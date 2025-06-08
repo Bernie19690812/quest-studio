@@ -129,7 +129,7 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
             </div>
             <div>
               <h1 className="font-semibold text-foreground">
-                {activeSolution.title} <span className="text-muted-foreground">></span> {currentChatName}
+                {activeSolution.title} <span className="text-muted-foreground">{'>'}</span> {currentChatName}
               </h1>
               <p className="text-sm text-muted-foreground">
                 {activeSolution.description || 'Ready to assist you'}
