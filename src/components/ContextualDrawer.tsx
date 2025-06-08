@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { X, Plus, Search, Calendar, Tag } from 'lucide-react';
+import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
