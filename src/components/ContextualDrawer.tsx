@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { ActiveSection, Solution } from './StudioLayout';
 import { CreateSolutionModal } from './CreateSolutionModal';
-import { SolutionsList } from './SolutionsList';
 
 interface ContextualDrawerProps {
   isOpen: boolean;
@@ -15,6 +13,31 @@ interface ContextualDrawerProps {
   onClose: () => void;
   onSolutionSelect: (solution: Solution) => void;
 }
+
+// Mock data for solutions
+const mockSolutions: Solution[] = [
+  {
+    id: '1',
+    title: 'Customer Support Bot',
+    description: 'AI-powered customer service solution',
+    dateModified: new Date('2024-06-07'),
+    status: 'active',
+  },
+  {
+    id: '2',
+    title: 'Data Analysis Pipeline',
+    description: 'Automated data processing and insights',
+    dateModified: new Date('2024-06-06'),
+    status: 'draft',
+  },
+  {
+    id: '3',
+    title: 'Content Generator',
+    description: 'Marketing content creation assistant',
+    dateModified: new Date('2024-06-05'),
+    status: 'active',
+  },
+];
 
 // Mock data for tools
 const mockTools = {
@@ -32,6 +55,11 @@ const mockTools = {
 const SolutionsContent = ({ onSolutionSelect, onClose }: { onSolutionSelect: (solution: Solution) => void; onClose: () => void }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  const handleSolutionClick = (solution: Solution) => {
+    onSolutionSelect(solution);
+    onClose();
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -43,14 +71,47 @@ const SolutionsContent = ({ onSolutionSelect, onClose }: { onSolutionSelect: (so
           </Button>
         </div>
 
-        <SolutionsList onSolutionSelect={onSolutionSelect} onClose={onClose} />
+        <div className="space-y-3">
+          {mockSolutions.map((solution) => (
+            <div
+              key={solution.id}
+              onClick={() => handleSolutionClick(solution)}
+              className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h4 className="font-medium text-foreground">{solution.title}</h4>
+                  {solution.description && (
+                    <p className="text-sm text-muted-foreground mt-1">{solution.description}</p>
+                  )}
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Calendar size={12} />
+                      {solution.dateModified.toLocaleDateString()}
+                    </div>
+                    <span className={cn(
+                      "text-xs px-2 py-1 rounded-full",
+                      solution.status === 'active' 
+                        ? "bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400"
+                        : solution.status === 'draft'
+                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-400"
+                        : "bg-gray-100 text-gray-800 dark:bg-gray-800/20 dark:text-gray-400"
+                    )}>
+                      {solution.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <CreateSolutionModal 
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
         onSolutionCreate={(solution) => {
-          onSolutionSelect(solution);
+          handleSolutionClick(solution);
           setShowCreateModal(false);
         }}
       />
