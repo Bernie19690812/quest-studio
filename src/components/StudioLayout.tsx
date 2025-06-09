@@ -21,8 +21,8 @@ export const StudioLayout = () => {
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
-      // Open marketplace in new tab
-      window.open('https://marketplace.quest.ai', '_blank');
+      // Navigate to marketplace page
+      window.location.href = '/marketplace';
       return;
     }
 

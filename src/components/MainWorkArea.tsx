@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Send, Paperclip, Mic, Plus, X, Trash2, Wrench, Brain, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,7 @@ const getComponentIcon = (type: ActiveComponent['type']) => {
 export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeComponents, setActiveComponents] = useState<ActiveComponent[]>([]);
-  const [currentChatName] = useState('General Chat'); // This would come from chat context
+  const [currentChatName] = useState('Chat name in solution');
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -78,11 +77,11 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
         {/* Header */}
         <div className="h-16 border-b border-border flex items-center px-6">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <span className="text-primary font-semibold text-sm">Q</span>
+            <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-semibold text-foreground">Quest AI Studio</h1>
+              <h1 className="font-semibold text-foreground text-lg">Quest AI Studio</h1>
               <p className="text-sm text-muted-foreground">Select or create a solution to begin</p>
             </div>
           </div>
@@ -91,15 +90,15 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
         {/* Empty State */}
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="text-center space-y-6 max-w-md">
-            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-              <span className="text-primary font-bold text-3xl">Q</span>
+            <div className="w-24 h-24 rounded-3xl quest-gradient flex items-center justify-center mx-auto">
+              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-12 h-12" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to Quest AI Studio</h2>
               <p className="text-muted-foreground mb-6">
                 Create or select a solution to start building your AI-powered applications.
               </p>
-              <Button onClick={onCreateSolution} size="lg">
+              <Button onClick={onCreateSolution} size="lg" className="bg-primary hover:bg-primary/90">
                 <Plus size={20} className="mr-2" />
                 Create Your First Solution
               </Button>
@@ -115,7 +114,6 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
       className="flex-1 flex flex-col"
       onDrop={(e) => {
         e.preventDefault();
-        // Mock implementation - in real app would parse drag data
         console.log('Component dropped');
       }}
       onDragOver={(e) => e.preventDefault()}
@@ -124,15 +122,15 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
       <div className="border-b border-border">
         <div className="h-16 flex items-center px-6">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <span className="text-primary font-semibold text-sm">Q</span>
+            <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-semibold text-foreground">
-                {activeSolution.title} <span className="text-muted-foreground">{'>'}</span> {currentChatName}
+              <h1 className="font-medium text-foreground text-lg">
+                {activeSolution.title} <span className="text-muted-foreground mx-2">{'>'}</span> {currentChatName}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {activeSolution.description || 'Ready to assist you'}
+                Component(s): {activeComponents.length}
               </p>
             </div>
           </div>
@@ -150,14 +148,14 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
                       <Badge
                         key={component.id}
                         variant="secondary"
-                        className="flex items-center gap-2 px-3 py-1 whitespace-nowrap"
+                        className="flex items-center gap-2 px-3 py-2 whitespace-nowrap bg-secondary border border-border rounded-full"
                       >
                         <IconComponent size={14} />
-                        <span>{component.name}</span>
+                        <span className="text-sm">{component.name}</span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-4 w-4 hover:bg-destructive/20"
+                          className="h-4 w-4 hover:bg-destructive/20 rounded-full ml-1"
                           onClick={() => removeComponent(component.id)}
                         >
                           <X size={12} />
@@ -171,10 +169,9 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
                 variant="ghost"
                 size="sm"
                 onClick={clearAllComponents}
-                className="flex items-center gap-1 text-muted-foreground hover:text-destructive"
+                className="flex items-center gap-1 text-muted-foreground hover:text-destructive rounded-full px-3"
               >
-                <Trash2 size={14} />
-                Clear All
+                Clear Components
               </Button>
             </div>
           </div>
@@ -192,8 +189,8 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Welcome Message for Active Solution */}
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-              <span className="text-primary font-bold text-xl">Q</span>
+            <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
+              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
@@ -209,16 +206,16 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
             <div 
               className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => handleDrop({ id: 'test-1', name: 'GPT-4 Integration', type: 'capability' })}
+              onClick={() => handleDrop({ id: 'test-1', name: 'Field Detector', type: 'capability' })}
             >
-              <h3 className="font-medium text-foreground mb-1">Test: Add GPT-4</h3>
+              <h3 className="font-medium text-foreground mb-1">Test: Add Field Detector</h3>
               <p className="text-sm text-muted-foreground">Click to test adding a component</p>
             </div>
             <div 
               className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => handleDrop({ id: 'test-2', name: 'Email Template', type: 'template' })}
+              onClick={() => handleDrop({ id: 'test-2', name: 'Text Extractor (OCR)', type: 'template' })}
             >
-              <h3 className="font-medium text-foreground mb-1">Test: Add Template</h3>
+              <h3 className="font-medium text-foreground mb-1">Test: Add OCR Template</h3>
               <p className="text-sm text-muted-foreground">Click to test adding a template</p>
             </div>
             <div className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
@@ -236,8 +233,8 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
       {/* Enhanced Input Area */}
       <div className="border-t border-border p-4 bg-background">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-end space-x-2">
-            <Button variant="outline" size="icon" className="mb-2">
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" size="icon" className="rounded-full border-border hover:bg-accent">
               <Paperclip size={18} />
             </Button>
             <div className="flex-1 relative">
@@ -245,25 +242,19 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder={`Ask Quest AI about ${activeSolution.title}...`}
-                className="pr-12 min-h-[44px] resize-none"
+                placeholder="Type your message..."
+                className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
               />
               <Button
                 onClick={handleSendMessage}
                 size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
                 disabled={!message.trim()}
               >
                 <Send size={16} />
               </Button>
             </div>
-            <Button variant="outline" size="icon" className="mb-2">
-              <Mic size={18} />
-            </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            Quest AI can make mistakes. Verify important information.
-          </p>
         </div>
       </div>
     </div>

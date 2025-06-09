@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, Plus, Eye } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, Plus, Eye, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
 import { CartDrawer } from '@/components/marketplace/CartDrawer';
 import { FavoritesDrawer } from '@/components/marketplace/FavoritesDrawer';
 import { CategorySection } from '@/components/marketplace/CategorySection';
+import { useNavigate } from 'react-router-dom';
 
 export interface MarketplaceItem {
   id: string;
@@ -95,6 +95,7 @@ const mockData: MarketplaceItem[] = [
 ];
 
 const Marketplace = () => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<MarketplaceItem[]>([]);
   const [favorites, setFavorites] = useState<MarketplaceItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -133,28 +134,44 @@ const Marketplace = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => window.history.back()}
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Quest AI Marketplace</h1>
-              <p className="text-sm text-muted-foreground">
-                Discover capabilities, solutions, and talent
-              </p>
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+                <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
+              </div>
+              <div className="text-xl font-bold text-foreground">Quest AI</div>
             </div>
+            <nav className="flex items-center space-x-1">
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Studio
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-foreground font-medium"
+              >
+                Marketplace
+              </Button>
+            </nav>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+              <Input
+                placeholder="Search marketplace..."
+                className="pl-10 w-64 bg-secondary border-border"
+              />
+            </div>
             <Button
               variant="outline"
               size="icon"
               onClick={() => setIsFavoritesOpen(true)}
+              className="border-border hover:bg-accent"
             >
               <Star size={20} />
             </Button>
@@ -162,39 +179,54 @@ const Marketplace = () => {
               variant="outline"
               size="icon"
               onClick={() => setIsCartOpen(true)}
-              className="relative"
+              className="relative border-border hover:bg-accent"
             >
               <ShoppingCart size={20} />
               {cartItems.length > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
                   {cartItems.length}
                 </Badge>
               )}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-border hover:bg-accent"
+            >
+              <User size={20} />
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="p-6 space-y-8">
-        {/* Featured Section */}
-        <section>
-          <h2 className="text-xl font-semibold mb-4">🌟 Featured</h2>
-          <CategorySection
-            items={mockData.filter(item => item.featured)}
-            onAddToCart={addToCart}
-            onToggleFavorite={toggleFavorite}
-            isFavorited={isFavorited}
-          />
-        </section>
+      {/* Hero Section */}
+      <section className="relative px-6 py-16 overflow-hidden">
+        <div className="absolute inset-0 quest-gradient opacity-20"></div>
+        <div className="relative z-10 max-w-4xl">
+          <h1 className="text-5xl font-bold text-foreground mb-4">Welcome to Quest AI</h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
+            Whether it's automating workflows, enhancing decision-making, 
+            or optimizing complex processes, Quest AI offers a range of AI 
+            agents, consultants and teams to help you achieve your goals.
+          </p>
+          <Button 
+            size="lg" 
+            onClick={() => navigate('/')}
+            className="bg-primary hover:bg-primary/90"
+          >
+            Go to quest studio
+          </Button>
+        </div>
+      </section>
 
+      {/* Main Content */}
+      <main className="px-6 space-y-12 pb-12">
         {/* Capabilities */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">🔧 Capabilities</h2>
-            <Button variant="ghost" size="sm">
-              <Eye size={16} className="mr-2" />
-              View All
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-foreground">Capabilities</h2>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              See all
             </Button>
           </div>
           <CategorySection
@@ -207,11 +239,10 @@ const Marketplace = () => {
 
         {/* Solutions */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">🧩 Solutions</h2>
-            <Button variant="ghost" size="sm">
-              <Eye size={16} className="mr-2" />
-              View All
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-foreground">Solutions</h2>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              See all
             </Button>
           </div>
           <CategorySection
@@ -224,11 +255,10 @@ const Marketplace = () => {
 
         {/* Teams */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">👥 Teams</h2>
-            <Button variant="ghost" size="sm">
-              <Eye size={16} className="mr-2" />
-              View All
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-foreground">Teams</h2>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              See all
             </Button>
           </div>
           <CategorySection
@@ -241,11 +271,10 @@ const Marketplace = () => {
 
         {/* Individuals */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">🧑‍💼 Individuals</h2>
-            <Button variant="ghost" size="sm">
-              <Eye size={16} className="mr-2" />
-              View All
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-foreground">Individuals</h2>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              See all
             </Button>
           </div>
           <CategorySection
