@@ -3,11 +3,12 @@ import React from 'react';
 import { Grid3X3, Zap, Bot, Database, Cloud, Settings, Code, Workflow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { LucideIcon } from 'lucide-react';
 
 interface Connection {
   id: string;
   name: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   description: string;
   status: 'connected' | 'available' | 'coming-soon';
 }
