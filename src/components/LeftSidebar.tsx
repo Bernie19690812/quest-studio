@@ -5,8 +5,8 @@ import {
   User, 
   ShoppingCart,
   Wrench,
-  ExternalLink
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { ActiveSection } from './StudioLayout';
 
@@ -35,7 +35,7 @@ const bottomSectionItems = [
     id: 'marketplace' as const,
     icon: ShoppingCart,
     label: 'Marketplace',
-    isExternal: true,
+    isExternal: false,
   },
   {
     id: 'profile' as const,
@@ -46,6 +46,16 @@ const bottomSectionItems = [
 ];
 
 export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps) => {
+  const navigate = useNavigate();
+
+  const handleSectionClick = (section: ActiveSection) => {
+    if (section === 'marketplace') {
+      navigate('/marketplace');
+      return;
+    }
+    onSectionClick(section);
+  };
+
   return (
     <div className="w-16 bg-card border-r border-border flex flex-col">
       {/* Logo/Brand */}
@@ -62,7 +72,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
             <li key={item.id} className="px-2">
               <div className="relative group">
                 <button
-                  onClick={() => onSectionClick(item.id)}
+                  onClick={() => handleSectionClick(item.id)}
                   className={cn(
                     "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 relative",
                     "hover:bg-accent hover:text-accent-foreground",
@@ -72,9 +82,6 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
                   )}
                 >
                   <item.icon size={20} />
-                  {item.isExternal && (
-                    <ExternalLink size={10} className="absolute top-1 right-1" />
-                  )}
                   
                   {/* Active indicator */}
                   {activeSection === item.id && (
@@ -100,7 +107,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
             <li key={item.id} className="px-2">
               <div className="relative group">
                 <button
-                  onClick={() => onSectionClick(item.id)}
+                  onClick={() => handleSectionClick(item.id)}
                   className={cn(
                     "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 relative",
                     "hover:bg-accent hover:text-accent-foreground",
@@ -110,9 +117,6 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
                   )}
                 >
                   <item.icon size={20} />
-                  {item.isExternal && (
-                    <ExternalLink size={10} className="absolute top-1 right-1" />
-                  )}
                   
                   {/* Active indicator */}
                   {activeSection === item.id && (
