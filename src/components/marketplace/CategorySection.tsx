@@ -8,6 +8,7 @@ interface CategorySectionProps {
   items: MarketplaceItem[];
   onAddToCart: (item: MarketplaceItem) => void;
   onToggleFavorite: (item: MarketplaceItem) => void;
+  onOpenModal: (item: MarketplaceItem) => void;
   isFavorited: (itemId: string) => boolean;
 }
 
@@ -15,6 +16,7 @@ export const CategorySection = ({
   items,
   onAddToCart,
   onToggleFavorite,
+  onOpenModal,
   isFavorited,
 }: CategorySectionProps) => {
   if (items.length === 0) {
@@ -34,6 +36,7 @@ export const CategorySection = ({
             item={item}
             onAddToCart={onAddToCart}
             onToggleFavorite={onToggleFavorite}
+            onOpenModal={onOpenModal}
             isFavorited={isFavorited(item.id)}
           />
         ))}

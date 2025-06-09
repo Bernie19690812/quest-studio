@@ -1,16 +1,16 @@
 
 import React from 'react';
-import { Star, Plus, Heart } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 import { MarketplaceItem } from '@/pages/Marketplace';
 
 interface MarketplaceCardProps {
   item: MarketplaceItem;
   onAddToCart: (item: MarketplaceItem) => void;
   onToggleFavorite: (item: MarketplaceItem) => void;
+  onOpenModal: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
 
@@ -18,117 +18,129 @@ export const MarketplaceCard = ({
   item, 
   onAddToCart, 
   onToggleFavorite, 
+  onOpenModal,
   isFavorited 
 }: MarketplaceCardProps) => {
-  const isService = item.type === 'service';
-  
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        size={12}
+        className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'}
+      />
+    ));
+  };
+
   return (
-    <Card className="min-w-[320px] max-w-[320px] netflix-card group cursor-pointer">
-      {/* Image/Preview Area */}
-      <div className="relative h-48 bg-gradient-to-br from-primary/20 to-secondary overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-6xl opacity-20">
-            {item.category === 'capabilities' && '🔧'}
-            {item.category === 'solutions' && '🧩'}
-            {item.category === 'teams' && '👥'}
-            {item.category === 'individuals' && '🧑‍💼'}
-          </div>
-        </div>
-        
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="flex space-x-2">
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToCart(item);
-              }}
-              className="bg-primary hover:bg-primary/90"
-            >
-              <Plus size={16} className="mr-1" />
-              Add to Cart
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite(item);
-              }}
-              className="border-white/50 text-white hover:bg-white/10"
-            >
-              <Heart 
-                size={16} 
-                className={cn(
-                  "transition-colors",
-                  isFavorited ? "fill-red-500 text-red-500" : ""
-                )} 
-              />
-            </Button>
-          </div>
-        </div>
-
-        {/* Featured Badge */}
-        {item.featured && (
-          <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-            Featured
-          </Badge>
-        )}
-      </div>
-
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-lg line-clamp-1 text-foreground">{item.name}</CardTitle>
-            <CardDescription className="line-clamp-2 mt-1 text-muted-foreground">
-              {item.description}
-            </CardDescription>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-2 mt-2">
-          <div className="flex items-center space-x-1">
-            <Star size={14} className="fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium text-foreground">{item.rating}</span>
-            <span className="text-xs text-muted-foreground">
-              ({item.reviewCount})
-            </span>
-          </div>
-          <Badge 
-            variant={isService ? "secondary" : "default"}
-            className="text-xs"
-          >
-            {isService ? "Service" : "Product"}
-          </Badge>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        <div className="flex flex-wrap gap-1 mb-3">
-          {item.tags.slice(0, 3).map((tag, index) => (
-            <Badge key={index} variant="outline" className="text-xs border-border">
-              {tag}
-            </Badge>
-          ))}
-          {item.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs border-border">
-              +{item.tags.length - 3}
+    <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
+      <div onClick={() => onOpenModal(item)} className="p-0">
+        {/* Image Area */}
+        <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/10 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+          {item.featured && (
+            <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground">
+              Featured
             </Badge>
           )}
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-lg font-bold text-foreground">
-              ${item.price}
-            </span>
-            {isService && (
-              <span className="text-sm text-muted-foreground">/hour</span>
+          <div className="text-center space-y-2">
+            {item.category === 'individuals' ? (
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <User size={24} className="text-white" />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center">
+                <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
+              </div>
             )}
           </div>
+          
+          {/* Overlay with actions on hover */}
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-white/90 text-black hover:bg-white"
+            >
+              View Details
+            </Button>
+          </div>
         </div>
-      </CardContent>
+
+        {/* Content */}
+        <div className="p-4 space-y-3">
+          <div>
+            <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-tight">
+              {item.name}
+            </h3>
+            {item.category === 'individuals' && (
+              <p className="text-xs text-primary mt-1">Frontend Developer</p>
+            )}
+          </div>
+
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+            {item.description}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1">
+            {item.tags.slice(0, 2).map((tag, index) => (
+              <Badge key={index} variant="outline" className="text-xs px-2 py-0">
+                {tag}
+              </Badge>
+            ))}
+            {item.tags.length > 2 && (
+              <Badge variant="outline" className="text-xs px-2 py-0">
+                +{item.tags.length - 2}
+              </Badge>
+            )}
+          </div>
+
+          {/* Rating */}
+          <div className="flex items-center space-x-1">
+            {renderStars(Math.floor(item.rating))}
+            <span className="text-xs text-muted-foreground ml-1">
+              {item.rating} ({item.reviewCount})
+            </span>
+          </div>
+
+          {/* Price and Actions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-1">
+              <span className="text-sm font-bold text-foreground">
+                ${item.price}
+              </span>
+              {item.type === 'service' && (
+                <span className="text-xs text-muted-foreground">/hr</span>
+              )}
+            </div>
+            
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(item);
+                }}
+                className={`h-8 w-8 rounded-full ${isFavorited ? 'text-red-500' : 'text-muted-foreground'}`}
+              >
+                <Heart size={14} className={isFavorited ? 'fill-current' : ''} />
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAddToCart(item);
+                }}
+                className="h-8 w-8 rounded-full border-border hover:bg-accent"
+              >
+                <Plus size={14} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 };

@@ -5,16 +5,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { EditableField } from './EditableField';
 import { AppLauncherDropdown } from './AppLauncherDropdown';
-import { cn } from '@/lib/utils';
+import { NewChatModal } from './NewChatModal';
 import { Solution } from './StudioLayout';
 
 interface ActiveComponent {
   id: string;
   name: string;
   type: 'capability' | 'solution' | 'template';
+}
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
 }
 
 interface MainWorkAreaProps {
@@ -36,16 +42,49 @@ const getComponentIcon = (type: ActiveComponent['type']) => {
   }
 };
 
+// Mock GPT response generator
+const generateGPTResponse = (userMessage: string): string => {
+  const responses = [
+    `I understand you're asking about "${userMessage}". Let me help you with that. Based on the components you've added, I can assist with processing and analyzing your request.`,
+    `Great question! Regarding "${userMessage}", I can leverage the available capabilities to provide you with a comprehensive solution. Would you like me to break this down into steps?`,
+    `Thank you for your message about "${userMessage}". I'm analyzing this with the current solution context and can provide several approaches to address this.`,
+    `I see you're working on "${userMessage}". With the tools and capabilities currently active, I can help you implement this efficiently. Let me walk you through the process.`,
+  ];
+  
+  return responses[Math.floor(Math.random() * responses.length)];
+};
+
 export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeComponents, setActiveComponents] = useState<ActiveComponent[]>([]);
   const [currentChatName, setCurrentChatName] = useState('Chat name in solution');
   const [solutionName, setSolutionName] = useState(activeSolution?.title || '');
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      console.log('Sending message:', message);
-      console.log('Active components:', activeComponents);
+      // Add user message
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        text: message.trim(),
+        isUser: true,
+        timestamp: new Date(),
+      };
+      
+      setChatMessages(prev => [...prev, userMessage]);
+      
+      // Generate and add GPT response after a short delay
+      setTimeout(() => {
+        const gptResponse: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          text: generateGPTResponse(message.trim()),
+          isUser: false,
+          timestamp: new Date(),
+        };
+        setChatMessages(prev => [...prev, gptResponse]);
+      }, 1000);
+      
       setMessage('');
     }
   };
@@ -57,6 +96,29 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
     }
   };
 
+  const handleFileUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files) {
+        Array.from(files).forEach(file => {
+          console.log('File uploaded:', file.name);
+          // Add file upload message to chat
+          const fileMessage: ChatMessage = {
+            id: Date.now().toString(),
+            text: `📎 Uploaded file: ${file.name}`,
+            isUser: true,
+            timestamp: new Date(),
+          };
+          setChatMessages(prev => [...prev, fileMessage]);
+        });
+      }
+    };
+    input.click();
+  };
+
   const removeComponent = (componentId: string) => {
     setActiveComponents(prev => prev.filter(comp => comp.id !== componentId));
   };
@@ -65,10 +127,12 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
     setActiveComponents([]);
   };
 
-  const handleNewChat = () => {
-    const newChatName = `New Chat ${Date.now()}`;
+  const handleNewChat = (chatName?: string) => {
+    const newChatName = chatName || `New Chat ${Date.now()}`;
     setCurrentChatName(newChatName);
     setActiveComponents([]);
+    setChatMessages([]);
+    setIsNewChatModalOpen(false);
     console.log('Created new chat:', newChatName);
   };
 
@@ -132,14 +196,7 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
   }
 
   return (
-    <div 
-      className="flex-1 flex flex-col"
-      onDrop={(e) => {
-        e.preventDefault();
-        console.log('Component dropped');
-      }}
-      onDragOver={(e) => e.preventDefault()}
-    >
+    <div className="flex-1 flex flex-col">
       {/* Enhanced Header with Editable Fields and Actions */}
       <div className="border-b border-border">
         <div className="h-16 flex items-center justify-between px-6">
@@ -170,7 +227,7 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleNewChat}
+              onClick={() => setIsNewChatModalOpen(true)}
               className="h-9 w-9 rounded-lg hover:bg-accent"
               title="Create new chat in current solution"
             >
@@ -180,97 +237,114 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
           </div>
         </div>
 
-        {/* Active Components Row */}
-        {activeComponents.length > 0 ? (
-          <div className="px-6 pb-4">
-            <div className="flex items-center gap-2">
-              <ScrollArea className="flex-1">
-                <div className="flex items-center gap-2 pb-2">
-                  {activeComponents.map((component) => {
-                    const IconComponent = getComponentIcon(component.type);
-                    return (
-                      <Badge
-                        key={component.id}
-                        variant="secondary"
-                        className="flex items-center gap-2 px-3 py-2 whitespace-nowrap bg-secondary border border-border rounded-full"
-                      >
-                        <IconComponent size={14} />
-                        <span className="text-sm">{component.name}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-4 w-4 hover:bg-destructive/20 rounded-full ml-1"
-                          onClick={() => removeComponent(component.id)}
-                        >
-                          <X size={12} />
-                        </Button>
-                      </Badge>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
+        {/* Components Row */}
+        <div className="px-6 pb-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">
+              Component(s): {activeComponents.length}
+            </span>
+            {activeComponents.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={clearAllComponents}
-                className="flex items-center gap-1 text-muted-foreground hover:text-destructive rounded-full px-3"
+                className="flex items-center gap-1 text-muted-foreground hover:text-destructive"
               >
-                Clear Components
+                Clear All <Trash2 size={14} />
               </Button>
-            </div>
+            )}
           </div>
-        ) : (
-          <div className="px-6 pb-4">
-            <div className="text-center py-3 text-sm text-muted-foreground border border-dashed border-border rounded-lg">
+          
+          {activeComponents.length > 0 ? (
+            <ScrollArea className="mt-2">
+              <div className="flex items-center gap-2 pb-2">
+                {activeComponents.map((component) => {
+                  const IconComponent = getComponentIcon(component.type);
+                  return (
+                    <Badge
+                      key={component.id}
+                      variant="secondary"
+                      className="flex items-center gap-2 px-3 py-2 whitespace-nowrap bg-secondary border border-border rounded-full"
+                    >
+                      <IconComponent size={14} />
+                      <span className="text-sm">{component.name}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 hover:bg-destructive/20 rounded-full ml-1"
+                        onClick={() => removeComponent(component.id)}
+                      >
+                        <X size={12} />
+                      </Button>
+                    </Badge>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="text-center py-3 text-sm text-muted-foreground border border-dashed border-border rounded-lg mt-2">
               Drag a tool from the sidebar to get started.
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Chat Messages Area */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Welcome Message for Active Solution */}
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
-              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Working on: {solutionName}
-              </h2>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                {activeSolution.description || 'Your AI workspace is ready. How can I help you with this solution?'}
-              </p>
-            </div>
-          </div>
+          {chatMessages.length === 0 ? (
+            <>
+              {/* Welcome Message for Active Solution */}
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
+                  <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Working on: {solutionName}
+                  </h2>
+                  <p className="text-muted-foreground max-w-md mx-auto">
+                    {activeSolution.description || 'Your AI workspace is ready. How can I help you with this solution?'}
+                  </p>
+                </div>
+              </div>
 
-          {/* Quick Actions for Active Solution */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-            <div 
-              className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => handleDrop({ id: 'test-1', name: 'Field Detector', type: 'capability' })}
-            >
-              <h3 className="font-medium text-foreground mb-1">Test: Add Field Detector</h3>
-              <p className="text-sm text-muted-foreground">Click to test adding a component</p>
+              {/* Quick Actions for Active Solution */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <div 
+                  className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                  onClick={() => handleDrop({ id: 'test-1', name: 'Field Detector', type: 'capability' })}
+                >
+                  <h3 className="font-medium text-foreground mb-1">Test: Add Field Detector</h3>
+                  <p className="text-sm text-muted-foreground">Click to test adding a component</p>
+                </div>
+                <div 
+                  className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                  onClick={() => handleDrop({ id: 'test-2', name: 'Text Extractor (OCR)', type: 'template' })}
+                >
+                  <h3 className="font-medium text-foreground mb-1">Test: Add OCR Template</h3>
+                  <p className="text-sm text-muted-foreground">Click to test adding a template</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-4">
+              {chatMessages.map((msg) => (
+                <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    msg.isUser 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-secondary text-secondary-foreground border border-border'
+                  }`}>
+                    <p className="text-sm">{msg.text}</p>
+                    <p className="text-xs opacity-70 mt-1">
+                      {msg.timestamp.toLocaleTimeString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div 
-              className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => handleDrop({ id: 'test-2', name: 'Text Extractor (OCR)', type: 'template' })}
-            >
-              <h3 className="font-medium text-foreground mb-1">Test: Add OCR Template</h3>
-              <p className="text-sm text-muted-foreground">Click to test adding a template</p>
-            </div>
-            <div className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-              <h3 className="font-medium text-foreground mb-1">View Chat History</h3>
-              <p className="text-sm text-muted-foreground">Review previous conversations</p>
-            </div>
-            <div className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-              <h3 className="font-medium text-foreground mb-1">Solution Settings</h3>
-              <p className="text-sm text-muted-foreground">Configure and manage this solution</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -278,7 +352,12 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
       <div className="border-t border-border p-4 bg-background">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="icon" className="rounded-full border-border hover:bg-accent">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="rounded-full border-border hover:bg-accent"
+              onClick={handleFileUpload}
+            >
               <Paperclip size={18} />
             </Button>
             <div className="flex-1 relative">
@@ -301,6 +380,13 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
           </div>
         </div>
       </div>
+
+      {/* New Chat Modal */}
+      <NewChatModal
+        open={isNewChatModalOpen}
+        onOpenChange={setIsNewChatModalOpen}
+        onCreateChat={handleNewChat}
+      />
     </div>
   );
 };

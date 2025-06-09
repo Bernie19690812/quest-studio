@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, ShoppingCart, Star, Plus, Eye, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
+import { MarketplaceItemModal } from '@/components/marketplace/MarketplaceItemModal';
 import { CartDrawer } from '@/components/marketplace/CartDrawer';
 import { FavoritesDrawer } from '@/components/marketplace/FavoritesDrawer';
 import { CategorySection } from '@/components/marketplace/CategorySection';
@@ -28,69 +30,69 @@ const mockData: MarketplaceItem[] = [
   {
     id: '1',
     name: 'GPT-4 Integration',
-    description: 'Advanced AI language model integration for your solutions',
+    description: 'Advanced AI language model integration for your solutions with comprehensive API access and custom fine-tuning capabilities',
     category: 'capabilities',
     type: 'product',
     price: 29.99,
     rating: 4.8,
     reviewCount: 142,
-    tags: ['AI Model', 'Language Processing'],
+    tags: ['AI Model', 'Language Processing', 'API'],
     featured: true,
   },
   {
     id: '2',
     name: 'E-commerce Solution',
-    description: 'Complete e-commerce platform with payment integration',
+    description: 'Complete e-commerce platform with payment integration, inventory management, and customer analytics',
     category: 'solutions',
     type: 'product',
     price: 99.99,
     rating: 4.6,
     reviewCount: 89,
-    tags: ['E-commerce', 'Payments', 'Catalog'],
+    tags: ['E-commerce', 'Payments', 'Catalog', 'Analytics'],
   },
   {
     id: '3',
     name: 'DevOps Team',
-    description: 'Expert DevOps team for infrastructure and deployment',
+    description: 'Expert DevOps team for infrastructure, deployment, CI/CD pipelines, and cloud architecture',
     category: 'teams',
     type: 'service',
     price: 150,
     rating: 4.9,
     reviewCount: 67,
-    tags: ['DevOps', 'Infrastructure', 'CI/CD'],
+    tags: ['DevOps', 'Infrastructure', 'CI/CD', 'Cloud'],
   },
   {
     id: '4',
-    name: 'Frontend Developer',
-    description: 'Experienced React/Vue developer for UI/UX projects',
+    name: 'Anita Mensah',
+    description: 'Experienced React/Vue developer specializing in modern UI/UX design and frontend architecture',
     category: 'individuals',
     type: 'service',
     price: 75,
     rating: 4.7,
     reviewCount: 94,
-    tags: ['Frontend', 'React', 'Vue'],
+    tags: ['Frontend', 'React', 'Vue', 'TypeScript'],
   },
   {
     id: '5',
     name: 'Data Analytics Dashboard',
-    description: 'Real-time analytics and reporting dashboard',
+    description: 'Real-time analytics and reporting dashboard with custom visualizations and automated insights',
     category: 'capabilities',
     type: 'product',
     price: 49.99,
     rating: 4.5,
     reviewCount: 156,
-    tags: ['Analytics', 'Dashboard', 'Real-time'],
+    tags: ['Analytics', 'Dashboard', 'Real-time', 'Visualization'],
   },
   {
     id: '6',
     name: 'QA Testing Team',
-    description: 'Comprehensive quality assurance and testing services',
+    description: 'Comprehensive quality assurance and testing services including automation, performance, and security testing',
     category: 'teams',
     type: 'service',
     price: 120,
     rating: 4.8,
     reviewCount: 78,
-    tags: ['QA', 'Testing', 'Automation'],
+    tags: ['QA', 'Testing', 'Automation', 'Performance'],
   },
 ];
 
@@ -100,6 +102,8 @@ const Marketplace = () => {
   const [favorites, setFavorites] = useState<MarketplaceItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -121,6 +125,11 @@ const Marketplace = () => {
 
   const isFavorited = (itemId: string) => {
     return favorites.some(item => item.id === itemId);
+  };
+
+  const handleOpenModal = (item: MarketplaceItem) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
   };
 
   const categorizedData = {
@@ -146,9 +155,10 @@ const Marketplace = () => {
               <Button
                 variant="ghost"
                 onClick={() => navigate('/')}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
               >
-                Studio
+                <ArrowLeft size={16} />
+                <span>Return to Studio</span>
               </Button>
               <Button
                 variant="ghost"
@@ -199,12 +209,13 @@ const Marketplace = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Enhanced Hero Section */}
       <section className="relative px-6 py-16 overflow-hidden">
-        <div className="absolute inset-0 quest-gradient opacity-20"></div>
+        <div className="absolute inset-0 quest-gradient opacity-20 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background"></div>
         <div className="relative z-10 max-w-4xl">
-          <h1 className="text-5xl font-bold text-foreground mb-4">Welcome to Quest AI</h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
+          <h1 className="text-5xl font-bold text-foreground mb-4 animate-fade-in">Welcome to Quest AI</h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl animate-fade-in">
             Whether it's automating workflows, enhancing decision-making, 
             or optimizing complex processes, Quest AI offers a range of AI 
             agents, consultants and teams to help you achieve your goals.
@@ -212,7 +223,7 @@ const Marketplace = () => {
           <Button 
             size="lg" 
             onClick={() => navigate('/')}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 hover-scale"
           >
             Go to quest studio
           </Button>
@@ -233,6 +244,7 @@ const Marketplace = () => {
             items={categorizedData.capabilities}
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
             isFavorited={isFavorited}
           />
         </section>
@@ -249,6 +261,7 @@ const Marketplace = () => {
             items={categorizedData.solutions}
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
             isFavorited={isFavorited}
           />
         </section>
@@ -265,6 +278,7 @@ const Marketplace = () => {
             items={categorizedData.teams}
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
             isFavorited={isFavorited}
           />
         </section>
@@ -281,10 +295,21 @@ const Marketplace = () => {
             items={categorizedData.individuals}
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
             isFavorited={isFavorited}
           />
         </section>
       </main>
+
+      {/* Item Detail Modal */}
+      <MarketplaceItemModal
+        item={selectedItem}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddToCart={addToCart}
+        onToggleFavorite={toggleFavorite}
+        isFavorited={selectedItem ? isFavorited(selectedItem.id) : false}
+      />
 
       {/* Cart Drawer */}
       <CartDrawer
