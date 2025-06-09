@@ -1,9 +1,13 @@
+
 import React, { useState } from 'react';
-import { Send, Paperclip, Mic, Plus, X, Trash2, Wrench, Brain, Zap } from 'lucide-react';
+import { Send, Paperclip, Plus, X, Trash2, Wrench, Brain, Zap, MessageSquarePlus, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { EditableField } from './EditableField';
+import { AppLauncherDropdown } from './AppLauncherDropdown';
 import { cn } from '@/lib/utils';
 import { Solution } from './StudioLayout';
 
@@ -35,7 +39,8 @@ const getComponentIcon = (type: ActiveComponent['type']) => {
 export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeComponents, setActiveComponents] = useState<ActiveComponent[]>([]);
-  const [currentChatName] = useState('Chat name in solution');
+  const [currentChatName, setCurrentChatName] = useState('Chat name in solution');
+  const [solutionName, setSolutionName] = useState(activeSolution?.title || '');
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -58,6 +63,23 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
 
   const clearAllComponents = () => {
     setActiveComponents([]);
+  };
+
+  const handleNewChat = () => {
+    const newChatName = `New Chat ${Date.now()}`;
+    setCurrentChatName(newChatName);
+    setActiveComponents([]);
+    console.log('Created new chat:', newChatName);
+  };
+
+  const handleSolutionNameChange = (newName: string) => {
+    setSolutionName(newName || 'Untitled Solution');
+    console.log('Solution name changed to:', newName);
+  };
+
+  const handleChatNameChange = (newName: string) => {
+    setCurrentChatName(newName || 'Untitled Chat');
+    console.log('Chat name changed to:', newName);
   };
 
   // Mock function to handle drop (would be implemented with proper drag & drop)
@@ -118,21 +140,43 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
       }}
       onDragOver={(e) => e.preventDefault()}
     >
-      {/* Header with Active Solution and Chat Name */}
+      {/* Enhanced Header with Editable Fields and Actions */}
       <div className="border-b border-border">
-        <div className="h-16 flex items-center px-6">
+        <div className="h-16 flex items-center justify-between px-6">
+          {/* Left: Logo and Editable Names */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
               <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
             </div>
-            <div>
-              <h1 className="font-medium text-foreground text-lg">
-                {activeSolution.title} <span className="text-muted-foreground mx-2">{'>'}</span> {currentChatName}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Component(s): {activeComponents.length}
-              </p>
+            <div className="flex items-center space-x-2">
+              <EditableField
+                value={solutionName}
+                onChange={handleSolutionNameChange}
+                placeholder="Untitled Solution"
+                className="text-lg font-medium text-foreground"
+              />
+              <span className="text-muted-foreground mx-1">{'>'}</span>
+              <EditableField
+                value={currentChatName}
+                onChange={handleChatNameChange}
+                placeholder="Untitled Chat"
+                className="text-lg font-medium text-foreground"
+              />
             </div>
+          </div>
+
+          {/* Right: Action Buttons */}
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNewChat}
+              className="h-9 w-9 rounded-lg hover:bg-accent"
+              title="Create new chat in current solution"
+            >
+              <MessageSquarePlus size={18} />
+            </Button>
+            <AppLauncherDropdown />
           </div>
         </div>
 
@@ -194,7 +238,7 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Working on: {activeSolution.title}
+                Working on: {solutionName}
               </h2>
               <p className="text-muted-foreground max-w-md mx-auto">
                 {activeSolution.description || 'Your AI workspace is ready. How can I help you with this solution?'}
