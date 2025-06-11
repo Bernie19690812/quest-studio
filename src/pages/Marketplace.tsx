@@ -845,8 +845,8 @@ const Marketplace = () => {
   };
 
   const categorizedData = {
-    capabilities: mockData.filter(item => item.category === 'capabilities'),
     solutions: mockData.filter(item => item.category === 'solutions'),
+    capabilities: mockData.filter(item => item.category === 'capabilities'),
     teams: mockData.filter(item => item.category === 'teams'),
     individuals: mockData.filter(item => item.category === 'individuals'),
   };
@@ -1073,9 +1073,9 @@ const Marketplace = () => {
         </div>
       </section>
 
-      {/* Main Content - Reordered with Solutions first */}
+      {/* Main Content - Solutions first */}
       <main className="px-6 space-y-12 pb-12">
-        {/* Solutions - Now first */}
+        {/* Solutions - First */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Solutions</h2>
@@ -1193,5 +1193,3 @@ const Marketplace = () => {
 };
 
 export default Marketplace;
-
-</edits_to_apply>
