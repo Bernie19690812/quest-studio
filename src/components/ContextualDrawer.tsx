@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { ActiveSection, Solution } from './StudioLayout';
 import { CreateSolutionModal } from './CreateSolutionModal';
+import { SolutionsList } from './SolutionsList';
 
 interface ContextualDrawerProps {
   isOpen: boolean;
@@ -60,6 +61,18 @@ const SolutionsContent = ({ onSolutionSelect, onClose }: { onSolutionSelect: (so
     onClose();
   };
 
+  const handleChatSelect = (chat: any, solution: Solution) => {
+    // Update solution context and chat
+    onSolutionSelect(solution);
+    console.log('Selected chat:', chat.name, 'in solution:', solution.title);
+    onClose();
+  };
+
+  const handleFileSelect = (file: any, solution: Solution) => {
+    // Handle file selection/preview
+    console.log('Selected file:', file.name, 'in solution:', solution.title);
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -71,40 +84,11 @@ const SolutionsContent = ({ onSolutionSelect, onClose }: { onSolutionSelect: (so
           </Button>
         </div>
 
-        <div className="space-y-3">
-          {mockSolutions.map((solution) => (
-            <div
-              key={solution.id}
-              onClick={() => handleSolutionClick(solution)}
-              className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium text-foreground">{solution.title}</h4>
-                  {solution.description && (
-                    <p className="text-sm text-muted-foreground mt-1">{solution.description}</p>
-                  )}
-                  <div className="flex items-center gap-3 mt-2">
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Calendar size={12} />
-                      {solution.dateModified.toLocaleDateString()}
-                    </div>
-                    <span className={cn(
-                      "text-xs px-2 py-1 rounded-full",
-                      solution.status === 'active' 
-                        ? "bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400"
-                        : solution.status === 'draft'
-                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-400"
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-800/20 dark:text-gray-400"
-                    )}>
-                      {solution.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <SolutionsList 
+          onSolutionSelect={handleSolutionClick}
+          onChatSelect={handleChatSelect}
+          onFileSelect={handleFileSelect}
+        />
       </div>
 
       <CreateSolutionModal 
