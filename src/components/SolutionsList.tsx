@@ -3,13 +3,7 @@ import React, { useState } from 'react';
 import { ChevronRight, ChevronDown, MessageSquare, FileText, Image, FileIcon, MoreHorizontal, Star, Edit2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Solution } from './StudioLayout';
-
-interface Chat {
-  id: string;
-  name: string;
-  dateModified: Date;
-}
+import { Solution, Chat } from './StudioLayout';
 
 interface File {
   id: string;
@@ -30,7 +24,7 @@ interface SolutionsListProps {
   onFileSelect?: (file: File, solution: Solution) => void;
 }
 
-// Mock data with chats and files
+// Enhanced mock data with one solution having many chats and files
 const mockSolutionsWithDetails: SolutionWithDetails[] = [
   {
     id: '1',
@@ -40,12 +34,48 @@ const mockSolutionsWithDetails: SolutionWithDetails[] = [
     status: 'active',
     isFavorite: true,
     chats: [
-      { id: 'c1', name: 'Initial Setup Discussion', dateModified: new Date('2024-06-07') },
-      { id: 'c2', name: 'Bot Training Questions', dateModified: new Date('2024-06-06') },
+      { id: 'c1', name: 'Initial Setup Discussion', dateModified: new Date('2024-06-07'), messages: [] },
+      { id: 'c2', name: 'Bot Training Questions', dateModified: new Date('2024-06-06'), messages: [] },
+      { id: 'c3', name: 'Customer Journey Mapping', dateModified: new Date('2024-06-05'), messages: [] },
+      { id: 'c4', name: 'Integration Planning', dateModified: new Date('2024-06-04'), messages: [] },
+      { id: 'c5', name: 'Testing Scenarios', dateModified: new Date('2024-06-03'), messages: [] },
+      { id: 'c6', name: 'Performance Optimization', dateModified: new Date('2024-06-02'), messages: [] },
+      { id: 'c7', name: 'User Feedback Analysis', dateModified: new Date('2024-06-01'), messages: [] },
+      { id: 'c8', name: 'Knowledge Base Setup', dateModified: new Date('2024-05-31'), messages: [] },
+      { id: 'c9', name: 'Escalation Workflows', dateModified: new Date('2024-05-30'), messages: [] },
+      { id: 'c10', name: 'Multi-language Support', dateModified: new Date('2024-05-29'), messages: [] },
+      { id: 'c11', name: 'API Configuration', dateModified: new Date('2024-05-28'), messages: [] },
+      { id: 'c12', name: 'Security & Privacy', dateModified: new Date('2024-05-27'), messages: [] },
+      { id: 'c13', name: 'Analytics Dashboard', dateModified: new Date('2024-05-26'), messages: [] },
+      { id: 'c14', name: 'Mobile Optimization', dateModified: new Date('2024-05-25'), messages: [] },
+      { id: 'c15', name: 'A/B Testing Strategy', dateModified: new Date('2024-05-24'), messages: [] },
+      { id: 'c16', name: 'Voice Integration', dateModified: new Date('2024-05-23'), messages: [] },
+      { id: 'c17', name: 'Sentiment Analysis', dateModified: new Date('2024-05-22'), messages: [] },
+      { id: 'c18', name: 'Custom Training Data', dateModified: new Date('2024-05-21'), messages: [] },
+      { id: 'c19', name: 'Deployment Checklist', dateModified: new Date('2024-05-20'), messages: [] },
+      { id: 'c20', name: 'Maintenance Schedule', dateModified: new Date('2024-05-19'), messages: [] },
+      { id: 'c21', name: 'User Training Materials', dateModified: new Date('2024-05-18'), messages: [] },
+      { id: 'c22', name: 'Backup & Recovery', dateModified: new Date('2024-05-17'), messages: [] },
+      { id: 'c23', name: 'Cost Optimization', dateModified: new Date('2024-05-16'), messages: [] },
+      { id: 'c24', name: 'Compliance Review', dateModified: new Date('2024-05-15'), messages: [] },
+      { id: 'c25', name: 'Launch Strategy', dateModified: new Date('2024-05-14'), messages: [] },
     ],
     files: [
       { id: 'f1', name: 'requirements.pdf', type: 'pdf', dateUploaded: new Date('2024-06-05') },
       { id: 'f2', name: 'wireframe.png', type: 'image', dateUploaded: new Date('2024-06-04') },
+      { id: 'f3', name: 'user-personas.doc', type: 'doc', dateUploaded: new Date('2024-06-03') },
+      { id: 'f4', name: 'api-documentation.pdf', type: 'pdf', dateUploaded: new Date('2024-06-02') },
+      { id: 'f5', name: 'flow-diagram.png', type: 'image', dateUploaded: new Date('2024-06-01') },
+      { id: 'f6', name: 'training-data.csv', type: 'other', dateUploaded: new Date('2024-05-31') },
+      { id: 'f7', name: 'test-scripts.doc', type: 'doc', dateUploaded: new Date('2024-05-30') },
+      { id: 'f8', name: 'ui-mockups.png', type: 'image', dateUploaded: new Date('2024-05-29') },
+      { id: 'f9', name: 'deployment-guide.pdf', type: 'pdf', dateUploaded: new Date('2024-05-28') },
+      { id: 'f10', name: 'security-checklist.doc', type: 'doc', dateUploaded: new Date('2024-05-27') },
+      { id: 'f11', name: 'analytics-setup.pdf', type: 'pdf', dateUploaded: new Date('2024-05-26') },
+      { id: 'f12', name: 'brand-assets.zip', type: 'other', dateUploaded: new Date('2024-05-25') },
+      { id: 'f13', name: 'user-feedback.csv', type: 'other', dateUploaded: new Date('2024-05-24') },
+      { id: 'f14', name: 'performance-metrics.pdf', type: 'pdf', dateUploaded: new Date('2024-05-23') },
+      { id: 'f15', name: 'integration-diagram.png', type: 'image', dateUploaded: new Date('2024-05-22') },
     ],
   },
   {
@@ -54,9 +84,13 @@ const mockSolutionsWithDetails: SolutionWithDetails[] = [
     description: 'Automated data processing and insights',
     dateModified: new Date('2024-06-06'),
     status: 'draft',
-    chats: [],
+    chats: [
+      { id: 'c26', name: 'Data Source Planning', dateModified: new Date('2024-06-06'), messages: [] },
+      { id: 'c27', name: 'Pipeline Architecture', dateModified: new Date('2024-06-05'), messages: [] },
+    ],
     files: [
-      { id: 'f3', name: 'dataset.csv', type: 'other', dateUploaded: new Date('2024-06-03') },
+      { id: 'f16', name: 'dataset.csv', type: 'other', dateUploaded: new Date('2024-06-03') },
+      { id: 'f17', name: 'schema-design.pdf', type: 'pdf', dateUploaded: new Date('2024-06-02') },
     ],
   },
   {
@@ -66,9 +100,12 @@ const mockSolutionsWithDetails: SolutionWithDetails[] = [
     dateModified: new Date('2024-06-05'),
     status: 'active',
     chats: [
-      { id: 'c3', name: 'Content Strategy', dateModified: new Date('2024-06-05') },
+      { id: 'c28', name: 'Content Strategy', dateModified: new Date('2024-06-05'), messages: [] },
+      { id: 'c29', name: 'Template Design', dateModified: new Date('2024-06-04'), messages: [] },
     ],
-    files: [],
+    files: [
+      { id: 'f18', name: 'brand-guidelines.pdf', type: 'pdf', dateUploaded: new Date('2024-06-01') },
+    ],
   },
 ];
 
@@ -175,7 +212,7 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
                   </div>
                   
                   {chatsExpanded && (
-                    <div className="ml-6 mt-1 space-y-1">
+                    <div className="ml-6 mt-1 space-y-1 max-h-48 overflow-y-auto">
                       {solution.chats.length === 0 ? (
                         <p className="text-xs text-muted-foreground py-2">No chats created yet</p>
                       ) : (
@@ -211,7 +248,7 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
                   </div>
                   
                   {filesExpanded && (
-                    <div className="ml-6 mt-1 space-y-1">
+                    <div className="ml-6 mt-1 space-y-1 max-h-48 overflow-y-auto">
                       {solution.files.length === 0 ? (
                         <p className="text-xs text-muted-foreground py-2">No files uploaded yet</p>
                       ) : (

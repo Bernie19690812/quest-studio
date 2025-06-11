@@ -3,7 +3,7 @@ import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { ActiveSection, Solution } from './StudioLayout';
+import { ActiveSection, Solution, Chat } from './StudioLayout';
 import { CreateSolutionModal } from './CreateSolutionModal';
 import { SolutionsList } from './SolutionsList';
 
@@ -13,6 +13,7 @@ interface ContextualDrawerProps {
   activeSolution: Solution | null;
   onClose: () => void;
   onSolutionSelect: (solution: Solution) => void;
+  onChatSelect?: (chat: Chat, solution: Solution) => void;
 }
 
 // Mock data for solutions
@@ -53,7 +54,15 @@ const mockTools = {
   ],
 };
 
-const SolutionsContent = ({ onSolutionSelect, onClose }: { onSolutionSelect: (solution: Solution) => void; onClose: () => void }) => {
+const SolutionsContent = ({ 
+  onSolutionSelect, 
+  onChatSelect, 
+  onClose 
+}: { 
+  onSolutionSelect: (solution: Solution) => void; 
+  onChatSelect?: (chat: Chat, solution: Solution) => void;
+  onClose: () => void;
+}) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleSolutionClick = (solution: Solution) => {
@@ -61,10 +70,10 @@ const SolutionsContent = ({ onSolutionSelect, onClose }: { onSolutionSelect: (so
     onClose();
   };
 
-  const handleChatSelect = (chat: any, solution: Solution) => {
-    // Update solution context and chat
-    onSolutionSelect(solution);
-    console.log('Selected chat:', chat.name, 'in solution:', solution.title);
+  const handleChatSelect = (chat: Chat, solution: Solution) => {
+    if (onChatSelect) {
+      onChatSelect(chat, solution);
+    }
     onClose();
   };
 
@@ -214,12 +223,13 @@ export const ContextualDrawer = ({
   activeSection, 
   activeSolution,
   onClose, 
-  onSolutionSelect 
+  onSolutionSelect,
+  onChatSelect
 }: ContextualDrawerProps) => {
   const renderContent = () => {
     switch (activeSection) {
       case 'solutions':
-        return <SolutionsContent onSolutionSelect={onSolutionSelect} onClose={onClose} />;
+        return <SolutionsContent onSolutionSelect={onSolutionSelect} onChatSelect={onChatSelect} onClose={onClose} />;
       case 'tools':
         return <ToolsContent />;
       case 'profile':
@@ -264,3 +274,5 @@ export const ContextualDrawer = ({
     </div>
   );
 };
+
+export default ContextualDrawer;

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Paperclip, Plus, X, Trash2, Wrench, Brain, Zap, MessageSquarePlus, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { EditableField } from './EditableField';
 import { AppLauncherDropdown } from './AppLauncherDropdown';
 import { NewChatModal } from './NewChatModal';
-import { Solution } from './StudioLayout';
+import { Solution, Chat } from './StudioLayout';
 
 interface ActiveComponent {
   id: string;
@@ -25,6 +24,7 @@ interface ChatMessage {
 
 interface MainWorkAreaProps {
   activeSolution: Solution | null;
+  activeChat: Chat | null;
   onCreateSolution: () => void;
 }
 
@@ -54,13 +54,35 @@ const generateGPTResponse = (userMessage: string): string => {
   return responses[Math.floor(Math.random() * responses.length)];
 };
 
-export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaProps) => {
+export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeComponents, setActiveComponents] = useState<ActiveComponent[]>([]);
   const [currentChatName, setCurrentChatName] = useState('Chat name in solution');
-  const [solutionName, setSolutionName] = useState(activeSolution?.title || '');
+  const [solutionName, setSolutionName] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
+
+  // Update state when activeChat or activeSolution changes
+  useEffect(() => {
+    if (activeChat) {
+      setCurrentChatName(activeChat.name);
+      setChatMessages(activeChat.messages || []);
+    } else if (activeSolution) {
+      setCurrentChatName('New Chat');
+      setChatMessages([]);
+    } else {
+      setCurrentChatName('Chat name in solution');
+      setChatMessages([]);
+    }
+  }, [activeChat, activeSolution]);
+
+  useEffect(() => {
+    if (activeSolution) {
+      setSolutionName(activeSolution.title);
+    } else {
+      setSolutionName('');
+    }
+  }, [activeSolution]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -241,7 +263,7 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
         <div className="px-6 pb-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              Component(s): {activeComponents.length}
+              Components: {activeComponents.length}
             </span>
             {activeComponents.length > 0 && (
               <Button
@@ -301,10 +323,13 @@ export const MainWorkArea = ({ activeSolution, onCreateSolution }: MainWorkAreaP
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-foreground mb-2">
-                    Working on: {solutionName}
+                    {activeChat ? `Chat: ${activeChat.name}` : `Working on: ${solutionName}`}
                   </h2>
                   <p className="text-muted-foreground max-w-md mx-auto">
-                    {activeSolution.description || 'Your AI workspace is ready. How can I help you with this solution?'}
+                    {activeChat 
+                      ? `Continue your conversation in "${activeChat.name}"`
+                      : activeSolution?.description || 'Your AI workspace is ready. How can I help you with this solution?'
+                    }
                   </p>
                 </div>
               </div>

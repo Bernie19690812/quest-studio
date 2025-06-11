@@ -14,10 +14,18 @@ export interface Solution {
   status: 'active' | 'draft' | 'archived';
 }
 
+export interface Chat {
+  id: string;
+  name: string;
+  dateModified: Date;
+  messages?: any[];
+}
+
 export const StudioLayout = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeSolution, setActiveSolution] = useState<Solution | null>(null);
+  const [activeChat, setActiveChat] = useState<Chat | null>(null);
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
@@ -37,6 +45,14 @@ export const StudioLayout = () => {
 
   const handleSolutionSelect = (solution: Solution) => {
     setActiveSolution(solution);
+    setActiveChat(null); // Reset chat when switching solutions
+    setIsDrawerOpen(false);
+    setActiveSection(null);
+  };
+
+  const handleChatSelect = (chat: Chat, solution: Solution) => {
+    setActiveSolution(solution);
+    setActiveChat(chat);
     setIsDrawerOpen(false);
     setActiveSection(null);
   };
@@ -56,9 +72,11 @@ export const StudioLayout = () => {
           setActiveSection(null);
         }}
         onSolutionSelect={handleSolutionSelect}
+        onChatSelect={handleChatSelect}
       />
       <MainWorkArea 
         activeSolution={activeSolution}
+        activeChat={activeChat}
         onCreateSolution={() => {
           setActiveSection('solutions');
           setIsDrawerOpen(true);
