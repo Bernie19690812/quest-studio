@@ -28,19 +28,21 @@ export const CategorySection = ({
   }
 
   return (
-    <ScrollArea className="w-full">
-      <div className="flex space-x-4 pb-4">
-        {items.map((item) => (
-          <MarketplaceCard
-            key={item.id}
-            item={item}
-            onAddToCart={onAddToCart}
-            onToggleFavorite={onToggleFavorite}
-            onOpenModal={onOpenModal}
-            isFavorited={isFavorited(item.id)}
-          />
-        ))}
-      </div>
-    </ScrollArea>
+    <div className="w-full overflow-hidden">
+      <ScrollArea className="w-full">
+        <div className="flex space-x-4 pb-4 px-1">
+          {items.map((item) => (
+            <MarketplaceCard
+              key={item.id}
+              item={item}
+              onAddToCart={onAddToCart}
+              onToggleFavorite={onToggleFavorite}
+              onOpenModal={onOpenModal}
+              isFavorited={isFavorited(item.id)}
+            />
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };

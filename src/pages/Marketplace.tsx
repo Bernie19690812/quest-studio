@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, ShoppingCart, Star, Plus, Eye, Search, User, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -816,6 +815,7 @@ const Marketplace = () => {
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -850,6 +850,137 @@ const Marketplace = () => {
     teams: mockData.filter(item => item.category === 'teams'),
     individuals: mockData.filter(item => item.category === 'individuals'),
   };
+
+  const handleSeeAll = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const handleBackToHome = () => {
+    setSelectedCategory(null);
+  };
+
+  if (selectedCategory) {
+    const categoryData = categorizedData[selectedCategory as keyof typeof categorizedData];
+    const categoryTitle = selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
+    
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+          <div className="flex items-center justify-between p-6">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+                  <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
+                </div>
+                <div className="text-xl font-bold text-foreground">Quest AI</div>
+              </div>
+              <nav className="flex items-center space-x-1">
+                <Button
+                  variant="ghost"
+                  onClick={handleBackToHome}
+                  className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Marketplace</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-foreground font-medium"
+                >
+                  {categoryTitle}
+                </Button>
+              </nav>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                <Input
+                  placeholder={`Search ${categoryTitle.toLowerCase()}...`}
+                  className="pl-10 w-64 bg-secondary border-border"
+                />
+              </div>
+              <Button variant="outline" size="icon" className="border-border hover:bg-accent">
+                <Filter size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsFavoritesOpen(true)}
+                className="border-border hover:bg-accent"
+              >
+                <Star size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsCartOpen(true)}
+                className="relative border-border hover:bg-accent"
+              >
+                <ShoppingCart size={20} />
+                {cartItems.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
+                    {cartItems.length}
+                  </Badge>
+                )}
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Category Grid View */}
+        <main className="px-6 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">{categoryTitle}</h1>
+            <p className="text-muted-foreground">
+              Showing {categoryData.length} {categoryTitle.toLowerCase()} available
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {categoryData.map((item) => (
+              <MarketplaceCard
+                key={item.id}
+                item={item}
+                onAddToCart={addToCart}
+                onToggleFavorite={toggleFavorite}
+                onOpenModal={handleOpenModal}
+                isFavorited={isFavorited(item.id)}
+              />
+            ))}
+          </div>
+        </main>
+
+        {/* Modals and Drawers */}
+        <MarketplaceItemModal
+          item={selectedItem}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          isFavorited={selectedItem ? isFavorited(selectedItem.id) : false}
+        />
+
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          items={cartItems}
+          onRemoveItem={removeFromCart}
+        />
+
+        <FavoritesDrawer
+          isOpen={isFavoritesOpen}
+          onClose={() => setIsFavoritesOpen(false)}
+          items={favorites}
+          onAddToCart={addToCart}
+          onRemoveFavorite={(itemId) => 
+            setFavorites(prev => prev.filter(i => i.id !== itemId))
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -942,30 +1073,17 @@ const Marketplace = () => {
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Main Content - Reordered with Solutions first */}
       <main className="px-6 space-y-12 pb-12">
-        {/* Capabilities */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-foreground">Capabilities</h2>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              See all
-            </Button>
-          </div>
-          <CategorySection
-            items={categorizedData.capabilities}
-            onAddToCart={addToCart}
-            onToggleFavorite={toggleFavorite}
-            onOpenModal={handleOpenModal}
-            isFavorited={isFavorited}
-          />
-        </section>
-
-        {/* Solutions */}
+        {/* Solutions - Now first */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Solutions</h2>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+            <Button 
+              variant="ghost" 
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => handleSeeAll('solutions')}
+            >
               See all
             </Button>
           </div>
@@ -978,11 +1096,36 @@ const Marketplace = () => {
           />
         </section>
 
+        {/* Capabilities */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-foreground">Capabilities</h2>
+            <Button 
+              variant="ghost" 
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => handleSeeAll('capabilities')}
+            >
+              See all
+            </Button>
+          </div>
+          <CategorySection
+            items={categorizedData.capabilities}
+            onAddToCart={addToCart}
+            onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
+            isFavorited={isFavorited}
+          />
+        </section>
+
         {/* Teams */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Teams</h2>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+            <Button 
+              variant="ghost" 
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => handleSeeAll('teams')}
+            >
               See all
             </Button>
           </div>
@@ -999,7 +1142,11 @@ const Marketplace = () => {
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Individuals</h2>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+            <Button 
+              variant="ghost" 
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => handleSeeAll('individuals')}
+            >
               See all
             </Button>
           </div>
@@ -1046,3 +1193,5 @@ const Marketplace = () => {
 };
 
 export default Marketplace;
+
+</edits_to_apply>
