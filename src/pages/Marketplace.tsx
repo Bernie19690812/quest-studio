@@ -9,7 +9,11 @@ import { MarketplaceItemModal } from '@/components/marketplace/MarketplaceItemMo
 import { CartDrawer } from '@/components/marketplace/CartDrawer';
 import { FavoritesDrawer } from '@/components/marketplace/FavoritesDrawer';
 import { CategorySection } from '@/components/marketplace/CategorySection';
+import { FilterBar, FilterOption } from '@/components/marketplace/FilterBar';
+import { StripeCheckoutModal } from '@/components/marketplace/StripeCheckoutModal';
+import { PaymentSuccessModal } from '@/components/marketplace/PaymentSuccessModal';
 import { useNavigate } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
 
 export interface MarketplaceItem {
   id: string;
@@ -816,9 +820,17 @@ const Marketplace = () => {
   const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterOption[]>([]);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [purchasedItems, setPurchasedItems] = useState<MarketplaceItem[]>([]);
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
+    toast({
+      title: "Added to cart",
+      description: `${item.name} has been added to your cart.`,
+    });
   };
 
   const removeFromCart = (itemId: string) => {
@@ -844,6 +856,79 @@ const Marketplace = () => {
     setIsModalOpen(true);
   };
 
+  const handleFilterToggle = (filter: FilterOption) => {
+    setActiveFilters(prev => {
+      const exists = prev.find(f => f.id === filter.id);
+      if (exists) {
+        return prev.filter(f => f.id !== filter.id);
+      }
+      return [...prev, filter];
+    });
+  };
+
+  const handleClearFilters = () => {
+    setActiveFilters([]);
+  };
+
+  const filterItems = (items: MarketplaceItem[]) => {
+    if (activeFilters.length === 0) return items;
+
+    return items.filter(item => {
+      return activeFilters.some(filter => {
+        switch (filter.category) {
+          case 'type':
+            return item.tags.some(tag => tag.toLowerCase().includes(filter.label.toLowerCase()));
+          case 'popularity':
+            if (filter.id === 'popular') return item.rating >= 4.5;
+            if (filter.id === 'trending') return item.reviewCount >= 150;
+            if (filter.id === 'new') return item.reviewCount < 100;
+            if (filter.id === 'featured') return item.featured;
+            return false;
+          case 'role':
+            return item.tags.some(tag => tag.toLowerCase().includes(filter.label.toLowerCase()));
+          case 'rating':
+            if (filter.id === 'high-rated') return item.rating >= 4.5;
+            return false;
+          case 'rate':
+            if (filter.id === 'low-rate') return item.price >= 50 && item.price <= 75;
+            if (filter.id === 'mid-rate') return item.price > 75 && item.price <= 100;
+            if (filter.id === 'high-rate') return item.price > 100;
+            return false;
+          case 'skill':
+            return item.tags.some(tag => tag.toLowerCase().includes(filter.label.toLowerCase()));
+          case 'size':
+            // Mock logic for team size based on price
+            if (filter.id === 'large-team') return item.price > 150;
+            if (filter.id === 'small-team') return item.price <= 150;
+            return false;
+          default:
+            return false;
+        }
+      });
+    });
+  };
+
+  const handleCheckout = () => {
+    setIsCartOpen(false);
+    setIsCheckoutOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setPurchasedItems([...cartItems]);
+    setCartItems([]);
+    setIsCheckoutOpen(false);
+    setIsSuccessModalOpen(true);
+  };
+
+  const handleGoToStudio = () => {
+    setIsSuccessModalOpen(false);
+    navigate('/');
+    toast({
+      title: "Welcome back to Studio!",
+      description: "Your purchased items have been added to My Items.",
+    });
+  };
+
   const categorizedData = {
     solutions: mockData.filter(item => item.category === 'solutions'),
     capabilities: mockData.filter(item => item.category === 'capabilities'),
@@ -857,10 +942,11 @@ const Marketplace = () => {
 
   const handleBackToHome = () => {
     setSelectedCategory(null);
+    setActiveFilters([]);
   };
 
   if (selectedCategory) {
-    const categoryData = categorizedData[selectedCategory as keyof typeof categorizedData];
+    const categoryData = filterItems(categorizedData[selectedCategory as keyof typeof categorizedData]);
     const categoryTitle = selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
     
     return (
@@ -901,9 +987,6 @@ const Marketplace = () => {
                   className="pl-10 w-64 bg-secondary border-border"
                 />
               </div>
-              <Button variant="outline" size="icon" className="border-border hover:bg-accent">
-                <Filter size={20} />
-              </Button>
               <Button
                 variant="outline"
                 size="icon"
@@ -938,6 +1021,14 @@ const Marketplace = () => {
             </p>
           </div>
 
+          {/* Filter Bar */}
+          <FilterBar
+            category={selectedCategory}
+            activeFilters={activeFilters}
+            onFilterToggle={handleFilterToggle}
+            onClearFilters={handleClearFilters}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {categoryData.map((item) => (
               <MarketplaceCard
@@ -966,7 +1057,13 @@ const Marketplace = () => {
           isOpen={isCartOpen}
           onClose={() => setIsCartOpen(false)}
           items={cartItems}
+          allItems={mockData}
           onRemoveItem={removeFromCart}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          onOpenModal={handleOpenModal}
+          onCheckout={handleCheckout}
+          isFavorited={isFavorited}
         />
 
         <FavoritesDrawer
@@ -977,6 +1074,20 @@ const Marketplace = () => {
           onRemoveFavorite={(itemId) => 
             setFavorites(prev => prev.filter(i => i.id !== itemId))
           }
+        />
+
+        <StripeCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          items={cartItems}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+
+        <PaymentSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          purchasedItems={purchasedItems}
+          onGoToStudio={handleGoToStudio}
         />
       </div>
     );
@@ -1089,9 +1200,11 @@ const Marketplace = () => {
           </div>
           <CategorySection
             items={categorizedData.solutions}
+            category="solutions"
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
             onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeAll}
             isFavorited={isFavorited}
           />
         </section>
@@ -1110,9 +1223,11 @@ const Marketplace = () => {
           </div>
           <CategorySection
             items={categorizedData.capabilities}
+            category="capabilities"
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
             onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeAll}
             isFavorited={isFavorited}
           />
         </section>
@@ -1131,9 +1246,11 @@ const Marketplace = () => {
           </div>
           <CategorySection
             items={categorizedData.teams}
+            category="teams"
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
             onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeAll}
             isFavorited={isFavorited}
           />
         </section>
@@ -1152,9 +1269,11 @@ const Marketplace = () => {
           </div>
           <CategorySection
             items={categorizedData.individuals}
+            category="individuals"
             onAddToCart={addToCart}
             onToggleFavorite={toggleFavorite}
             onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeAll}
             isFavorited={isFavorited}
           />
         </section>
@@ -1175,7 +1294,13 @@ const Marketplace = () => {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
+        allItems={mockData}
         onRemoveItem={removeFromCart}
+        onAddToCart={addToCart}
+        onToggleFavorite={toggleFavorite}
+        onOpenModal={handleOpenModal}
+        onCheckout={handleCheckout}
+        isFavorited={isFavorited}
       />
 
       {/* Favorites Drawer */}
@@ -1187,6 +1312,22 @@ const Marketplace = () => {
         onRemoveFavorite={(itemId) => 
           setFavorites(prev => prev.filter(i => i.id !== itemId))
         }
+      />
+
+      {/* Stripe Checkout Modal */}
+      <StripeCheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        items={cartItems}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
+
+      {/* Payment Success Modal */}
+      <PaymentSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        purchasedItems={purchasedItems}
+        onGoToStudio={handleGoToStudio}
       />
     </div>
   );

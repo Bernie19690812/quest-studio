@@ -4,23 +4,35 @@ import { X, CreditCard, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { RelatedSuggestions } from './RelatedSuggestions';
 import { MarketplaceItem } from '@/pages/Marketplace';
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   items: MarketplaceItem[];
+  allItems: MarketplaceItem[];
   onRemoveItem: (itemId: string) => void;
+  onAddToCart: (item: MarketplaceItem) => void;
+  onToggleFavorite: (item: MarketplaceItem) => void;
+  onOpenModal: (item: MarketplaceItem) => void;
+  onCheckout: () => void;
+  isFavorited: (itemId: string) => boolean;
 }
 
-export const CartDrawer = ({ isOpen, onClose, items, onRemoveItem }: CartDrawerProps) => {
+export const CartDrawer = ({ 
+  isOpen, 
+  onClose, 
+  items, 
+  allItems,
+  onRemoveItem, 
+  onAddToCart,
+  onToggleFavorite,
+  onOpenModal,
+  onCheckout,
+  isFavorited
+}: CartDrawerProps) => {
   const total = items.reduce((sum, item) => sum + item.price, 0);
-
-  const handleCheckout = () => {
-    // TODO: Implement Stripe checkout
-    console.log('Proceeding to checkout with items:', items);
-    alert('Checkout functionality will be implemented with Stripe integration');
-  };
 
   if (!isOpen) return null;
 
@@ -44,7 +56,7 @@ export const CartDrawer = ({ isOpen, onClose, items, onRemoveItem }: CartDrawerP
           </div>
         ) : (
           <>
-            <ScrollArea className="flex-1 p-4">
+            <ScrollArea className="flex-1 p-4 max-h-[calc(100vh-200px)]">
               <div className="space-y-4">
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3 p-3 border border-border rounded-lg">
@@ -73,6 +85,16 @@ export const CartDrawer = ({ isOpen, onClose, items, onRemoveItem }: CartDrawerP
                     </Button>
                   </div>
                 ))}
+
+                {/* Related Suggestions */}
+                <RelatedSuggestions
+                  cartItems={items}
+                  allItems={allItems}
+                  onAddToCart={onAddToCart}
+                  onToggleFavorite={onToggleFavorite}
+                  onOpenModal={onOpenModal}
+                  isFavorited={isFavorited}
+                />
               </div>
             </ScrollArea>
 
@@ -81,7 +103,7 @@ export const CartDrawer = ({ isOpen, onClose, items, onRemoveItem }: CartDrawerP
                 <span className="font-medium">Total</span>
                 <span className="text-xl font-bold">${total.toFixed(2)}</span>
               </div>
-              <Button onClick={handleCheckout} className="w-full">
+              <Button onClick={onCheckout} className="w-full">
                 <CreditCard size={16} className="mr-2" />
                 Proceed to Checkout
               </Button>
