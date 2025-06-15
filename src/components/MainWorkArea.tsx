@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EditableField } from './EditableField';
 import { AppLauncherDropdown } from './AppLauncherDropdown';
 import { NewChatModal } from './NewChatModal';
@@ -61,6 +62,22 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
   const [solutionName, setSolutionName] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('chats');
+
+  // Mock chats data
+  const mockChats = [
+    { id: '1', name: 'Data Analysis Chat', dateModified: new Date(), messages: [] },
+    { id: '2', name: 'Model Training Discussion', dateModified: new Date(), messages: [] },
+    { id: '3', name: 'API Integration Help', dateModified: new Date(), messages: [] },
+  ];
+
+  // Mock tools data
+  const mockTools = [
+    { id: 't1', name: 'Field Detector', type: 'capability' as const, description: 'Automatically detect and extract form fields' },
+    { id: 't2', name: 'Text Extractor (OCR)', type: 'template' as const, description: 'Extract text from images and documents' },
+    { id: 't3', name: 'Data Validator', type: 'capability' as const, description: 'Validate data format and integrity' },
+    { id: 't4', name: 'Report Generator', type: 'solution' as const, description: 'Generate automated reports' },
+  ];
 
   // Update state when activeChat or activeSolution changes
   useEffect(() => {
@@ -168,6 +185,15 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
     console.log('Chat name changed to:', newName);
   };
 
+  const handleToolAdd = (tool: typeof mockTools[0]) => {
+    const component: ActiveComponent = {
+      id: tool.id,
+      name: tool.name,
+      type: tool.type
+    };
+    handleDrop(component);
+  };
+
   // Mock function to handle drop (would be implemented with proper drag & drop)
   const handleDrop = (componentData: ActiveComponent) => {
     setActiveComponents(prev => {
@@ -218,189 +244,255 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      {/* Enhanced Header with Editable Fields and Actions */}
-      <div className="border-b border-border">
-        <div className="h-16 flex items-center justify-between px-6">
-          {/* Left: Logo and Editable Names */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
-              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
-            </div>
-            <div className="flex items-center space-x-2">
-              <EditableField
-                value={solutionName}
-                onChange={handleSolutionNameChange}
-                placeholder="Untitled Solution"
-                className="text-lg font-medium text-foreground"
-              />
-              <span className="text-muted-foreground mx-1">{'>'}</span>
-              <EditableField
-                value={currentChatName}
-                onChange={handleChatNameChange}
-                placeholder="Untitled Chat"
-                className="text-lg font-medium text-foreground"
-              />
-            </div>
-          </div>
+    <div className="flex-1 flex">
+      {/* Left Panel - Tabs for Chats and Tools */}
+      <div className="w-80 border-r border-border flex flex-col">
+        <div className="h-16 border-b border-border flex items-center px-4">
+          <EditableField
+            value={solutionName}
+            onChange={handleSolutionNameChange}
+            placeholder="Untitled Solution"
+            className="text-lg font-medium text-foreground"
+          />
+        </div>
 
-          {/* Right: Action Buttons */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+          <TabsList className="grid w-full grid-cols-2 m-4 mb-0">
+            <TabsTrigger value="chats">Chats</TabsTrigger>
+            <TabsTrigger value="tools">Tools</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="chats" className="flex-1 overflow-hidden m-0">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-foreground">Conversations</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsNewChatModalOpen(true)}
+                  className="h-8 w-8"
+                >
+                  <Plus size={16} />
+                </Button>
+              </div>
+              <ScrollArea className="flex-1">
+                <div className="space-y-2">
+                  {mockChats.map((chat) => (
+                    <div
+                      key={chat.id}
+                      className={`p-3 rounded-lg border border-border hover:bg-accent cursor-pointer transition-colors ${
+                        activeChat?.id === chat.id ? 'bg-accent' : ''
+                      }`}
+                      onClick={() => setCurrentChatName(chat.name)}
+                    >
+                      <h4 className="font-medium text-sm text-foreground">{chat.name}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {chat.dateModified.toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="tools" className="flex-1 overflow-hidden m-0">
+            <div className="p-4">
+              <h3 className="font-medium text-foreground mb-4">Available Tools</h3>
+              <ScrollArea className="flex-1">
+                <div className="space-y-3">
+                  {mockTools.map((tool) => {
+                    const IconComponent = getComponentIcon(tool.type);
+                    const isActive = activeComponents.some(comp => comp.id === tool.id);
+                    
+                    return (
+                      <div
+                        key={tool.id}
+                        className={`p-3 rounded-lg border border-border hover:bg-accent cursor-pointer transition-colors ${
+                          isActive ? 'bg-accent border-primary' : ''
+                        }`}
+                        onClick={() => handleToolAdd(tool)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`p-2 rounded-lg ${
+                            tool.type === 'capability' ? 'bg-blue-50 dark:bg-blue-950/30' :
+                            tool.type === 'solution' ? 'bg-emerald-50 dark:bg-emerald-950/30' :
+                            'bg-amber-50 dark:bg-amber-950/30'
+                          }`}>
+                            <IconComponent size={16} className={
+                              tool.type === 'capability' ? 'text-blue-600 dark:text-blue-400' :
+                              tool.type === 'solution' ? 'text-emerald-600 dark:text-emerald-400' :
+                              'text-amber-600 dark:text-amber-400'
+                            } />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-sm text-foreground">{tool.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                              {tool.description}
+                            </p>
+                            <Badge variant="outline" className={`mt-2 text-xs ${
+                              tool.type === 'capability' ? 'border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300' :
+                              tool.type === 'solution' ? 'border-emerald-200 text-emerald-700 dark:border-emerald-800 dark:text-emerald-300' :
+                              'border-amber-200 text-amber-700 dark:border-amber-800 dark:text-amber-300'
+                            }`}>
+                              {tool.type}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Right Panel - Chat Interface */}
+      <div className="flex-1 flex flex-col">
+        {/* Header with Chat Name and Actions */}
+        <div className="h-16 border-b border-border flex items-center justify-between px-6">
+          <div className="flex items-center space-x-3">
+            <EditableField
+              value={currentChatName}
+              onChange={handleChatNameChange}
+              placeholder="Untitled Chat"
+              className="text-lg font-medium text-foreground"
+            />
+          </div>
           <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsNewChatModalOpen(true)}
-              className="h-9 w-9 rounded-lg hover:bg-accent"
-              title="Create new chat in current solution"
-            >
-              <MessageSquarePlus size={18} />
-            </Button>
             <AppLauncherDropdown />
           </div>
         </div>
 
-        {/* Components Row */}
-        <div className="px-6 pb-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              Components: {activeComponents.length}
-            </span>
-            {activeComponents.length > 0 && (
+        {/* Active Components */}
+        {activeComponents.length > 0 && (
+          <div className="px-6 py-3 border-b border-border bg-muted/20">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">
+                Active Components: {activeComponents.length}
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={clearAllComponents}
-                className="flex items-center gap-1 text-muted-foreground hover:text-destructive"
+                className="flex items-center gap-1 text-muted-foreground hover:text-destructive h-6 text-xs"
               >
-                Clear All <Trash2 size={14} />
+                Clear All <Trash2 size={12} />
               </Button>
-            )}
-          </div>
-          
-          {activeComponents.length > 0 ? (
-            <ScrollArea className="mt-2">
-              <div className="flex items-center gap-2 pb-2">
+            </div>
+            
+            <ScrollArea className="w-full">
+              <div className="flex items-center gap-2 pb-1">
                 {activeComponents.map((component) => {
                   const IconComponent = getComponentIcon(component.type);
                   return (
                     <Badge
                       key={component.id}
                       variant="secondary"
-                      className="flex items-center gap-2 px-3 py-2 whitespace-nowrap bg-secondary border border-border rounded-full"
+                      className="flex items-center gap-2 px-3 py-1.5 whitespace-nowrap bg-secondary border border-border rounded-full"
                     >
-                      <IconComponent size={14} />
-                      <span className="text-sm">{component.name}</span>
+                      <IconComponent size={12} />
+                      <span className="text-xs">{component.name}</span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-4 w-4 hover:bg-destructive/20 rounded-full ml-1"
+                        className="h-3 w-3 hover:bg-destructive/20 rounded-full"
                         onClick={() => removeComponent(component.id)}
                       >
-                        <X size={12} />
+                        <X size={10} />
                       </Button>
                     </Badge>
                   );
                 })}
               </div>
             </ScrollArea>
-          ) : (
-            <div className="text-center py-3 text-sm text-muted-foreground border border-dashed border-border rounded-lg mt-2">
-              Drag a tool from the sidebar to get started.
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
 
-      {/* Chat Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {chatMessages.length === 0 ? (
-            <>
-              {/* Welcome Message for Active Solution */}
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
-                  <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground mb-2">
-                    {activeChat ? `Chat: ${activeChat.name}` : `Working on: ${solutionName}`}
-                  </h2>
-                  <p className="text-muted-foreground max-w-md mx-auto">
-                    {activeChat 
-                      ? `Continue your conversation in "${activeChat.name}"`
-                      : activeSolution?.description || 'Your AI workspace is ready. How can I help you with this solution?'
-                    }
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick Actions for Active Solution */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                <div 
-                  className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                  onClick={() => handleDrop({ id: 'test-1', name: 'Field Detector', type: 'capability' })}
-                >
-                  <h3 className="font-medium text-foreground mb-1">Test: Add Field Detector</h3>
-                  <p className="text-sm text-muted-foreground">Click to test adding a component</p>
-                </div>
-                <div 
-                  className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                  onClick={() => handleDrop({ id: 'test-2', name: 'Text Extractor (OCR)', type: 'template' })}
-                >
-                  <h3 className="font-medium text-foreground mb-1">Test: Add OCR Template</h3>
-                  <p className="text-sm text-muted-foreground">Click to test adding a template</p>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="space-y-4">
-              {chatMessages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    msg.isUser 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-secondary text-secondary-foreground border border-border'
-                  }`}>
-                    <p className="text-sm">{msg.text}</p>
-                    <p className="text-xs opacity-70 mt-1">
-                      {msg.timestamp.toLocaleTimeString()}
+        {/* Chat Messages Area */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto space-y-6">
+            {chatMessages.length === 0 ? (
+              <>
+                {/* Welcome Message for Active Solution */}
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
+                    <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground mb-2">
+                      {activeChat ? `Chat: ${activeChat.name}` : `Working on: ${solutionName}`}
+                    </h2>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                      {activeChat 
+                        ? `Continue your conversation in "${activeChat.name}"`
+                        : activeSolution?.description || 'Your AI workspace is ready. How can I help you with this solution?'
+                      }
                     </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
 
-      {/* Enhanced Input Area */}
-      <div className="border-t border-border p-4 bg-background">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center space-x-3">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="rounded-full border-border hover:bg-accent"
-              onClick={handleFileUpload}
-            >
-              <Paperclip size={18} />
-            </Button>
-            <div className="flex-1 relative">
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Type your message..."
-                className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
-              />
-              <Button
-                onClick={handleSendMessage}
-                size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                disabled={!message.trim()}
+                {/* Quick Actions */}
+                {activeComponents.length === 0 && (
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Add tools from the sidebar to get started
+                    </p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="space-y-4">
+                {chatMessages.map((msg) => (
+                  <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                      msg.isUser 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-secondary text-secondary-foreground border border-border'
+                    }`}>
+                      <p className="text-sm">{msg.text}</p>
+                      <p className="text-xs opacity-70 mt-1">
+                        {msg.timestamp.toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Enhanced Input Area */}
+        <div className="border-t border-border p-4 bg-background">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-full border-border hover:bg-accent"
+                onClick={handleFileUpload}
               >
-                <Send size={16} />
+                <Paperclip size={18} />
               </Button>
+              <div className="flex-1 relative">
+                <Input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Type your message..."
+                  className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                  disabled={!message.trim()}
+                >
+                  <Send size={16} />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
