@@ -12,6 +12,8 @@ import { CategorySection } from '@/components/marketplace/CategorySection';
 import { FilterBar, FilterOption } from '@/components/marketplace/FilterBar';
 import { StripeCheckoutModal } from '@/components/marketplace/StripeCheckoutModal';
 import { PaymentSuccessModal } from '@/components/marketplace/PaymentSuccessModal';
+import { RoleGroupCard } from '@/components/marketplace/RoleGroupCard';
+import { FullPageCart } from '@/components/marketplace/FullPageCart';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
@@ -1248,7 +1250,6 @@ const Marketplace = () => {
               </div>
               <Button
                 variant="outline"
-                size="icon"
                 onClick={() => setShowPurchasedItems(!showPurchasedItems)}
                 className="border-border hover:bg-accent"
               >
