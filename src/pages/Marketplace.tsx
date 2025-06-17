@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ShoppingCart, Heart, User, ChevronDown, Mail, Phone } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +28,7 @@ export interface MarketplaceItem {
   reviewCount: number;
   level?: 'Junior' | 'Mid-level' | 'Senior';
   role?: string;
+  featured?: boolean;
 }
 
 const mockData: { [key: string]: MarketplaceItem[] } = {
@@ -223,8 +224,8 @@ const Marketplace = () => {
     setCartItems(prevItems => prevItems.filter(cartItem => cartItem.id !== item.id));
   };
 
-  const handleRemoveFromFavorites = (item: MarketplaceItem) => {
-    setFavoriteItems(prevItems => prevItems.filter(favItem => favItem.id !== item.id));
+  const handleRemoveFromFavorites = (itemId: string) => {
+    setFavoriteItems(prevItems => prevItems.filter(favItem => favItem.id !== itemId));
   };
 
   const handleUpdateCartQuantity = (item: MarketplaceItem, quantity: number) => {
@@ -595,8 +596,8 @@ const Marketplace = () => {
         isOpen={isFavoritesOpen}
         onClose={() => setIsFavoritesOpen(false)}
         items={favoriteItems}
-        onRemoveItem={handleRemoveFromFavorites}
         onAddToCart={handleAddToCart}
+        onRemoveFavorite={handleRemoveFromFavorites}
       />
     </div>
   );
