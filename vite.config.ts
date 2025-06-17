@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     watch: {
-      // Reduce the number of files being watched
+      // More aggressive file watching restrictions
       ignored: [
         '**/node_modules/**',
         '**/.git/**',
@@ -23,10 +23,17 @@ export default defineConfig(({ mode }) => ({
         '**/coverage/**',
         '**/*.log',
         '**/tmp/**',
-        '**/temp/**'
+        '**/temp/**',
+        '**/.DS_Store',
+        '**/Thumbs.db',
+        '**/*.swp',
+        '**/*.swo',
+        '**/.*'
       ],
-      usePolling: false,
-      interval: 1000,
+      usePolling: true,
+      interval: 2000,
+      binaryInterval: 5000,
+      depth: 3,
     },
   },
   plugins: [
@@ -40,6 +47,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    exclude: ['fsevents']
+    exclude: ['fsevents'],
+    include: ['react', 'react-dom']
   },
+  build: {
+    rollupOptions: {
+      external: ['fsevents']
+    }
+  }
 }));
