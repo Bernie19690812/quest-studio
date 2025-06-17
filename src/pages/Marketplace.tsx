@@ -27,6 +27,8 @@ export interface MarketplaceItem {
   tags: string[];
   image?: string;
   featured?: boolean;
+  level?: 'Junior' | 'Mid' | 'Senior' | 'Lead'; // Added for individuals
+  role?: string; // Added for role grouping
 }
 
 // Expanded mock data with 12-20 items per category
@@ -588,6 +590,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 94,
     tags: ['Frontend', 'React', 'Vue', 'TypeScript'],
+    level: 'Senior',
+    role: 'Frontend Developer',
   },
   {
     id: 'i1',
@@ -599,6 +603,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 127,
     tags: ['Full-stack', 'Node.js', 'Python', 'Cloud'],
+    level: 'Senior',
+    role: 'Full-stack Developer',
   },
   {
     id: 'i2',
@@ -610,6 +616,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 86,
     tags: ['Data Science', 'ML', 'Analytics', 'Python'],
+    level: 'Senior',
+    role: 'Data Scientist',
   },
   {
     id: 'i3',
@@ -621,6 +629,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 103,
     tags: ['DevOps', 'AWS', 'Kubernetes', 'Infrastructure'],
+    level: 'Senior',
+    role: 'DevOps Engineer',
   },
   {
     id: 'i4',
@@ -632,6 +642,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 156,
     tags: ['UI/UX', 'Mobile Design', 'User Research', 'Figma'],
+    level: 'Senior',
+    role: 'UI/UX Designer',
   },
   {
     id: 'i5',
@@ -643,6 +655,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 67,
     tags: ['Security', 'Penetration Testing', 'Compliance', 'CISSP'],
+    level: 'Senior',
+    role: 'Cybersecurity Specialist',
   },
   {
     id: 'i6',
@@ -654,6 +668,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 89,
     tags: ['Product Management', 'SaaS', 'Agile', 'Strategy'],
+    level: 'Senior',
+    role: 'Product Manager',
   },
   {
     id: 'i7',
@@ -665,6 +681,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 112,
     tags: ['Mobile', 'React Native', 'Flutter', 'Cross-platform'],
+    level: 'Senior',
+    role: 'Mobile App Developer',
   },
   {
     id: 'i8',
@@ -676,6 +694,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 134,
     tags: ['Marketing', 'SEO', 'PPC', 'Content Marketing'],
+    level: 'Senior',
+    role: 'Digital Marketing Specialist',
   },
   {
     id: 'i9',
@@ -687,6 +707,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 45,
     tags: ['Blockchain', 'Smart Contracts', 'DeFi', 'Solidity'],
+    level: 'Senior',
+    role: 'Blockchain Developer',
   },
   {
     id: 'i10',
@@ -698,6 +720,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 98,
     tags: ['Technical Writing', 'Documentation', 'API', 'Developer Experience'],
+    level: 'Senior',
+    role: 'Technical Writer',
   },
   {
     id: 'i11',
@@ -709,6 +733,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 76,
     tags: ['Game Development', 'Unity', 'Mobile Games', 'Monetization'],
+    level: 'Senior',
+    role: 'Game Developer',
   },
   {
     id: 'i12',
@@ -720,6 +746,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 123,
     tags: ['QA', 'Test Automation', 'Performance Testing', 'Selenium'],
+    level: 'Senior',
+    role: 'QA Engineer',
   },
   {
     id: 'i13',
@@ -731,6 +759,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 72,
     tags: ['AI', 'Deep Learning', 'Computer Vision', 'TensorFlow'],
+    level: 'Senior',
+    role: 'AI/ML Engineer',
   },
   {
     id: 'i14',
@@ -742,6 +772,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 145,
     tags: ['Business Analysis', 'Process Optimization', 'Requirements'],
+    level: 'Senior',
+    role: 'Business Analyst',
   },
   {
     id: 'i15',
@@ -753,6 +785,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 88,
     tags: ['Cloud Architecture', 'AWS', 'Serverless', 'Lambda'],
+    level: 'Senior',
+    role: 'Cloud Architect',
   },
   {
     id: 'i16',
@@ -764,6 +798,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 167,
     tags: ['Content Strategy', 'B2B Marketing', 'Thought Leadership'],
+    level: 'Senior',
+    role: 'Content Strategist',
   },
   {
     id: 'i17',
@@ -775,6 +811,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 91,
     tags: ['Database', 'PostgreSQL', 'MongoDB', 'Performance'],
+    level: 'Senior',
+    role: 'Database Administrator',
   },
   {
     id: 'i18',
@@ -786,6 +824,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 54,
     tags: ['VR', 'AR', 'Unity', 'Immersive Design'],
+    level: 'Senior',
+    role: 'VR/AR Developer',
   },
   {
     id: 'i19',
@@ -797,6 +837,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 109,
     tags: ['Backend', 'Microservices', 'Distributed Systems', 'Go'],
+    level: 'Senior',
+    role: 'Backend Engineer',
   },
   {
     id: 'i20',
@@ -808,6 +850,8 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 132,
     tags: ['Scrum Master', 'Agile Coach', 'Team Leadership', 'Process Improvement'],
+    level: 'Senior',
+    role: 'Scrum Master',
   },
 ];
 
@@ -824,6 +868,9 @@ const Marketplace = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [purchasedItems, setPurchasedItems] = useState<MarketplaceItem[]>([]);
+  const [isFullPageCartOpen, setIsFullPageCartOpen] = useState(false);
+  const [selectedRoleGroup, setSelectedRoleGroup] = useState<string | null>(null);
+  const [showPurchasedItems, setShowPurchasedItems] = useState(false);
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -945,6 +992,390 @@ const Marketplace = () => {
     setActiveFilters([]);
   };
 
+  const roleGroups = [
+    {
+      id: 'frontend',
+      name: 'Frontend Developers',
+      description: 'React, Vue, Angular specialists for modern web interfaces',
+      count: 8,
+      icon: '💻',
+      averageRate: 75,
+    },
+    {
+      id: 'backend',
+      name: 'Backend Engineers',
+      description: 'Node.js, Python, Java experts for robust server solutions',
+      count: 6,
+      icon: '⚙️',
+      averageRate: 82,
+    },
+    {
+      id: 'fullstack',
+      name: 'Full-stack Developers',
+      description: 'End-to-end development specialists',
+      count: 4,
+      icon: '🔧',
+      averageRate: 88,
+    },
+    {
+      id: 'data-science',
+      name: 'Data Scientists',
+      description: 'ML engineers and analytics experts',
+      count: 3,
+      icon: '📊',
+      averageRate: 95,
+    },
+    {
+      id: 'product-management',
+      name: 'Product Managers',
+      description: 'Strategy and roadmap specialists',
+      count: 2,
+      icon: '📋',
+      averageRate: 80,
+    },
+    {
+      id: 'design',
+      name: 'UI/UX Designers',
+      description: 'User experience and interface design experts',
+      count: 3,
+      icon: '🎨',
+      averageRate: 70,
+    },
+  ];
+
+  const getIndividualsByRole = (roleId: string) => {
+    const roleMap: Record<string, string[]> = {
+      'frontend': ['Frontend Developer'],
+      'backend': ['Backend Engineer'],
+      'fullstack': ['Full-stack Developer'],
+      'data-science': ['Data Scientist', 'AI/ML Engineer'],
+      'product-management': ['Product Manager', 'Business Analyst'],
+      'design': ['UI/UX Designer'],
+    };
+    
+    return categorizedData.individuals.filter(item => 
+      roleMap[roleId]?.some(role => 
+        item.role?.includes(role) || item.tags.some(tag => tag.toLowerCase().includes(role.toLowerCase()))
+      )
+    );
+  };
+
+  if (selectedRoleGroup) {
+    const roleGroupData = getIndividualsByRole(selectedRoleGroup);
+    const roleGroup = roleGroups.find(rg => rg.id === selectedRoleGroup);
+    
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+          <div className="flex items-center justify-between p-6">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+                  <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
+                </div>
+                <div className="text-xl font-bold text-foreground">Quest AI</div>
+              </div>
+              <nav className="flex items-center space-x-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => setSelectedRoleGroup(null)}
+                  className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Individuals</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-foreground font-medium"
+                >
+                  {roleGroup?.name}
+                </Button>
+              </nav>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                <Input
+                  placeholder={`Search ${roleGroup?.name.toLowerCase()}...`}
+                  className="pl-10 w-64 bg-secondary border-border"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsFavoritesOpen(true)}
+                className="border-border hover:bg-accent"
+              >
+                <Star size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsCartOpen(true)}
+                className="relative border-border hover:bg-accent"
+              >
+                <ShoppingCart size={20} />
+                {cartItems.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
+                    {cartItems.length}
+                  </Badge>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-border hover:bg-accent"
+              >
+                <User size={20} />
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Role Group Content */}
+        <main className="px-6 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">{roleGroup?.name}</h1>
+            <p className="text-muted-foreground">
+              {roleGroupData.length} {roleGroup?.name.toLowerCase()} available
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {roleGroupData.map((item) => (
+              <MarketplaceCard
+                key={item.id}
+                item={item}
+                onAddToCart={addToCart}
+                onToggleFavorite={toggleFavorite}
+                onOpenModal={handleOpenModal}
+                isFavorited={isFavorited(item.id)}
+              />
+            ))}
+          </div>
+        </main>
+
+        {/* Modals and Drawers */}
+        <MarketplaceItemModal
+          item={selectedItem}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          isFavorited={selectedItem ? isFavorited(selectedItem.id) : false}
+        />
+
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          items={cartItems}
+          allItems={mockData}
+          onRemoveItem={removeFromCart}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          onOpenModal={handleOpenModal}
+          onCheckout={handleCheckout}
+          isFavorited={isFavorited}
+        />
+
+        <FavoritesDrawer
+          isOpen={isFavoritesOpen}
+          onClose={() => setIsFavoritesOpen(false)}
+          items={favorites}
+          onAddToCart={addToCart}
+          onRemoveFavorite={(itemId) => 
+            setFavorites(prev => prev.filter(i => i.id !== itemId))
+          }
+        />
+
+        <StripeCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          items={cartItems}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+
+        <PaymentSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          purchasedItems={purchasedItems}
+          onGoToStudio={handleGoToStudio}
+        />
+      </div>
+    );
+  }
+
+  if (selectedCategory === 'individuals') {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+          <div className="flex items-center justify-between p-6">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+                  <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
+                </div>
+                <div className="text-xl font-bold text-foreground">Quest AI</div>
+              </div>
+              <nav className="flex items-center space-x-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => setSelectedRoleGroup(null)}
+                  className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Individuals</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-foreground font-medium"
+                >
+                  Individuals
+                </Button>
+              </nav>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                <Input
+                  placeholder="Search individuals..."
+                  className="pl-10 w-64 bg-secondary border-border"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowPurchasedItems(!showPurchasedItems)}
+                className="border-border hover:bg-accent"
+              >
+                My Items
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsFavoritesOpen(true)}
+                className="border-border hover:bg-accent"
+              >
+                <Star size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsFullPageCartOpen(true)}
+                className="relative border-border hover:bg-accent"
+              >
+                <ShoppingCart size={20} />
+                {cartItems.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
+                    {cartItems.length}
+                  </Badge>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-border hover:bg-accent"
+              >
+                <User size={20} />
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Individuals Role Groups */}
+        <main className="px-6 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Individual Professionals</h1>
+            <p className="text-muted-foreground">Browse by specialty or view all professionals</p>
+          </div>
+
+          {/* Role Groups */}
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-foreground mb-6">Browse by Role</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {roleGroups.map((roleGroup) => (
+                <RoleGroupCard
+                  key={roleGroup.id}
+                  roleGroup={roleGroup}
+                  onSelect={(rg) => setSelectedRoleGroup(rg.id)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* All Individuals */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-foreground mb-6">All Professionals</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {categorizedData.individuals.map((item) => (
+              <MarketplaceCard
+                key={item.id}
+                item={item}
+                onAddToCart={addToCart}
+                onToggleFavorite={toggleFavorite}
+                onOpenModal={handleOpenModal}
+                isFavorited={isFavorited(item.id)}
+              />
+            ))}
+          </div>
+        </main>
+        
+        {/* Modals and Drawers */}
+        <MarketplaceItemModal
+          item={selectedItem}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          isFavorited={selectedItem ? isFavorited(selectedItem.id) : false}
+        />
+
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          items={cartItems}
+          allItems={mockData}
+          onRemoveItem={removeFromCart}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          onOpenModal={handleOpenModal}
+          onCheckout={handleCheckout}
+          isFavorited={isFavorited}
+        />
+
+        <FavoritesDrawer
+          isOpen={isFavoritesOpen}
+          onClose={() => setIsFavoritesOpen(false)}
+          items={favorites}
+          onAddToCart={addToCart}
+          onRemoveFavorite={(itemId) => 
+            setFavorites(prev => prev.filter(i => i.id !== itemId))
+          }
+        />
+
+        <StripeCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          items={cartItems}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+
+        <PaymentSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          purchasedItems={purchasedItems}
+          onGoToStudio={handleGoToStudio}
+        />
+      </div>
+    );
+  }
+
   if (selectedCategory) {
     const categoryData = filterItems(categorizedData[selectedCategory as keyof typeof categorizedData]);
     const categoryTitle = selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
@@ -964,7 +1395,7 @@ const Marketplace = () => {
               <nav className="flex items-center space-x-1">
                 <Button
                   variant="ghost"
-                  onClick={handleBackToHome}
+                  onClick={() => setSelectedCategory(null)}
                   className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
                 >
                   <ArrowLeft size={16} />
@@ -1008,11 +1439,18 @@ const Marketplace = () => {
                   </Badge>
                 )}
               </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-border hover:bg-accent"
+              >
+                <User size={20} />
+              </Button>
             </div>
           </div>
         </header>
 
-        {/* Category Grid View */}
+        {/* Category Grid View with reduced spacing */}
         <main className="px-6 py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">{categoryTitle}</h1>
@@ -1029,7 +1467,7 @@ const Marketplace = () => {
             onClearFilters={handleClearFilters}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {categoryData.map((item) => (
               <MarketplaceCard
                 key={item.id}
@@ -1133,6 +1571,13 @@ const Marketplace = () => {
             </div>
             <Button
               variant="outline"
+              onClick={() => setShowPurchasedItems(!showPurchasedItems)}
+              className="border-border hover:bg-accent"
+            >
+              My Items
+            </Button>
+            <Button
+              variant="outline"
               size="icon"
               onClick={() => setIsFavoritesOpen(true)}
               className="border-border hover:bg-accent"
@@ -1142,7 +1587,7 @@ const Marketplace = () => {
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => setIsFullPageCartOpen(true)}
               className="relative border-border hover:bg-accent"
             >
               <ShoppingCart size={20} />
@@ -1328,6 +1773,20 @@ const Marketplace = () => {
         onClose={() => setIsSuccessModalOpen(false)}
         purchasedItems={purchasedItems}
         onGoToStudio={handleGoToStudio}
+      />
+
+      {/* Full Page Cart */}
+      <FullPageCart
+        isOpen={isFullPageCartOpen}
+        onClose={() => setIsFullPageCartOpen(false)}
+        items={cartItems}
+        allItems={mockData}
+        onRemoveItem={removeFromCart}
+        onAddToCart={addToCart}
+        onToggleFavorite={toggleFavorite}
+        onOpenModal={handleOpenModal}
+        onCheckout={handleCheckout}
+        isFavorited={isFavorited}
       />
     </div>
   );

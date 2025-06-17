@@ -1,9 +1,11 @@
+
 import React from 'react';
-import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign } from 'lucide-react';
+import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MarketplaceItem } from '@/pages/Marketplace';
+
 interface MarketplaceItemModalProps {
   item: MarketplaceItem | null;
   isOpen: boolean;
@@ -12,6 +14,7 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
 export const MarketplaceItemModal = ({
   item,
   isOpen,
@@ -21,12 +24,23 @@ export const MarketplaceItemModal = ({
   isFavorited
 }: MarketplaceItemModalProps) => {
   if (!item) return null;
+
+  const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
+
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={16} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
-  return <Dialog open={isOpen} onOpenChange={onClose}>
+
+  const handleContact = () => {
+    // Handle contact action - could open a contact form or email
+    console.log('Contact action for:', item.name);
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <div className="space-y-6">
           {/* Header */}
@@ -43,9 +57,13 @@ export const MarketplaceItemModal = ({
                 <Badge variant="outline">
                   {item.type === 'service' ? 'Service' : 'Product'}
                 </Badge>
+                {item.category === 'individuals' && (
+                  <Badge variant="secondary">
+                    {item.level || 'Senior'}
+                  </Badge>
+                )}
               </div>
             </div>
-            
           </div>
 
           {/* Image placeholder */}
@@ -68,9 +86,11 @@ export const MarketplaceItemModal = ({
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-foreground">Skills & Technologies</h3>
             <div className="flex flex-wrap gap-2">
-              {item.tags.map((tag, index) => <Badge key={index} variant="secondary" className="text-xs">
+              {item.tags.map((tag, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
                   {tag}
-                </Badge>)}
+                </Badge>
+              ))}
             </div>
           </div>
 
@@ -87,7 +107,8 @@ export const MarketplaceItemModal = ({
           </div>
 
           {/* For individuals, show additional info */}
-          {item.category === 'individuals' && <div className="space-y-3">
+          {item.category === 'individuals' && (
+            <div className="space-y-3">
               <h3 className="text-lg font-semibold text-foreground">Professional Details</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
@@ -99,24 +120,53 @@ export const MarketplaceItemModal = ({
                   <span className="text-sm text-muted-foreground">Available: Full-time</span>
                 </div>
               </div>
-            </div>}
+            </div>
+          )}
 
           {/* Action buttons */}
           <div className="flex items-center justify-between pt-4 border-t border-border">
-            <Button variant="outline" onClick={() => onToggleFavorite(item)} className={`flex items-center space-x-2 ${isFavorited ? 'text-red-500 border-red-500' : ''}`}>
+            <Button 
+              variant="outline" 
+              onClick={() => onToggleFavorite(item)} 
+              className={`flex items-center space-x-2 ${isFavorited ? 'text-red-500 border-red-500' : ''}`}
+            >
               <Heart size={16} className={isFavorited ? 'fill-current' : ''} />
               <span>{isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}</span>
             </Button>
             
-            <Button onClick={() => {
-            onAddToCart(item);
-            onClose();
-          }} className="flex items-center space-x-2">
-              <ShoppingCart size={16} />
-              <span>Add to Cart</span>
-            </Button>
+            {showContactUs ? (
+              <div className="flex space-x-2">
+                <Button 
+                  variant="outline"
+                  onClick={handleContact}
+                  className="flex items-center space-x-2"
+                >
+                  <Mail size={16} />
+                  <span>Send Message</span>
+                </Button>
+                <Button 
+                  onClick={handleContact}
+                  className="flex items-center space-x-2"
+                >
+                  <Phone size={16} />
+                  <span>Contact Now</span>
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                onClick={() => {
+                  onAddToCart(item);
+                  onClose();
+                }} 
+                className="flex items-center space-x-2"
+              >
+                <ShoppingCart size={16} />
+                <span>Add to Cart</span>
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 };

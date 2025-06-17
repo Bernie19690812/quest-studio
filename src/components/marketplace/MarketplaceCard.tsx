@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, ShoppingCart, Heart, Plus, User } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus, User, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -30,6 +30,8 @@ export const MarketplaceCard = ({
       />
     ));
   };
+
+  const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
 
   return (
     <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
@@ -72,7 +74,12 @@ export const MarketplaceCard = ({
               {item.name}
             </h3>
             {item.category === 'individuals' && (
-              <p className="text-xs text-primary mt-1">Frontend Developer</p>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-primary">Frontend Developer</p>
+                <Badge variant="outline" className="text-xs px-2 py-0">
+                  {item.level || 'Senior'}
+                </Badge>
+              </div>
             )}
           </div>
 
@@ -126,17 +133,31 @@ export const MarketplaceCard = ({
                 <Heart size={14} className={isFavorited ? 'fill-current' : ''} />
               </Button>
               
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddToCart(item);
-                }}
-                className="h-8 w-8 rounded-full border-border hover:bg-accent"
-              >
-                <Plus size={14} />
-              </Button>
+              {showContactUs ? (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle contact us action
+                  }}
+                  className="h-8 w-8 rounded-full border-border hover:bg-accent"
+                >
+                  <Mail size={14} />
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToCart(item);
+                  }}
+                  className="h-8 w-8 rounded-full border-border hover:bg-accent"
+                >
+                  <Plus size={14} />
+                </Button>
+              )}
             </div>
           </div>
         </div>
