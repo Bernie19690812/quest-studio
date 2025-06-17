@@ -1,16 +1,13 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Brain, Wrench, Users, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
 interface CategoryBadgeProps {
   category: 'capabilities' | 'solutions' | 'teams' | 'individuals';
   size?: 'sm' | 'md' | 'lg';
   showIcon?: boolean;
   className?: string;
 }
-
 const categoryConfig = {
   capabilities: {
     label: 'Capability',
@@ -45,7 +42,6 @@ const categoryConfig = {
     iconColor: 'text-orange-600 dark:text-orange-400'
   }
 };
-
 const sizeConfig = {
   sm: {
     text: 'text-xs',
@@ -63,7 +59,6 @@ const sizeConfig = {
     padding: 'px-4 py-2'
   }
 };
-
 export const CategoryBadge = ({
   category,
   size = 'sm',
@@ -73,27 +68,5 @@ export const CategoryBadge = ({
   const config = categoryConfig[category];
   const sizeConf = sizeConfig[size];
   const IconComponent = config.icon;
-
-  return (
-    <Badge
-      variant="outline"
-      className={cn(
-        config.bgColor,
-        config.textColor,
-        config.borderColor,
-        sizeConf.text,
-        sizeConf.padding,
-        'flex items-center gap-1.5 font-medium',
-        className
-      )}
-    >
-      {showIcon && (
-        <IconComponent 
-          size={sizeConf.icon} 
-          className={config.iconColor}
-        />
-      )}
-      {config.label}
-    </Badge>
-  );
+  return;
 };
