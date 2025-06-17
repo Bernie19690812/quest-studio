@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, ShoppingCart, Star, Plus, Eye, Search, User, Filter, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -1134,7 +1133,6 @@ const Marketplace = () => {
                     className="border-border hover:bg-accent"
                   >
                     <User size={20} />
-                    <ChevronDown size={12} className="ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
@@ -1800,7 +1798,7 @@ const Marketplace = () => {
               onClick={() => setIsFullPageCartOpen(true)}
               className="relative border-border hover:bg-accent"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={16} />
               {cartItems.length > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
                   {cartItems.length}
