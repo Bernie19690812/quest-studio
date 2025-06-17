@@ -20,56 +20,56 @@ interface FilterBarProps {
 export const FilterBar = ({ category, activeFilters, onFilterToggle, onClearFilters }: FilterBarProps) => {
   const getFiltersForCategory = (): FilterOption[] => {
     const baseFilters: FilterOption[] = [
-      { id: 'popular', label: 'Popular', category: 'filter' },
-      { id: 'trending', label: 'Trending', category: 'filter' },
-      { id: 'new', label: 'New', category: 'filter' },
-      { id: 'featured', label: 'Featured', category: 'filter' },
-      { id: 'high-rated', label: 'High Rated', category: 'filter' },
+      { id: 'popular', label: 'Popular', category: 'popularity' },
+      { id: 'trending', label: 'Trending', category: 'popularity' },
+      { id: 'new', label: 'New', category: 'popularity' },
+      { id: 'featured', label: 'Featured', category: 'popularity' },
+      { id: 'high-rated', label: 'High Rated', category: 'rating' },
     ];
 
     if (category === 'capabilities') {
       return [
         ...baseFilters,
-        { id: 'ai', label: 'AI & ML', category: 'filter' },
-        { id: 'data', label: 'Data Analytics', category: 'filter' },
-        { id: 'automation', label: 'Automation', category: 'filter' },
-        { id: 'integration', label: 'Integration', category: 'filter' },
+        { id: 'ai', label: 'AI & ML', category: 'type' },
+        { id: 'data', label: 'Data Analytics', category: 'type' },
+        { id: 'automation', label: 'Automation', category: 'type' },
+        { id: 'integration', label: 'Integration', category: 'type' },
       ];
     }
 
     if (category === 'solutions') {
       return [
         ...baseFilters,
-        { id: 'enterprise', label: 'Enterprise', category: 'filter' },
-        { id: 'startup', label: 'Startup', category: 'filter' },
-        { id: 'saas', label: 'SaaS', category: 'filter' },
-        { id: 'ecommerce', label: 'E-commerce', category: 'filter' },
+        { id: 'enterprise', label: 'Enterprise', category: 'type' },
+        { id: 'startup', label: 'Startup', category: 'type' },
+        { id: 'saas', label: 'SaaS', category: 'type' },
+        { id: 'ecommerce', label: 'E-commerce', category: 'type' },
       ];
     }
 
     if (category === 'teams') {
       return [
         ...baseFilters,
-        { id: 'development', label: 'Development', category: 'filter' },
-        { id: 'design', label: 'Design', category: 'filter' },
-        { id: 'marketing', label: 'Marketing', category: 'filter' },
-        { id: 'consulting', label: 'Consulting', category: 'filter' },
-        { id: 'small-team', label: 'Small Team (2-5)', category: 'filter' },
-        { id: 'large-team', label: 'Large Team (6+)', category: 'filter' },
+        { id: 'development', label: 'Development', category: 'skill' },
+        { id: 'design', label: 'Design', category: 'skill' },
+        { id: 'marketing', label: 'Marketing', category: 'skill' },
+        { id: 'consulting', label: 'Consulting', category: 'skill' },
+        { id: 'small-team', label: 'Small Team (2-5)', category: 'size' },
+        { id: 'large-team', label: 'Large Team (6+)', category: 'size' },
       ];
     }
 
     if (category === 'individuals') {
       return [
         ...baseFilters,
-        { id: 'frontend', label: 'Frontend', category: 'filter' },
-        { id: 'backend', label: 'Backend', category: 'filter' },
-        { id: 'fullstack', label: 'Full-stack', category: 'filter' },
-        { id: 'design', label: 'Design', category: 'filter' },
-        { id: 'data-science', label: 'Data Science', category: 'filter' },
-        { id: 'low-rate', label: '$50-75/hr', category: 'filter' },
-        { id: 'mid-rate', label: '$75-100/hr', category: 'filter' },
-        { id: 'high-rate', label: '$100+/hr', category: 'filter' },
+        { id: 'frontend', label: 'Frontend', category: 'role' },
+        { id: 'backend', label: 'Backend', category: 'role' },
+        { id: 'fullstack', label: 'Full-stack', category: 'role' },
+        { id: 'design', label: 'Design', category: 'role' },
+        { id: 'data-science', label: 'Data Science', category: 'role' },
+        { id: 'low-rate', label: '$50-75/hr', category: 'rate' },
+        { id: 'mid-rate', label: '$75-100/hr', category: 'rate' },
+        { id: 'high-rate', label: '$100+/hr', category: 'rate' },
       ];
     }
 
