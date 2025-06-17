@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, Plus, Eye, Search, User, Filter } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, Plus, Eye, Search, User, Filter, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -14,6 +15,12 @@ import { StripeCheckoutModal } from '@/components/marketplace/StripeCheckoutModa
 import { PaymentSuccessModal } from '@/components/marketplace/PaymentSuccessModal';
 import { RoleGroupCard } from '@/components/marketplace/RoleGroupCard';
 import { FullPageCart } from '@/components/marketplace/FullPageCart';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
@@ -1062,6 +1069,128 @@ const Marketplace = () => {
     );
   };
 
+  const handleGoToMyItems = () => {
+    navigate('/my-items');
+  };
+
+  if (showPurchasedItems) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+          <div className="flex items-center justify-between p-6">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl quest-gradient flex items-center justify-center">
+                  <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
+                </div>
+                <div className="text-xl font-bold text-foreground">Quest AI</div>
+              </div>
+              <nav className="flex items-center space-x-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowPurchasedItems(false)}
+                  className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Marketplace</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-foreground font-medium"
+                >
+                  My Items
+                </Button>
+              </nav>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsFavoritesOpen(true)}
+                className="border-border hover:bg-accent"
+              >
+                <Star size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsFullPageCartOpen(true)}
+                className="relative border-border hover:bg-accent"
+              >
+                <ShoppingCart size={20} />
+                {cartItems.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
+                    {cartItems.length}
+                  </Badge>
+                )}
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-border hover:bg-accent"
+                  >
+                    <User size={20} />
+                    <ChevronDown size={12} className="ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
+                  <DropdownMenuItem>Request Agent</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </header>
+
+        {/* My Items Content */}
+        <main className="px-6 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">My Items</h1>
+            <p className="text-muted-foreground">
+              {purchasedItems.length} items purchased
+            </p>
+          </div>
+
+          {purchasedItems.length === 0 ? (
+            <div className="text-center py-16">
+              <h2 className="text-xl font-bold text-foreground mb-4">No items purchased yet</h2>
+              <p className="text-muted-foreground mb-8">Browse our marketplace to find amazing products and services</p>
+              <Button onClick={() => setShowPurchasedItems(false)}>Browse Marketplace</Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+              {purchasedItems.map((item) => (
+                <MarketplaceCard
+                  key={item.id}
+                  item={item}
+                  onAddToCart={addToCart}
+                  onToggleFavorite={toggleFavorite}
+                  onOpenModal={handleOpenModal}
+                  isFavorited={isFavorited(item.id)}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+
+        {/* Modals */}
+        <MarketplaceItemModal
+          item={selectedItem}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          isFavorited={selectedItem ? isFavorited(selectedItem.id) : false}
+        />
+      </div>
+    );
+  }
+
   if (selectedRoleGroup) {
     const roleGroupData = getIndividualsByRole(selectedRoleGroup);
     const roleGroup = roleGroups.find(rg => rg.id === selectedRoleGroup);
@@ -1125,13 +1254,23 @@ const Marketplace = () => {
                   </Badge>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="border-border hover:bg-accent"
-              >
-                <User size={20} />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-border hover:bg-accent"
+                  >
+                    <User size={20} />
+                    <ChevronDown size={12} className="ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
+                  <DropdownMenuItem>Request Agent</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
@@ -1145,7 +1284,7 @@ const Marketplace = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {roleGroupData.map((item) => (
               <MarketplaceCard
                 key={item.id}
@@ -1210,6 +1349,43 @@ const Marketplace = () => {
   }
 
   if (selectedCategory === 'individuals') {
+    const individualsFilters: FilterOption[] = [
+      { id: 'frontend', label: 'Frontend', category: 'role' },
+      { id: 'backend', label: 'Backend', category: 'role' },
+      { id: 'fullstack', label: 'Full-stack', category: 'role' },
+      { id: 'data-science', label: 'Data Science', category: 'role' },
+      { id: 'product-management', label: 'Product Management', category: 'role' },
+      { id: 'design', label: 'Design', category: 'role' },
+      { id: 'junior', label: 'Junior', category: 'level' },
+      { id: 'mid', label: 'Mid', category: 'level' },
+      { id: 'senior', label: 'Senior', category: 'level' },
+      { id: 'lead', label: 'Lead', category: 'level' },
+    ];
+
+    const filteredIndividuals = activeFilters.length === 0 
+      ? categorizedData.individuals 
+      : categorizedData.individuals.filter(item => {
+          return activeFilters.some(filter => {
+            if (filter.category === 'role') {
+              const roleMap: Record<string, string[]> = {
+                'frontend': ['Frontend Developer'],
+                'backend': ['Backend Engineer'],
+                'fullstack': ['Full-stack Developer'],
+                'data-science': ['Data Scientist', 'AI/ML Engineer'],
+                'product-management': ['Product Manager', 'Business Analyst'],
+                'design': ['UI/UX Designer'],
+              };
+              return roleMap[filter.id]?.some(role => 
+                item.role?.includes(role) || item.tags.some(tag => tag.toLowerCase().includes(role.toLowerCase()))
+              );
+            }
+            if (filter.category === 'level') {
+              return item.level?.toLowerCase() === filter.label.toLowerCase();
+            }
+            return false;
+          });
+        });
+    
     return (
       <div className="min-h-screen bg-background">
         {/* Header */}
@@ -1225,11 +1401,11 @@ const Marketplace = () => {
               <nav className="flex items-center space-x-1">
                 <Button
                   variant="ghost"
-                  onClick={() => setSelectedRoleGroup(null)}
+                  onClick={() => setSelectedCategory(null)}
                   className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
                 >
                   <ArrowLeft size={16} />
-                  <span>Back to Individuals</span>
+                  <span>Back to Marketplace</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -1250,7 +1426,7 @@ const Marketplace = () => {
               </div>
               <Button
                 variant="outline"
-                onClick={() => setShowPurchasedItems(!showPurchasedItems)}
+                onClick={handleGoToMyItems}
                 className="border-border hover:bg-accent"
               >
                 My Items
@@ -1276,45 +1452,68 @@ const Marketplace = () => {
                   </Badge>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="border-border hover:bg-accent"
-              >
-                <User size={20} />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-border hover:bg-accent"
+                  >
+                    <User size={20} />
+                    <ChevronDown size={12} className="ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
+                  <DropdownMenuItem>Request Agent</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
 
-        {/* Individuals Role Groups */}
+        {/* Individuals Content */}
         <main className="px-6 py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">Individual Professionals</h1>
-            <p className="text-muted-foreground">Browse by specialty or view all professionals</p>
+            <p className="text-muted-foreground">
+              Showing {filteredIndividuals.length} professionals available
+            </p>
           </div>
 
-          {/* Role Groups */}
-          <div className="mb-12">
-            <h2 className="text-xl font-bold text-foreground mb-6">Browse by Role</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {roleGroups.map((roleGroup) => (
-                <RoleGroupCard
-                  key={roleGroup.id}
-                  roleGroup={roleGroup}
-                  onSelect={(rg) => setSelectedRoleGroup(rg.id)}
-                />
-              ))}
+          {/* Filter Pills */}
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-2">
+              {individualsFilters.map((filter) => {
+                const isActive = activeFilters.some(f => f.id === filter.id);
+                return (
+                  <Button
+                    key={filter.id}
+                    variant={isActive ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleFilterToggle(filter)}
+                    className="rounded-full"
+                  >
+                    {filter.label}
+                  </Button>
+                );
+              })}
+              {activeFilters.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearFilters}
+                  className="text-muted-foreground"
+                >
+                  Clear all
+                </Button>
+              )}
             </div>
           </div>
 
-          {/* All Individuals */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-foreground mb-6">All Professionals</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {categorizedData.individuals.map((item) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+            {filteredIndividuals.map((item) => (
               <MarketplaceCard
                 key={item.id}
                 item={item}
@@ -1440,18 +1639,28 @@ const Marketplace = () => {
                   </Badge>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="border-border hover:bg-accent"
-              >
-                <User size={20} />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-border hover:bg-accent"
+                  >
+                    <User size={20} />
+                    <ChevronDown size={12} className="ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
+                  <DropdownMenuItem>Request Agent</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
 
-        {/* Category Grid View with reduced spacing */}
+        {/* Category Grid View */}
         <main className="px-6 py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">{categoryTitle}</h1>
@@ -1468,7 +1677,7 @@ const Marketplace = () => {
             onClearFilters={handleClearFilters}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {categoryData.map((item) => (
               <MarketplaceCard
                 key={item.id}
@@ -1572,7 +1781,7 @@ const Marketplace = () => {
             </div>
             <Button
               variant="outline"
-              onClick={() => setShowPurchasedItems(!showPurchasedItems)}
+              onClick={handleGoToMyItems}
               className="border-border hover:bg-accent"
             >
               My Items
@@ -1598,13 +1807,23 @@ const Marketplace = () => {
                 </Badge>
               )}
             </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="border-border hover:bg-accent"
-            >
-              <User size={20} />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="border-border hover:bg-accent"
+                >
+                  <User size={20} />
+                  <ChevronDown size={12} className="ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
+                <DropdownMenuItem>Request Agent</DropdownMenuItem>
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Logout</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -1701,7 +1920,7 @@ const Marketplace = () => {
           />
         </section>
 
-        {/* Individuals */}
+        {/* Individuals - Show Role Groups Instead */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Individuals</h2>
@@ -1713,15 +1932,19 @@ const Marketplace = () => {
               See all
             </Button>
           </div>
-          <CategorySection
-            items={categorizedData.individuals}
-            category="individuals"
-            onAddToCart={addToCart}
-            onToggleFavorite={toggleFavorite}
-            onOpenModal={handleOpenModal}
-            onSeeMore={handleSeeAll}
-            isFavorited={isFavorited}
-          />
+          <div className="w-full overflow-hidden">
+            <ScrollArea className="w-full">
+              <div className="flex space-x-4 pb-4 px-1">
+                {roleGroups.map((roleGroup) => (
+                  <RoleGroupCard
+                    key={roleGroup.id}
+                    roleGroup={roleGroup}
+                    onSelect={(rg) => setSelectedRoleGroup(rg.id)}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
         </section>
       </main>
 
