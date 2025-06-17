@@ -4,6 +4,7 @@ import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } fr
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { MarketplaceItem } from '@/pages/Marketplace';
 
 interface MarketplaceItemModalProps {
@@ -14,6 +15,41 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
+// Mock reviews data
+const mockReviews = [
+  {
+    id: 1,
+    author: "Sarah Johnson",
+    rating: 5,
+    comment: "Excellent work! Very professional and delivered on time. Highly recommended.",
+    date: "2024-01-15"
+  },
+  {
+    id: 2,
+    author: "Mike Chen",
+    rating: 4,
+    comment: "Great developer with solid technical skills. Communication could be improved.",
+    date: "2024-01-10"
+  },
+  {
+    id: 3,
+    author: "Emily Davis",
+    rating: 5,
+    comment: "Outstanding quality and attention to detail. Will definitely work with again.",
+    date: "2024-01-05"
+  }
+];
+
+// Mock skills data for individuals
+const mockSkills = [
+  { name: "React", level: 95 },
+  { name: "TypeScript", level: 90 },
+  { name: "Node.js", level: 85 },
+  { name: "Python", level: 80 },
+  { name: "AWS", level: 75 },
+  { name: "Docker", level: 70 }
+];
 
 export const MarketplaceItemModal = ({
   item,
@@ -41,7 +77,7 @@ export const MarketplaceItemModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-start justify-between">
@@ -81,6 +117,24 @@ export const MarketplaceItemModal = ({
             <h3 className="text-lg font-semibold text-foreground">Description</h3>
             <p className="text-muted-foreground leading-relaxed">{item.description}</p>
           </div>
+
+          {/* Skills Matrix for Individuals */}
+          {item.category === 'individuals' && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-foreground">Skills & Expertise</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mockSkills.map((skill, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-foreground">{skill.name}</span>
+                      <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                    </div>
+                    <Progress value={skill.level} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Tags */}
           <div className="space-y-3">
@@ -122,6 +176,32 @@ export const MarketplaceItemModal = ({
               </div>
             </div>
           )}
+
+          {/* Reviews Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Reviews</h3>
+            <div className="space-y-4">
+              {mockReviews.map((review) => (
+                <div key={review.id} className="border border-border rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User size={16} className="text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{review.author}</p>
+                        <p className="text-xs text-muted-foreground">{review.date}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      {renderStars(review.rating)}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Action buttons */}
           <div className="flex items-center justify-between pt-4 border-t border-border">
