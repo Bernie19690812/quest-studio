@@ -27,16 +27,14 @@ export interface MarketplaceItem {
   id: string;
   name: string;
   description: string;
-  category: 'capabilities' | 'solutions' | 'teams' | 'individuals';
-  type: 'product' | 'service';
   price: number;
   rating: number;
   reviewCount: number;
+  category: 'solutions' | 'capabilities' | 'individuals' | 'teams';
+  type: 'product' | 'service';
   tags: string[];
-  image?: string;
-  featured?: boolean;
-  level?: 'Junior' | 'Mid' | 'Senior' | 'Lead'; // Added for individuals
-  role?: string; // Added for role grouping
+  level?: string;
+  featured: boolean;
 }
 
 // Expanded mock data with 12-20 items per category
@@ -599,7 +597,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 94,
     tags: ['Frontend', 'React', 'Vue', 'TypeScript'],
     level: 'Senior',
-    role: 'Frontend Developer',
   },
   {
     id: 'i1',
@@ -612,7 +609,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 127,
     tags: ['Full-stack', 'Node.js', 'Python', 'Cloud'],
     level: 'Senior',
-    role: 'Full-stack Developer',
   },
   {
     id: 'i2',
@@ -625,7 +621,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 86,
     tags: ['Data Science', 'ML', 'Analytics', 'Python'],
     level: 'Senior',
-    role: 'Data Scientist',
   },
   {
     id: 'i3',
@@ -638,7 +633,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 103,
     tags: ['DevOps', 'AWS', 'Kubernetes', 'Infrastructure'],
     level: 'Senior',
-    role: 'DevOps Engineer',
   },
   {
     id: 'i4',
@@ -651,7 +645,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 156,
     tags: ['UI/UX', 'Mobile Design', 'User Research', 'Figma'],
     level: 'Senior',
-    role: 'UI/UX Designer',
   },
   {
     id: 'i5',
@@ -664,7 +657,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 67,
     tags: ['Security', 'Penetration Testing', 'Compliance', 'CISSP'],
     level: 'Senior',
-    role: 'Cybersecurity Specialist',
   },
   {
     id: 'i6',
@@ -677,7 +669,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 89,
     tags: ['Product Management', 'SaaS', 'Agile', 'Strategy'],
     level: 'Senior',
-    role: 'Product Manager',
   },
   {
     id: 'i7',
@@ -690,7 +681,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 112,
     tags: ['Mobile', 'React Native', 'Flutter', 'Cross-platform'],
     level: 'Senior',
-    role: 'Mobile App Developer',
   },
   {
     id: 'i8',
@@ -703,7 +693,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 134,
     tags: ['Marketing', 'SEO', 'PPC', 'Content Marketing'],
     level: 'Senior',
-    role: 'Digital Marketing Specialist',
   },
   {
     id: 'i9',
@@ -716,7 +705,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 45,
     tags: ['Blockchain', 'Smart Contracts', 'DeFi', 'Solidity'],
     level: 'Senior',
-    role: 'Blockchain Developer',
   },
   {
     id: 'i10',
@@ -729,7 +717,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 98,
     tags: ['Technical Writing', 'Documentation', 'API', 'Developer Experience'],
     level: 'Senior',
-    role: 'Technical Writer',
   },
   {
     id: 'i11',
@@ -742,7 +729,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 76,
     tags: ['Game Development', 'Unity', 'Mobile Games', 'Monetization'],
     level: 'Senior',
-    role: 'Game Developer',
   },
   {
     id: 'i12',
@@ -755,7 +741,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 123,
     tags: ['QA', 'Test Automation', 'Performance Testing', 'Selenium'],
     level: 'Senior',
-    role: 'QA Engineer',
   },
   {
     id: 'i13',
@@ -768,7 +753,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 72,
     tags: ['AI', 'Deep Learning', 'Computer Vision', 'TensorFlow'],
     level: 'Senior',
-    role: 'AI/ML Engineer',
   },
   {
     id: 'i14',
@@ -781,7 +765,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 145,
     tags: ['Business Analysis', 'Process Optimization', 'Requirements'],
     level: 'Senior',
-    role: 'Business Analyst',
   },
   {
     id: 'i15',
@@ -794,7 +777,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 88,
     tags: ['Cloud Architecture', 'AWS', 'Serverless', 'Lambda'],
     level: 'Senior',
-    role: 'Cloud Architect',
   },
   {
     id: 'i16',
@@ -807,7 +789,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 167,
     tags: ['Content Strategy', 'B2B Marketing', 'Thought Leadership'],
     level: 'Senior',
-    role: 'Content Strategist',
   },
   {
     id: 'i17',
@@ -820,7 +801,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 91,
     tags: ['Database', 'PostgreSQL', 'MongoDB', 'Performance'],
     level: 'Senior',
-    role: 'Database Administrator',
   },
   {
     id: 'i18',
@@ -833,7 +813,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 54,
     tags: ['VR', 'AR', 'Unity', 'Immersive Design'],
     level: 'Senior',
-    role: 'VR/AR Developer',
   },
   {
     id: 'i19',
@@ -846,7 +825,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 109,
     tags: ['Backend', 'Microservices', 'Distributed Systems', 'Go'],
     level: 'Senior',
-    role: 'Backend Engineer',
   },
   {
     id: 'i20',
@@ -859,7 +837,6 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 132,
     tags: ['Scrum Master', 'Agile Coach', 'Team Leadership', 'Process Improvement'],
     level: 'Senior',
-    role: 'Scrum Master',
   },
 ];
 
@@ -879,6 +856,7 @@ const Marketplace = () => {
   const [isFullPageCartOpen, setIsFullPageCartOpen] = useState(false);
   const [selectedRoleGroup, setSelectedRoleGroup] = useState<string | null>(null);
   const [showPurchasedItems, setShowPurchasedItems] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -1071,6 +1049,8 @@ const Marketplace = () => {
   const handleGoToMyItems = () => {
     navigate('/my-items');
   };
+
+  const userName = "John Doe"; // This would come from user context in real app
 
   if (showPurchasedItems) {
     return (
@@ -1754,17 +1734,16 @@ const Marketplace = () => {
             <nav className="flex items-center space-x-1">
               <Button
                 variant="ghost"
-                onClick={() => navigate('/')}
-                className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
-              >
-                <ArrowLeft size={16} />
-                <span>Return to Studio</span>
-              </Button>
-              <Button
-                variant="ghost"
                 className="text-foreground font-medium"
               >
                 Marketplace
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/my-items')}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                My Items
               </Button>
             </nav>
           </div>
@@ -1774,16 +1753,11 @@ const Marketplace = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
               <Input
                 placeholder="Search marketplace..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-64 bg-secondary border-border"
               />
             </div>
-            <Button
-              variant="outline"
-              onClick={handleGoToMyItems}
-              className="border-border hover:bg-accent"
-            >
-              My Items
-            </Button>
             <Button
               variant="outline"
               size="icon"
@@ -1798,7 +1772,7 @@ const Marketplace = () => {
               onClick={() => setIsFullPageCartOpen(true)}
               className="relative border-border hover:bg-accent"
             >
-              <ShoppingCart size={16} />
+              <ShoppingCart size={20} />
               {cartItems.length > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
                   {cartItems.length}
@@ -1808,12 +1782,16 @@ const Marketplace = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="outline"
-                  size="icon"
-                  className="border-border hover:bg-accent"
+                  variant="ghost"
+                  className="flex items-center space-x-2 hover:bg-accent"
                 >
-                  <User size={20} />
-                  <ChevronDown size={12} className="ml-1" />
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback className="text-xs font-medium">
+                      {userName.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">{userName}</span>
+                  <ChevronDown size={12} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
