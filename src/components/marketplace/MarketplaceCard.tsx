@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, ShoppingCart, Heart, Plus, User, Mail, Users } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus, User, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -37,13 +37,7 @@ export const MarketplaceCard = ({
     <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
       <div onClick={() => onOpenModal(item)} className="p-0">
         {/* Image Area */}
-        <div className={`h-40 rounded-t-lg flex items-center justify-center relative overflow-hidden ${
-          item.category === 'teams' 
-            ? 'bg-gradient-to-br from-purple-500/20 to-indigo-500/20' 
-            : item.category === 'individuals'
-            ? 'bg-gradient-to-br from-primary/20 to-primary/10'
-            : 'bg-gradient-to-br from-primary/20 to-primary/10'
-        }`}>
+        <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/10 rounded-t-lg flex items-center justify-center relative overflow-hidden">
           {item.featured && (
             <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground">
               Featured
@@ -53,10 +47,6 @@ export const MarketplaceCard = ({
             {item.category === 'individuals' ? (
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
                 <User size={24} className="text-white" />
-              </div>
-            ) : item.category === 'teams' ? (
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center">
-                <Users size={24} className="text-white" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center">
@@ -89,15 +79,6 @@ export const MarketplaceCard = ({
                 <Badge variant="outline" className="text-xs px-2 py-0">
                   {item.level || 'Senior'}
                 </Badge>
-              </div>
-            )}
-            {item.category === 'teams' && item.teamMembers && (
-              <div className="mt-1">
-                <p className="text-xs text-purple-600 font-medium">Cross-Functional Team</p>
-                <p className="text-xs text-muted-foreground">
-                  {item.teamMembers.slice(0, 2).join(', ')}
-                  {item.teamMembers.length > 2 && ` +${item.teamMembers.length - 2} more`}
-                </p>
               </div>
             )}
           </div>
