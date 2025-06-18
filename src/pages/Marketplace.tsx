@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search, ShoppingCart, Star, User, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,11 +42,9 @@ const Marketplace = () => {
   const [favorites, setFavorites] = useState<MarketplaceItem[]>([]);
   const [cartItems, setCartItems] = useState<MarketplaceItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<any[]>([]);
 
-  // Mock data - same as before but with featured property added
+  // Mock data with featured property added
   const mockItems: MarketplaceItem[] = [
     // Capabilities
     {
@@ -246,14 +245,29 @@ const Marketplace = () => {
     // Implementation would go here
   };
 
+  const handleSeeMore = (category: string) => {
+    // Implementation would go here
+  };
+
+  const handleFilterToggle = (filter: any) => {
+    setActiveFilters(prev => {
+      const exists = prev.find(f => f.id === filter.id);
+      if (exists) {
+        return prev.filter(f => f.id !== filter.id);
+      }
+      return [...prev, filter];
+    });
+  };
+
+  const handleClearFilters = () => {
+    setActiveFilters([]);
+  };
+
   const filteredItems = mockItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    const matchesPrice = item.price >= priceRange[0] && item.price <= priceRange[1];
-    const matchesTags = selectedTags.length === 0 || item.tags.some(tag => selectedTags.includes(tag));
 
-    return matchesSearch && matchesCategory && matchesPrice && matchesTags;
+    return matchesSearch;
   });
 
   return (
@@ -359,59 +373,81 @@ const Marketplace = () => {
 
         {/* Filter Bar */}
         <FilterBar
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          selectedTags={selectedTags}
-          setSelectedTags={setSelectedTags}
+          category="all"
+          activeFilters={activeFilters}
+          onFilterToggle={handleFilterToggle}
+          onClearFilters={handleClearFilters}
         />
 
-        {/* Category Sections */}
-        <CategorySection
-          title="Featured"
-          items={filteredItems.filter(item => item.featured)}
-          onAddToCart={addToCart}
-          onToggleFavorite={toggleFavorite}
-          onOpenModal={handleOpenModal}
-          isFavorited={isFavorited}
-        />
+        {/* Featured Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Featured</h2>
+          <CategorySection
+            items={filteredItems.filter(item => item.featured)}
+            category="featured"
+            onAddToCart={addToCart}
+            onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeMore}
+            isFavorited={isFavorited}
+          />
+        </div>
 
-        <CategorySection
-          title="Capabilities"
-          items={filteredItems.filter(item => item.category === 'capabilities' && !item.featured)}
-          onAddToCart={addToCart}
-          onToggleFavorite={toggleFavorite}
-          onOpenModal={handleOpenModal}
-          isFavorited={isFavorited}
-        />
+        {/* Capabilities Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Capabilities</h2>
+          <CategorySection
+            items={filteredItems.filter(item => item.category === 'capabilities' && !item.featured)}
+            category="capabilities"
+            onAddToCart={addToCart}
+            onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeMore}
+            isFavorited={isFavorited}
+          />
+        </div>
 
-        <CategorySection
-          title="Solutions"
-          items={filteredItems.filter(item => item.category === 'solutions' && !item.featured)}
-          onAddToCart={addToCart}
-          onToggleFavorite={toggleFavorite}
-          onOpenModal={handleOpenModal}
-          isFavorited={isFavorited}
-        />
+        {/* Solutions Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Solutions</h2>
+          <CategorySection
+            items={filteredItems.filter(item => item.category === 'solutions' && !item.featured)}
+            category="solutions"
+            onAddToCart={addToCart}
+            onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeMore}
+            isFavorited={isFavorited}
+          />
+        </div>
 
-        <CategorySection
-          title="Individuals"
-          items={filteredItems.filter(item => item.category === 'individuals' && !item.featured)}
-          onAddToCart={addToCart}
-          onToggleFavorite={toggleFavorite}
-          onOpenModal={handleOpenModal}
-          isFavorited={isFavorited}
-        />
+        {/* Individuals Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Individuals</h2>
+          <CategorySection
+            items={filteredItems.filter(item => item.category === 'individuals' && !item.featured)}
+            category="individuals"
+            onAddToCart={addToCart}
+            onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeMore}
+            isFavorited={isFavorited}
+          />
+        </div>
 
-        <CategorySection
-          title="Teams"
-          items={filteredItems.filter(item => item.category === 'teams' && !item.featured)}
-          onAddToCart={addToCart}
-          onToggleFavorite={toggleFavorite}
-          onOpenModal={handleOpenModal}
-          isFavorited={isFavorited}
-        />
+        {/* Teams Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Teams</h2>
+          <CategorySection
+            items={filteredItems.filter(item => item.category === 'teams' && !item.featured)}
+            category="teams"
+            onAddToCart={addToCart}
+            onToggleFavorite={toggleFavorite}
+            onOpenModal={handleOpenModal}
+            onSeeMore={handleSeeMore}
+            isFavorited={isFavorited}
+          />
+        </div>
       </main>
 
       {/* Modals */}
