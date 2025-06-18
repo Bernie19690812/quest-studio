@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Search, ShoppingCart, Heart, Filter, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -258,6 +259,11 @@ const Marketplace = () => {
     teams: filteredItems.filter(item => item.category === 'teams'),
   };
 
+  const handleSeeMore = (category: string) => {
+    // Handle see more functionality
+    console.log('See more for category:', category);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -355,7 +361,12 @@ const Marketplace = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Filter Bar */}
-        <FilterBar />
+        <FilterBar 
+          category=""
+          activeFilters={[]}
+          onFilterToggle={() => {}}
+          onClearFilters={() => {}}
+        />
 
         {/* Category Sections */}
         <div className="space-y-12">
@@ -364,9 +375,11 @@ const Marketplace = () => {
             <h2 className="text-2xl font-bold text-foreground mb-6">Solutions</h2>
             <CategorySection
               items={groupedItems.solutions}
+              category="solutions"
               onAddToCart={handleAddToCart}
               onToggleFavorite={handleToggleFavorite}
               onOpenModal={handleOpenModal}
+              onSeeMore={handleSeeMore}
               isFavorited={isFavorited}
             />
           </section>
@@ -376,9 +389,11 @@ const Marketplace = () => {
             <h2 className="text-2xl font-bold text-foreground mb-6">Capabilities</h2>
             <CategorySection
               items={groupedItems.capabilities}
+              category="capabilities"
               onAddToCart={handleAddToCart}
               onToggleFavorite={handleToggleFavorite}
               onOpenModal={handleOpenModal}
+              onSeeMore={handleSeeMore}
               isFavorited={isFavorited}
             />
           </section>
@@ -388,9 +403,11 @@ const Marketplace = () => {
             <h2 className="text-2xl font-bold text-foreground mb-6">Teams</h2>
             <CategorySection
               items={groupedItems.teams}
+              category="teams"
               onAddToCart={handleAddToCart}
               onToggleFavorite={handleToggleFavorite}
               onOpenModal={handleOpenModal}
+              onSeeMore={handleSeeMore}
               isFavorited={isFavorited}
             />
           </section>
@@ -400,9 +417,11 @@ const Marketplace = () => {
             <h2 className="text-2xl font-bold text-foreground mb-6">Individuals</h2>
             <CategorySection
               items={groupedItems.individuals}
+              category="individuals"
               onAddToCart={handleAddToCart}
               onToggleFavorite={handleToggleFavorite}
               onOpenModal={handleOpenModal}
+              onSeeMore={handleSeeMore}
               isFavorited={isFavorited}
             />
           </section>
@@ -424,14 +443,12 @@ const Marketplace = () => {
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
         onRemoveItem={(itemId) => setCartItems(prev => prev.filter(item => item.id !== itemId))}
-        onClearCart={() => setCartItems([])}
       />
 
       <FavoritesDrawer
         isOpen={isFavoritesOpen}
         onClose={() => setIsFavoritesOpen(false)}
         items={marketplaceItems.filter(item => favoriteItems.has(item.id))}
-        onToggleFavorite={handleToggleFavorite}
         onOpenModal={handleOpenModal}
       />
     </div>
