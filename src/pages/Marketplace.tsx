@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
 import { MarketplaceItemModal } from '@/components/marketplace/MarketplaceItemModal';
 import { CartDrawer } from '@/components/marketplace/CartDrawer';
@@ -28,14 +27,16 @@ export interface MarketplaceItem {
   id: string;
   name: string;
   description: string;
+  category: 'capabilities' | 'solutions' | 'teams' | 'individuals';
+  type: 'product' | 'service';
   price: number;
   rating: number;
   reviewCount: number;
-  category: 'solutions' | 'capabilities' | 'individuals' | 'teams';
-  type: 'product' | 'service';
   tags: string[];
-  level?: string;
-  featured: boolean;
+  image?: string;
+  featured?: boolean;
+  level?: 'Junior' | 'Mid' | 'Senior' | 'Lead'; // Added for individuals
+  role?: string; // Added for role grouping
 }
 
 // Expanded mock data with 12-20 items per category
@@ -63,7 +64,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 156,
     tags: ['Analytics', 'Dashboard', 'Real-time', 'Visualization'],
-    featured: false,
   },
   {
     id: 'c1',
@@ -75,7 +75,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 203,
     tags: ['Computer Vision', 'Image Analysis', 'AI'],
-    featured: true,
   },
   {
     id: 'c2',
@@ -87,7 +86,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 189,
     tags: ['NLP', 'Text Analysis', 'Sentiment'],
-    featured: false,
   },
   {
     id: 'c3',
@@ -99,7 +97,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 167,
     tags: ['Speech', 'Voice Recognition', 'Audio'],
-    featured: false,
   },
   {
     id: 'c4',
@@ -111,7 +108,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 134,
     tags: ['ML', 'Forecasting', 'Predictive'],
-    featured: true,
   },
   {
     id: 'c5',
@@ -123,7 +119,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 198,
     tags: ['OCR', 'Document', 'Extraction'],
-    featured: false,
   },
   {
     id: 'c6',
@@ -135,7 +130,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 176,
     tags: ['Recommendations', 'Personalization', 'ML'],
-    featured: false,
   },
   {
     id: 'c7',
@@ -147,7 +141,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 112,
     tags: ['Security', 'Fraud Detection', 'Risk'],
-    featured: true,
   },
   {
     id: 'c8',
@@ -159,7 +152,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 221,
     tags: ['Chatbot', 'Conversational AI', 'NLP'],
-    featured: false,
   },
   {
     id: 'c9',
@@ -171,7 +163,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 145,
     tags: ['Time Series', 'Forecasting', 'Analytics'],
-    featured: false,
   },
   {
     id: 'c10',
@@ -183,7 +174,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 187,
     tags: ['Image Generation', 'AI Art', 'Creative'],
-    featured: false,
   },
   {
     id: 'c11',
@@ -195,7 +185,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 158,
     tags: ['Video', 'Analytics', 'Computer Vision'],
-    featured: false,
   },
   {
     id: 'c12',
@@ -207,7 +196,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.3,
     reviewCount: 129,
     tags: ['Audio', 'Music', 'Classification'],
-    featured: false,
   },
   {
     id: 'c13',
@@ -219,7 +207,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 94,
     tags: ['Blockchain', 'Crypto', 'Analytics'],
-    featured: false,
   },
 
   // Solutions (18 items)
@@ -233,7 +220,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 89,
     tags: ['E-commerce', 'Payments', 'Catalog', 'Analytics'],
-    featured: true,
   },
   {
     id: 's1',
@@ -245,7 +231,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 156,
     tags: ['CRM', 'Sales', 'Automation', 'Leads'],
-    featured: false,
   },
   {
     id: 's2',
@@ -257,7 +242,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 203,
     tags: ['Education', 'LMS', 'Courses', 'Assessment'],
-    featured: false,
   },
   {
     id: 's3',
@@ -269,7 +253,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 178,
     tags: ['Project Management', 'Collaboration', 'Planning'],
-    featured: true,
   },
   {
     id: 's4',
@@ -281,7 +264,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 134,
     tags: ['HR', 'Recruitment', 'Payroll', 'Performance'],
-    featured: false,
   },
   {
     id: 's5',
@@ -293,7 +275,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 167,
     tags: ['Inventory', 'Supply Chain', 'Forecasting'],
-    featured: false,
   },
   {
     id: 's6',
@@ -305,7 +286,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 145,
     tags: ['Marketing', 'Automation', 'Campaigns', 'Analytics'],
-    featured: false,
   },
   {
     id: 's7',
@@ -317,7 +297,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 189,
     tags: ['Finance', 'Reporting', 'Budgeting', 'Expenses'],
-    featured: false,
   },
   {
     id: 's8',
@@ -329,7 +308,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.3,
     reviewCount: 234,
     tags: ['CMS', 'Content', 'SEO', 'Media'],
-    featured: false,
   },
   {
     id: 's9',
@@ -341,7 +319,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 198,
     tags: ['Social Media', 'Scheduling', 'Analytics', 'Engagement'],
-    featured: false,
   },
   {
     id: 's10',
@@ -353,7 +330,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 123,
     tags: ['Events', 'Ticketing', 'Registration', 'Planning'],
-    featured: false,
   },
   {
     id: 's11',
@@ -365,7 +341,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 176,
     tags: ['Booking', 'Reservations', 'Calendar', 'Payments'],
-    featured: false,
   },
   {
     id: 's12',
@@ -377,7 +352,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.2,
     reviewCount: 267,
     tags: ['Forms', 'Surveys', 'Analytics', 'Logic'],
-    featured: false,
   },
   {
     id: 's13',
@@ -389,7 +363,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 142,
     tags: ['Documents', 'Storage', 'Collaboration', 'Workflow'],
-    featured: false,
   },
   {
     id: 's14',
@@ -401,7 +374,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 213,
     tags: ['Support', 'Tickets', 'Knowledge Base', 'Chat'],
-    featured: false,
   },
   {
     id: 's15',
@@ -413,7 +385,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 98,
     tags: ['Fleet', 'GPS', 'Tracking', 'Maintenance'],
-    featured: false,
   },
   {
     id: 's16',
@@ -425,7 +396,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 156,
     tags: ['Real Estate', 'CRM', 'Properties', 'Market Analysis'],
-    featured: false,
   },
   {
     id: 's17',
@@ -437,7 +407,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 87,
     tags: ['Healthcare', 'Patients', 'Appointments', 'Medical Records'],
-    featured: true,
   },
 
   // Teams (16 items)
@@ -451,7 +420,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 67,
     tags: ['DevOps', 'Infrastructure', 'CI/CD', 'Cloud'],
-    featured: true,
   },
   {
     id: '6',
@@ -463,7 +431,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 78,
     tags: ['QA', 'Testing', 'Automation', 'Performance'],
-    featured: false,
   },
   {
     id: 't1',
@@ -475,7 +442,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 89,
     tags: ['Frontend', 'React', 'Vue', 'Angular'],
-    featured: false,
   },
   {
     id: 't2',
@@ -487,7 +453,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 92,
     tags: ['Backend', 'Node.js', 'Python', 'Microservices'],
-    featured: false,
   },
   {
     id: 't3',
@@ -499,7 +464,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 54,
     tags: ['Data Science', 'ML', 'AI', 'Analytics'],
-    featured: true,
   },
   {
     id: 't4',
@@ -511,7 +475,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 76,
     tags: ['Mobile', 'iOS', 'Android', 'React Native'],
-    featured: false,
   },
   {
     id: 't5',
@@ -523,7 +486,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 103,
     tags: ['Design', 'UI/UX', 'Creative', 'User Experience'],
-    featured: false,
   },
   {
     id: 't6',
@@ -535,7 +497,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 45,
     tags: ['Security', 'Penetration Testing', 'Compliance'],
-    featured: false,
   },
   {
     id: 't7',
@@ -547,7 +508,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 67,
     tags: ['Cloud', 'AWS', 'Azure', 'Architecture'],
-    featured: false,
   },
   {
     id: 't8',
@@ -559,7 +519,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 58,
     tags: ['Product Management', 'Strategy', 'Roadmap'],
-    featured: false,
   },
   {
     id: 't9',
@@ -571,7 +530,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.5,
     reviewCount: 134,
     tags: ['Content', 'Writing', 'Marketing', 'Documentation'],
-    featured: false,
   },
   {
     id: 't10',
@@ -583,7 +541,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.4,
     reviewCount: 89,
     tags: ['Marketing', 'SEO', 'SEM', 'Social Media'],
-    featured: false,
   },
   {
     id: 't11',
@@ -595,7 +552,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 61,
     tags: ['BI', 'Analytics', 'Visualization', 'Strategy'],
-    featured: false,
   },
   {
     id: 't12',
@@ -607,7 +563,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 38,
     tags: ['Blockchain', 'Smart Contracts', 'Web3', 'DApp'],
-    featured: false,
   },
   {
     id: 't13',
@@ -619,7 +574,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.6,
     reviewCount: 52,
     tags: ['Game Development', 'Unity', 'Unreal', 'Mobile Games'],
-    featured: false,
   },
   {
     id: 't14',
@@ -631,7 +585,6 @@ const mockData: MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 43,
     tags: ['VR', 'AR', 'Immersive', 'Unity'],
-    featured: false,
   },
 
   // Individuals (20 items)
@@ -646,7 +599,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 94,
     tags: ['Frontend', 'React', 'Vue', 'TypeScript'],
     level: 'Senior',
-    featured: false,
+    role: 'Frontend Developer',
   },
   {
     id: 'i1',
@@ -659,7 +612,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 127,
     tags: ['Full-stack', 'Node.js', 'Python', 'Cloud'],
     level: 'Senior',
-    featured: true,
+    role: 'Full-stack Developer',
   },
   {
     id: 'i2',
@@ -672,7 +625,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 86,
     tags: ['Data Science', 'ML', 'Analytics', 'Python'],
     level: 'Senior',
-    featured: false,
+    role: 'Data Scientist',
   },
   {
     id: 'i3',
@@ -685,7 +638,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 103,
     tags: ['DevOps', 'AWS', 'Kubernetes', 'Infrastructure'],
     level: 'Senior',
-    featured: false,
+    role: 'DevOps Engineer',
   },
   {
     id: 'i4',
@@ -698,7 +651,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 156,
     tags: ['UI/UX', 'Mobile Design', 'User Research', 'Figma'],
     level: 'Senior',
-    featured: false,
+    role: 'UI/UX Designer',
   },
   {
     id: 'i5',
@@ -711,7 +664,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 67,
     tags: ['Security', 'Penetration Testing', 'Compliance', 'CISSP'],
     level: 'Senior',
-    featured: false,
+    role: 'Cybersecurity Specialist',
   },
   {
     id: 'i6',
@@ -724,7 +677,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 89,
     tags: ['Product Management', 'SaaS', 'Agile', 'Strategy'],
     level: 'Senior',
-    featured: false,
+    role: 'Product Manager',
   },
   {
     id: 'i7',
@@ -737,7 +690,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 112,
     tags: ['Mobile', 'React Native', 'Flutter', 'Cross-platform'],
     level: 'Senior',
-    featured: false,
+    role: 'Mobile App Developer',
   },
   {
     id: 'i8',
@@ -750,7 +703,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 134,
     tags: ['Marketing', 'SEO', 'PPC', 'Content Marketing'],
     level: 'Senior',
-    featured: false,
+    role: 'Digital Marketing Specialist',
   },
   {
     id: 'i9',
@@ -763,7 +716,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 45,
     tags: ['Blockchain', 'Smart Contracts', 'DeFi', 'Solidity'],
     level: 'Senior',
-    featured: true,
+    role: 'Blockchain Developer',
   },
   {
     id: 'i10',
@@ -776,7 +729,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 98,
     tags: ['Technical Writing', 'Documentation', 'API', 'Developer Experience'],
     level: 'Senior',
-    featured: false,
+    role: 'Technical Writer',
   },
   {
     id: 'i11',
@@ -789,7 +742,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 76,
     tags: ['Game Development', 'Unity', 'Mobile Games', 'Monetization'],
     level: 'Senior',
-    featured: false,
+    role: 'Game Developer',
   },
   {
     id: 'i12',
@@ -802,7 +755,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 123,
     tags: ['QA', 'Test Automation', 'Performance Testing', 'Selenium'],
     level: 'Senior',
-    featured: false,
+    role: 'QA Engineer',
   },
   {
     id: 'i13',
@@ -815,7 +768,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 72,
     tags: ['AI', 'Deep Learning', 'Computer Vision', 'TensorFlow'],
     level: 'Senior',
-    featured: false,
+    role: 'AI/ML Engineer',
   },
   {
     id: 'i14',
@@ -828,7 +781,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 145,
     tags: ['Business Analysis', 'Process Optimization', 'Requirements'],
     level: 'Senior',
-    featured: false,
+    role: 'Business Analyst',
   },
   {
     id: 'i15',
@@ -841,7 +794,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 88,
     tags: ['Cloud Architecture', 'AWS', 'Serverless', 'Lambda'],
     level: 'Senior',
-    featured: false,
+    role: 'Cloud Architect',
   },
   {
     id: 'i16',
@@ -854,7 +807,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 167,
     tags: ['Content Strategy', 'B2B Marketing', 'Thought Leadership'],
     level: 'Senior',
-    featured: false,
+    role: 'Content Strategist',
   },
   {
     id: 'i17',
@@ -867,7 +820,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 91,
     tags: ['Database', 'PostgreSQL', 'MongoDB', 'Performance'],
     level: 'Senior',
-    featured: false,
+    role: 'Database Administrator',
   },
   {
     id: 'i18',
@@ -880,7 +833,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 54,
     tags: ['VR', 'AR', 'Unity', 'Immersive Design'],
     level: 'Senior',
-    featured: false,
+    role: 'VR/AR Developer',
   },
   {
     id: 'i19',
@@ -893,7 +846,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 109,
     tags: ['Backend', 'Microservices', 'Distributed Systems', 'Go'],
     level: 'Senior',
-    featured: false,
+    role: 'Backend Engineer',
   },
   {
     id: 'i20',
@@ -906,7 +859,7 @@ const mockData: MarketplaceItem[] = [
     reviewCount: 132,
     tags: ['Scrum Master', 'Agile Coach', 'Team Leadership', 'Process Improvement'],
     level: 'Senior',
-    featured: false,
+    role: 'Scrum Master',
   },
 ];
 
@@ -926,7 +879,6 @@ const Marketplace = () => {
   const [isFullPageCartOpen, setIsFullPageCartOpen] = useState(false);
   const [selectedRoleGroup, setSelectedRoleGroup] = useState<string | null>(null);
   const [showPurchasedItems, setShowPurchasedItems] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -1119,8 +1071,6 @@ const Marketplace = () => {
   const handleGoToMyItems = () => {
     navigate('/my-items');
   };
-
-  const userName = "John Doe"; // This would come from user context in real app
 
   if (showPurchasedItems) {
     return (
@@ -1804,16 +1754,17 @@ const Marketplace = () => {
             <nav className="flex items-center space-x-1">
               <Button
                 variant="ghost"
-                className="text-foreground font-medium"
+                onClick={() => navigate('/')}
+                className="text-muted-foreground hover:text-foreground flex items-center space-x-2"
               >
-                Marketplace
+                <ArrowLeft size={16} />
+                <span>Return to Studio</span>
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => navigate('/my-items')}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-foreground font-medium"
               >
-                My Items
+                Marketplace
               </Button>
             </nav>
           </div>
@@ -1823,11 +1774,16 @@ const Marketplace = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
               <Input
                 placeholder="Search marketplace..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-64 bg-secondary border-border"
               />
             </div>
+            <Button
+              variant="outline"
+              onClick={handleGoToMyItems}
+              className="border-border hover:bg-accent"
+            >
+              My Items
+            </Button>
             <Button
               variant="outline"
               size="icon"
@@ -1842,7 +1798,7 @@ const Marketplace = () => {
               onClick={() => setIsFullPageCartOpen(true)}
               className="relative border-border hover:bg-accent"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={16} />
               {cartItems.length > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
                   {cartItems.length}
@@ -1852,16 +1808,12 @@ const Marketplace = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
-                  className="flex items-center space-x-2 hover:bg-accent"
+                  variant="outline"
+                  size="icon"
+                  className="border-border hover:bg-accent"
                 >
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback className="text-xs font-medium">
-                      {userName.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{userName}</span>
-                  <ChevronDown size={12} />
+                  <User size={20} />
+                  <ChevronDown size={12} className="ml-1" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-popover border-border">

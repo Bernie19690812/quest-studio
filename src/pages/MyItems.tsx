@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, Search, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, User, Search, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
 import { MarketplaceItemModal } from '@/components/marketplace/MarketplaceItemModal';
 import { FavoritesDrawer } from '@/components/marketplace/FavoritesDrawer';
@@ -27,60 +26,8 @@ const MyItems = () => {
   const [favorites, setFavorites] = useState<MarketplaceItem[]>([]);
   const [cartItems, setCartItems] = useState<MarketplaceItem[]>([]);
   
-  // Mock purchased items organized by category
-  const [purchasedItems] = useState<MarketplaceItem[]>([
-    {
-      id: '1',
-      name: 'AI-Powered Analytics Dashboard',
-      description: 'Complete analytics solution with real-time insights',
-      price: 299,
-      rating: 4.8,
-      reviewCount: 156,
-      category: 'solutions',
-      type: 'service',
-      tags: ['Analytics', 'AI', 'Dashboard'],
-      featured: true
-    },
-    {
-      id: '2',
-      name: 'React Component Library',
-      description: 'Professional UI component library for React applications',
-      price: 49,
-      rating: 4.6,
-      reviewCount: 89,
-      category: 'capabilities',
-      type: 'product',
-      tags: ['React', 'Components', 'UI'],
-      featured: false
-    },
-    {
-      id: '3',
-      name: 'Alex Thompson',
-      description: 'Senior Full-Stack Developer with expertise in React and Node.js',
-      price: 85,
-      rating: 4.9,
-      reviewCount: 47,
-      category: 'individuals',
-      type: 'service',
-      tags: ['React', 'Node.js', 'TypeScript'],
-      level: 'Senior',
-      featured: false
-    },
-    {
-      id: '4',
-      name: 'W4D Squad',
-      description: 'Cross-functional development team specializing in web applications',
-      price: 450,
-      rating: 4.7,
-      reviewCount: 23,
-      category: 'teams',
-      type: 'service',
-      tags: ['Full-Stack', 'React', 'DevOps'],
-      featured: false
-    }
-  ]);
-
-  const userName = "John Doe"; // This would come from user context in real app
+  // Mock purchased items - in real app this would come from user's purchase history
+  const [purchasedItems] = useState<MarketplaceItem[]>([]);
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -111,18 +58,6 @@ const MyItems = () => {
 
   const handleCheckout = () => {
     // Implementation would go here
-  };
-
-  const handleLaunchItem = (item: MarketplaceItem) => {
-    console.log('Launching item:', item.name);
-    // Implementation for launching/viewing items would go here
-  };
-
-  const groupedItems = {
-    solutions: purchasedItems.filter(item => item.category === 'solutions'),
-    capabilities: purchasedItems.filter(item => item.category === 'capabilities'),
-    individuals: purchasedItems.filter(item => item.category === 'individuals'),
-    teams: purchasedItems.filter(item => item.category === 'teams')
   };
 
   return (
@@ -187,16 +122,12 @@ const MyItems = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
-                  className="flex items-center space-x-2 hover:bg-accent"
+                  variant="outline"
+                  size="icon"
+                  className="border-border hover:bg-accent"
                 >
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback className="text-xs font-medium">
-                      {userName.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{userName}</span>
-                  <ChevronDown size={12} />
+                  <User size={20} />
+                  <ChevronDown size={12} className="ml-1" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
@@ -225,126 +156,17 @@ const MyItems = () => {
             <Button onClick={() => navigate('/marketplace')}>Browse Marketplace</Button>
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* Solutions */}
-            {groupedItems.solutions.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-foreground">Solutions</h2>
-                  <Badge variant="outline">{groupedItems.solutions.length}</Badge>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-                  {groupedItems.solutions.map((item) => (
-                    <div key={item.id} className="relative">
-                      <MarketplaceCard
-                        item={item}
-                        onAddToCart={addToCart}
-                        onToggleFavorite={toggleFavorite}
-                        onOpenModal={handleOpenModal}
-                        isFavorited={isFavorited(item.id)}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => handleLaunchItem(item)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Launch
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Capabilities */}
-            {groupedItems.capabilities.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-foreground">Capabilities</h2>
-                  <Badge variant="outline">{groupedItems.capabilities.length}</Badge>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-                  {groupedItems.capabilities.map((item) => (
-                    <div key={item.id} className="relative">
-                      <MarketplaceCard
-                        item={item}
-                        onAddToCart={addToCart}
-                        onToggleFavorite={toggleFavorite}
-                        onOpenModal={handleOpenModal}
-                        isFavorited={isFavorited(item.id)}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => handleLaunchItem(item)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        View
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Individuals */}
-            {groupedItems.individuals.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-foreground">Individuals</h2>
-                  <Badge variant="outline">{groupedItems.individuals.length}</Badge>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-                  {groupedItems.individuals.map((item) => (
-                    <div key={item.id} className="relative">
-                      <MarketplaceCard
-                        item={item}
-                        onAddToCart={addToCart}
-                        onToggleFavorite={toggleFavorite}
-                        onOpenModal={handleOpenModal}
-                        isFavorited={isFavorited(item.id)}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => handleLaunchItem(item)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Contact
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Teams */}
-            {groupedItems.teams.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-foreground">Teams</h2>
-                  <Badge variant="outline">{groupedItems.teams.length}</Badge>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-                  {groupedItems.teams.map((item) => (
-                    <div key={item.id} className="relative">
-                      <MarketplaceCard
-                        item={item}
-                        onAddToCart={addToCart}
-                        onToggleFavorite={toggleFavorite}
-                        onOpenModal={handleOpenModal}
-                        isFavorited={isFavorited(item.id)}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => handleLaunchItem(item)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Contact
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+            {purchasedItems.map((item) => (
+              <MarketplaceCard
+                key={item.id}
+                item={item}
+                onAddToCart={addToCart}
+                onToggleFavorite={toggleFavorite}
+                onOpenModal={handleOpenModal}
+                isFavorited={isFavorited(item.id)}
+              />
+            ))}
           </div>
         )}
       </main>
