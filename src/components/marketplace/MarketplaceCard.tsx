@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, ShoppingCart, Heart, Plus, User, Mail } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus, User, Mail, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -13,6 +13,16 @@ interface MarketplaceCardProps {
   onOpenModal: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
+// Team names mapping
+const teamNames: { [key: string]: string } = {
+  'team-1': 'W4D Squad',
+  'team-2': 'BuildForce',
+  'team-3': 'SprintCore',
+  'team-4': 'DevOps Elite',
+  'team-5': 'CodeCrafters',
+  'team-6': 'AgileFlow',
+};
 
 export const MarketplaceCard = ({ 
   item, 
@@ -32,12 +42,19 @@ export const MarketplaceCard = ({
   };
 
   const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
+  const teamName = item.category === 'teams' ? teamNames[item.id] || item.name : item.name;
 
   return (
     <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
       <div onClick={() => onOpenModal(item)} className="p-0">
         {/* Image Area */}
-        <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/10 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+        <div className={`h-40 ${
+          item.category === 'teams' 
+            ? 'bg-gradient-to-br from-purple-500/20 to-purple-700/10' 
+            : item.category === 'solutions'
+            ? 'bg-gradient-to-br from-blue-500/20 to-blue-700/10'
+            : 'bg-gradient-to-br from-primary/20 to-primary/10'
+        } rounded-t-lg flex items-center justify-center relative overflow-hidden`}>
           {item.featured && (
             <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground">
               Featured
@@ -47,6 +64,10 @@ export const MarketplaceCard = ({
             {item.category === 'individuals' ? (
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
                 <User size={24} className="text-white" />
+              </div>
+            ) : item.category === 'teams' ? (
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                <Users size={24} className="text-white" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center">
@@ -71,13 +92,21 @@ export const MarketplaceCard = ({
         <div className="p-4 space-y-3">
           <div>
             <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-tight">
-              {item.name}
+              {teamName}
             </h3>
             {item.category === 'individuals' && (
               <div className="flex items-center justify-between mt-1">
                 <p className="text-xs text-primary">Frontend Developer</p>
                 <Badge variant="outline" className="text-xs px-2 py-0">
                   {item.level || 'Senior'}
+                </Badge>
+              </div>
+            )}
+            {item.category === 'teams' && (
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-purple-600">Cross-functional Team</p>
+                <Badge variant="outline" className="text-xs px-2 py-0 border-purple-200 text-purple-700">
+                  6 Members
                 </Badge>
               </div>
             )}
