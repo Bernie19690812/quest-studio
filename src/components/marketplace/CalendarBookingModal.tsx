@@ -107,7 +107,7 @@ export const CalendarBookingModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <CalendarIcon className="w-5 h-5" />
@@ -124,46 +124,66 @@ export const CalendarBookingModal = ({
             </Badge>
           </div>
 
-          {/* Date Selection */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Select Date</Label>
-            <div className="border rounded-lg p-3">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                disabled={isDateDisabled}
-                className={cn("w-full pointer-events-auto")}
-                initialFocus
-              />
+          {/* Calendar and Time Selection - Side by Side Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Side - Date Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Select Date</Label>
+              <div className="border rounded-lg p-3">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={isDateDisabled}
+                  className={cn("w-full pointer-events-auto")}
+                  initialFocus
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Available Monday through Friday. Weekends are not available.
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Available Monday through Friday. Weekends are not available.
-            </p>
-          </div>
 
-          {/* Time Selection */}
-          {selectedDate && (
+            {/* Right Side - Time Selection */}
             <div className="space-y-3">
               <Label className="text-sm font-medium flex items-center space-x-2">
                 <Clock className="w-4 h-4" />
-                <span>Select Time</span>
+                <span>Available Time Slots</span>
               </Label>
-              <div className="grid grid-cols-3 gap-2">
-                {mockTimeSlots.map((time) => (
-                  <Button
-                    key={time}
-                    variant={selectedTime === time ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedTime(time)}
-                    className="text-sm"
-                  >
-                    {time}
-                  </Button>
-                ))}
-              </div>
+              
+              {selectedDate ? (
+                <div className="space-y-3">
+                  <div className="p-3 bg-muted/30 rounded-lg">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Available times for <span className="font-medium text-foreground">
+                        {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                      </span>
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {mockTimeSlots.map((time) => (
+                        <Button
+                          key={time}
+                          variant={selectedTime === time ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setSelectedTime(time)}
+                          className="text-sm justify-center"
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-8 text-center border-2 border-dashed border-muted rounded-lg">
+                  <Clock className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    Please select a date to view available time slots
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Message/Agenda */}
           {selectedDate && selectedTime && (

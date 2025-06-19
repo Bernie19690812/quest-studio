@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
-import { Star, ShoppingCart, Heart, Plus, User, Mail } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus, User, CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { ContactModal } from './ContactModal';
 interface MarketplaceCardProps {
@@ -45,7 +47,7 @@ export const MarketplaceCard = ({
     return null;
   };
   const teamContent = getTeamContent();
-  return <>
+  return <TooltipProvider>
       <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
         <div onClick={() => onOpenModal(item)} className="p-0">
           {/* Image Area */}
@@ -123,9 +125,16 @@ export const MarketplaceCard = ({
                   <Heart size={14} className={isFavorited ? 'fill-current' : ''} />
                 </Button>
                 
-                {showContactUs ? <Button variant="outline" size="icon" onClick={handleContactClick} className="h-8 w-8 rounded-full border-border hover:bg-accent">
-                    <Mail size={14} />
-                  </Button> : <Button variant="outline" size="icon" onClick={e => {
+                {showContactUs ? <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" onClick={handleContactClick} className="h-8 w-8 rounded-full border-border hover:bg-accent">
+                        <CalendarIcon size={14} />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Schedule a Meeting</p>
+                    </TooltipContent>
+                  </Tooltip> : <Button variant="outline" size="icon" onClick={e => {
                 e.stopPropagation();
                 onAddToCart(item);
               }} className="h-8 w-8 rounded-full border-border hover:bg-accent">
@@ -138,5 +147,5 @@ export const MarketplaceCard = ({
       </Card>
 
       <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} itemName={item.category === 'teams' && teamContent ? teamContent.teamName : item.name} itemType={item.category as 'team' | 'individual' | 'solution'} />
-    </>;
+    </TooltipProvider>;
 };
