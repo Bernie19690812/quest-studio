@@ -44,7 +44,7 @@ export const MarketplaceItemModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="space-y-6">
-          {/* Header */}
+          {/* Header with title and basic info */}
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-foreground mb-2">{item.name}</h2>
@@ -68,9 +68,9 @@ export const MarketplaceItemModal = ({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Main Details */}
+            {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Image placeholder */}
+              {/* 1. Product/Service Image */}
               <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center">
                 <div className="text-center space-y-2">
                   <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
@@ -80,31 +80,18 @@ export const MarketplaceItemModal = ({
                 </div>
               </div>
 
-              {/* Description */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-foreground">Description</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-              </div>
-
-              {/* Tags */}
-              {item.tags && (
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">Skills & Technologies</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {item.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+              {/* 2. Pricing Section */}
+              <div className="space-y-3 p-6 border border-border rounded-lg bg-card">
+                <h3 className="text-xl font-semibold text-foreground">Pricing</h3>
+                <div className="flex items-center space-x-2">
+                  <DollarSign size={24} className="text-primary" />
+                  <span className="text-3xl font-bold text-foreground">
+                    ${item.price}
+                    {item.type === 'service' && <span className="text-lg font-normal text-muted-foreground">/hour</span>}
+                  </span>
                 </div>
-              )}
-
-              {/* For individuals, show additional info */}
-              {item.category === 'individuals' && (
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">Professional Details</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                {item.category === 'individuals' && (
+                  <div className="grid grid-cols-2 gap-4 pt-2">
                     <div className="flex items-center space-x-2">
                       <User size={16} className="text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">Experience: 5+ years</span>
@@ -114,61 +101,77 @@ export const MarketplaceItemModal = ({
                       <span className="text-sm text-muted-foreground">Available: Full-time</span>
                     </div>
                   </div>
+                )}
+              </div>
+
+              {/* 3. Description */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground">Description</h3>
+                <div className="prose prose-sm max-w-none text-muted-foreground">
+                  <p className="leading-relaxed whitespace-pre-line">{item.description}</p>
+                </div>
+              </div>
+
+              {/* 4. Skills & Technologies */}
+              {item.tags && (
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold text-foreground">Skills & Technologies</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {item.tags.map((tag, index) => (
+                      <Badge 
+                        key={index} 
+                        variant="secondary" 
+                        className="text-xs px-3 py-1 bg-primary/10 text-primary hover:bg-primary/20"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Right Column - Pricing, Actions, and Reviews */}
+            {/* Right Column - Reviews */}
             <div className="space-y-6">
-              {/* Pricing */}
-              <div className="space-y-3 p-4 border border-border rounded-lg">
-                <h3 className="text-lg font-semibold text-foreground">Pricing</h3>
-                <div className="flex items-center space-x-2">
-                  <DollarSign size={20} className="text-primary" />
-                  <span className="text-2xl font-bold text-foreground">
-                    ${item.price}
-                    {item.type === 'service' && <span className="text-base font-normal text-muted-foreground">/hour</span>}
-                  </span>
-                </div>
-
-                {/* Action buttons */}
-                <div className="space-y-3 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => onToggleFavorite(item)}
-                    className={`w-full flex items-center space-x-2 ${isFavorited ? 'text-red-500 border-red-500' : ''}`}
-                  >
-                    <Heart size={16} className={isFavorited ? 'fill-current' : ''} />
-                    <span>{isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}</span>
-                  </Button>
-                  
-                  {showContactUs ? (
-                    <Button
-                      onClick={handleContact}
-                      className="w-full flex items-center space-x-2 bg-purple-700 hover:bg-purple-600"
-                    >
-                      <Mail size={16} />
-                      <span>Send Message</span>
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        onAddToCart(item);
-                        onClose();
-                      }}
-                      className="w-full flex items-center space-x-2"
-                    >
-                      <ShoppingCart size={16} />
-                      <span>Add to Cart</span>
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {/* Ratings & Reviews Section */}
               <div className="border border-border rounded-lg p-4">
                 <RatingsReviews item={item} />
               </div>
+            </div>
+          </div>
+
+          {/* 5. Call-to-Action Buttons - Sticky Bottom */}
+          <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border pt-4 mt-8">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                onClick={() => onToggleFavorite(item)}
+                className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 ${isFavorited ? 'text-red-500 border-red-500' : ''}`}
+              >
+                <Heart size={16} className={isFavorited ? 'fill-current' : ''} />
+                <span className="hidden sm:inline">{isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}</span>
+                <span className="sm:hidden">{isFavorited ? 'Remove' : 'Favorite'}</span>
+              </Button>
+              
+              {showContactUs ? (
+                <Button
+                  onClick={handleContact}
+                  className="flex-1 flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600"
+                >
+                  <Mail size={16} />
+                  <span>Send Message</span>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    onAddToCart(item);
+                    onClose();
+                  }}
+                  className="flex-1 flex items-center justify-center space-x-2"
+                >
+                  <ShoppingCart size={16} />
+                  <span>Add to Cart</span>
+                </Button>
+              )}
             </div>
           </div>
         </div>
