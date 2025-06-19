@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
+import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone, CalendarIcon } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { RatingsReviews } from './RatingsReviews';
 import { ContactModal } from './ContactModal';
+import { CalendarBookingModal } from './CalendarBookingModal';
+
 interface MarketplaceItemModalProps {
   item: MarketplaceItem | null;
   isOpen: boolean;
@@ -14,6 +16,7 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
 export const MarketplaceItemModal = ({
   item,
   isOpen,
@@ -23,16 +26,27 @@ export const MarketplaceItemModal = ({
   isFavorited
 }: MarketplaceItemModalProps) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [calendarModalOpen, setCalendarModalOpen] = useState(false);
+
   if (!item) return null;
-  const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
+
+  const showContactUs = item.category === 'solutions';
+  const showCalendarBooking = item.category === 'individuals' || item.category === 'teams';
+
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={16} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
+
   const handleContact = () => {
     setContactModalOpen(true);
   };
+
+  const handleScheduleMeeting = () => {
+    setCalendarModalOpen(true);
+  };
+
   const getPricingDisplay = () => {
     if (item.category === 'capabilities') {
       return {
@@ -79,9 +93,11 @@ export const MarketplaceItemModal = ({
     }
     return null;
   };
+
   const teamContent = getTeamContent();
   const pricing = getPricingDisplay();
   const displayName = item.category === 'teams' && teamContent ? teamContent.teamName : item.name;
+
   return <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -161,24 +177,43 @@ export const MarketplaceItemModal = ({
                   <span className="sm:hidden">{isFavorited ? 'Remove' : 'Favorite'}</span>
                 </Button>
                 
-                {showContactUs ? <Button onClick={handleContact} className="flex-1 flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600">
+                {showCalendarBooking ? (
+                  <Button onClick={handleScheduleMeeting} className="flex-1 flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600">
+                    <CalendarIcon size={16} />
+                    <span>Schedule a Meeting</span>
+                  </Button>
+                ) : showContactUs ? (
+                  <Button onClick={handleContact} className="flex-1 flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600">
                     <Mail size={16} />
-                    <span>
-                      {item.category === 'individuals' ? 'Send Message' : 'Request Access'}
-                    </span>
-                  </Button> : <Button onClick={() => {
-                onAddToCart(item);
-                onClose();
-              }} className="flex-1 flex items-center justify-center space-x-2">
+                    <span>Request Access</span>
+                  </Button>
+                ) : (
+                  <Button onClick={() => {
+                    onAddToCart(item);
+                    onClose();
+                  }} className="flex-1 flex items-center justify-center space-x-2">
                     <ShoppingCart size={16} />
                     <span>Add to Cart</span>
-                  </Button>}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} itemName={displayName} itemType={item.category as 'team' | 'individual' | 'solution'} />
+      <ContactModal 
+        isOpen={contactModalOpen} 
+        onClose={() => setContactModalOpen(false)} 
+        itemName={displayName} 
+        itemType={item.category as 'team' | 'individual' | 'solution'} 
+      />
+
+      <CalendarBookingModal
+        isOpen={calendarModalOpen}
+        onClose={() => setCalendarModalOpen(false)}
+        itemName={displayName}
+        itemType={item.category === 'teams' ? 'team' : 'individual'}
+      />
     </>;
 };
