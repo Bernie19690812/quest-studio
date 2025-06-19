@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -6,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { RatingsReviews } from './RatingsReviews';
 import { ContactModal } from './ContactModal';
+
 interface MarketplaceItemModalProps {
   item: MarketplaceItem | null;
   isOpen: boolean;
@@ -14,6 +16,7 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
 export const MarketplaceItemModal = ({
   item,
   isOpen,
@@ -23,16 +26,21 @@ export const MarketplaceItemModal = ({
   isFavorited
 }: MarketplaceItemModalProps) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
+
   if (!item) return null;
+
   const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
+
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={16} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
+
   const handleContact = () => {
     setContactModalOpen(true);
   };
+
   const getPricingDisplay = () => {
     if (item.category === 'capabilities') {
       return {
@@ -79,9 +87,11 @@ export const MarketplaceItemModal = ({
     }
     return null;
   };
+
   const teamContent = getTeamContent();
   const pricing = getPricingDisplay();
   const displayName = item.category === 'teams' && teamContent ? teamContent.teamName : item.name;
+
   return <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -103,7 +113,6 @@ export const MarketplaceItemModal = ({
                   {item.category === 'individuals' && <Badge variant="secondary">
                       {item.level || 'Senior'}
                     </Badge>}
-                  {item.category === 'teams' && teamContent}
                 </div>
               </div>
             </div>
