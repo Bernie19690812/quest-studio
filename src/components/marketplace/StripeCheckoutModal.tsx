@@ -12,14 +12,14 @@ interface StripeCheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   items: MarketplaceItem[];
-  onSuccess: () => void;
+  onPaymentSuccess: () => void;
 }
 
 export const StripeCheckoutModal = ({ 
   isOpen, 
   onClose, 
   items, 
-  onSuccess 
+  onPaymentSuccess 
 }: StripeCheckoutModalProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
@@ -36,7 +36,7 @@ export const StripeCheckoutModal = ({
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     setIsProcessing(false);
-    onSuccess();
+    onPaymentSuccess();
     onClose();
   };
 
