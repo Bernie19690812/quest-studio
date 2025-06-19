@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { MarketplaceGrid } from '@/components/marketplace/MarketplaceGrid';
@@ -57,8 +58,6 @@ const marketplaceItems: MarketplaceItem[] = [
     type: 'product',
     tags: ['IoT', 'Predictive Maintenance', 'Machine Learning', 'Manufacturing']
   },
-
-  // Teams
   {
     id: '4',
     name: 'Full-Stack Development Team',
@@ -81,8 +80,6 @@ const marketplaceItems: MarketplaceItem[] = [
     type: 'service',
     tags: ['AI Research', 'Deep Learning', 'Computer Vision', 'NLP', 'TensorFlow']
   },
-
-  // Individuals
   {
     id: '6',
     name: 'Senior Data Scientist',
@@ -146,11 +143,23 @@ const Marketplace = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [purchasedItems, setPurchasedItems] = useState<MarketplaceItem[]>([]);
 
   const handleCheckout = () => {
+    setPurchasedItems([...cartItems]);
     setShowPaymentSuccess(true);
     setIsCartOpen(false);
     clearCart();
+  };
+
+  const handleSeeMore = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const handleGoToStudio = () => {
+    setShowPaymentSuccess(false);
+    // Navigate to studio - could use react-router navigate here
+    window.location.href = '/';
   };
 
   return (
@@ -182,6 +191,7 @@ const Marketplace = () => {
           onAddToCart={addToCart}
           onToggleFavorite={toggleFavorite}
           onOpenModal={setSelectedItem}
+          onSeeMore={handleSeeMore}
         />
 
         <MarketplaceItemModal
@@ -205,13 +215,18 @@ const Marketplace = () => {
           isOpen={isFavoritesOpen}
           onClose={() => setIsFavoritesOpen(false)}
           items={favorites}
-          onToggleFavorite={toggleFavorite}
           onAddToCart={addToCart}
+          onRemoveFavorite={(itemId: string) => {
+            const item = favorites.find(f => f.id === itemId);
+            if (item) toggleFavorite(item);
+          }}
         />
 
         <PaymentSuccessModal
           isOpen={showPaymentSuccess}
           onClose={() => setShowPaymentSuccess(false)}
+          purchasedItems={purchasedItems}
+          onGoToStudio={handleGoToStudio}
         />
       </div>
     </div>

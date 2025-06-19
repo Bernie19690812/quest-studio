@@ -14,6 +14,7 @@ interface MarketplaceGridProps {
   onAddToCart: (item: MarketplaceItem) => void;
   onToggleFavorite: (item: MarketplaceItem) => void;
   onOpenModal: (item: MarketplaceItem) => void;
+  onSeeMore: (category: string) => void;
 }
 
 export const MarketplaceGrid = ({
@@ -24,7 +25,8 @@ export const MarketplaceGrid = ({
   favorites,
   onAddToCart,
   onToggleFavorite,
-  onOpenModal
+  onOpenModal,
+  onSeeMore
 }: MarketplaceGridProps) => {
   if (searchTerm || selectedCategory !== 'all') {
     return (
@@ -52,21 +54,18 @@ export const MarketplaceGrid = ({
   return (
     <div className="space-y-12">
       {categories.map((category) => (
-        <CategorySection
-          key={category.id}
-          title={category.title}
-          items={category.items}
-          onAddToCart={onAddToCart}
-          onToggleFavorite={onToggleFavorite}
-          onOpenModal={onOpenModal}
-          favorites={favorites}
-          renderSeeMore={() => (
-            <SeeMoreCard 
-              category={category.id as 'solutions' | 'teams' | 'individuals'} 
-              totalCount={category.items.length}
-            />
-          )}
-        />
+        <div key={category.id}>
+          <h2 className="text-xl font-semibold mb-6">{category.title}</h2>
+          <CategorySection
+            items={category.items}
+            category={category.id}
+            onAddToCart={onAddToCart}
+            onToggleFavorite={onToggleFavorite}
+            onOpenModal={onOpenModal}
+            onSeeMore={onSeeMore}
+            isFavorited={(itemId: string) => favorites.some(fav => fav.id === itemId)}
+          />
+        </div>
       ))}
     </div>
   );

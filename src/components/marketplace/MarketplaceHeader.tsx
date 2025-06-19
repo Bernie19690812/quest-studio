@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { FilterBar } from './FilterBar';
 
 interface MarketplaceHeaderProps {
   searchTerm: string;
@@ -111,14 +110,51 @@ export const MarketplaceHeader = ({
         </div>
 
         {showFilters && (
-          <FilterBar
-            selectedCategory={selectedCategory}
-            onCategoryChange={onCategoryChange}
-            selectedType={selectedType}
-            onTypeChange={onTypeChange}
-            selectedPriceRange={selectedPriceRange}
-            onPriceRangeChange={onPriceRangeChange}
-          />
+          <div className="p-4 border border-border rounded-lg bg-muted/20">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Category</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => onCategoryChange(e.target.value)}
+                  className="w-full p-2 border border-border rounded-md bg-background"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="solutions">Solutions</option>
+                  <option value="teams">Teams</option>
+                  <option value="individuals">Individuals</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Type</label>
+                <select
+                  value={selectedType}
+                  onChange={(e) => onTypeChange(e.target.value)}
+                  className="w-full p-2 border border-border rounded-md bg-background"
+                >
+                  <option value="all">All Types</option>
+                  <option value="product">Product</option>
+                  <option value="service">Service</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Price Range</label>
+                <select
+                  value={selectedPriceRange}
+                  onChange={(e) => onPriceRangeChange(e.target.value)}
+                  className="w-full p-2 border border-border rounded-md bg-background"
+                >
+                  <option value="all">All Prices</option>
+                  <option value="0-50">$0 - $50</option>
+                  <option value="51-200">$51 - $200</option>
+                  <option value="201-500">$201 - $500</option>
+                  <option value="500+">$500+</option>
+                </select>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </>
