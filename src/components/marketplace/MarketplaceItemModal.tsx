@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -7,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { RatingsReviews } from './RatingsReviews';
 import { ContactModal } from './ContactModal';
-
 interface MarketplaceItemModalProps {
   item: MarketplaceItem | null;
   isOpen: boolean;
@@ -16,7 +14,6 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
-
 export const MarketplaceItemModal = ({
   item,
   isOpen,
@@ -26,21 +23,16 @@ export const MarketplaceItemModal = ({
   isFavorited
 }: MarketplaceItemModalProps) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
-
   if (!item) return null;
-
   const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
-
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={16} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
-
   const handleContact = () => {
     setContactModalOpen(true);
   };
-
   const getPricingDisplay = () => {
     if (item.category === 'capabilities') {
       return {
@@ -67,13 +59,14 @@ export const MarketplaceItemModal = ({
         description: 'Starting price for projects'
       };
     }
-    return { price: 'Contact for pricing', unit: '', description: '' };
+    return {
+      price: 'Contact for pricing',
+      unit: '',
+      description: ''
+    };
   };
-
   const pricing = getPricingDisplay();
-
-  return (
-    <>
+  return <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <div className="space-y-6">
@@ -91,16 +84,12 @@ export const MarketplaceItemModal = ({
                   <Badge variant="outline">
                     {item.type === 'service' ? 'Service' : 'Product'}
                   </Badge>
-                  {item.category === 'individuals' && (
-                    <Badge variant="secondary">
+                  {item.category === 'individuals' && <Badge variant="secondary">
                       {item.level || 'Senior'}
-                    </Badge>
-                  )}
-                  {item.category === 'teams' && (item as any).roleComposition && (
-                    <Badge variant="secondary" className="text-xs">
+                    </Badge>}
+                  {item.category === 'teams' && (item as any).roleComposition && <Badge variant="secondary" className="text-xs">
                       {(item as any).roleComposition}
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
               </div>
             </div>
@@ -117,17 +106,12 @@ export const MarketplaceItemModal = ({
 
             {/* 2. Pricing Section */}
             <div className="space-y-3 border-b border-border pb-4">
-              <h3 className="text-lg font-semibold text-foreground flex items-center space-x-2">
-                <DollarSign size={20} />
-                <span>Pricing</span>
-              </h3>
+              
               <div className="flex items-baseline space-x-2">
                 <span className="text-2xl font-bold text-foreground">{pricing.price}</span>
                 {pricing.unit && <span className="text-muted-foreground">{pricing.unit}</span>}
               </div>
-              {pricing.description && (
-                <p className="text-sm text-muted-foreground">{pricing.description}</p>
-              )}
+              {pricing.description && <p className="text-sm text-muted-foreground">{pricing.description}</p>}
             </div>
 
             {/* 3. Description */}
@@ -139,22 +123,14 @@ export const MarketplaceItemModal = ({
             </div>
 
             {/* 4. Skills & Technologies */}
-            {item.tags && (
-              <div className="space-y-3 border-b border-border pb-4">
+            {item.tags && <div className="space-y-3 border-b border-border pb-4">
                 <h3 className="text-lg font-semibold text-foreground">Skills & Technologies</h3>
                 <div className="flex flex-wrap gap-2">
-                  {item.tags.map((tag, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="secondary" 
-                      className="text-xs px-3 py-1 bg-primary/10 text-primary hover:bg-primary/20"
-                    >
+                  {item.tags.map((tag, index) => <Badge key={index} variant="secondary" className="text-xs px-3 py-1 bg-primary/10 text-primary hover:bg-primary/20">
                       {tag}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                 </div>
-              </div>
-            )}
+              </div>}
 
             {/* 5. Ratings & Reviews */}
             <div className="border-b border-border pb-4">
@@ -164,13 +140,7 @@ export const MarketplaceItemModal = ({
             {/* 6. Call-to-Action Buttons - Sticky Bottom */}
             <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border pt-4 mt-8">
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => onToggleFavorite(item)} 
-                  className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 ${
-                    isFavorited ? 'text-red-500 border-red-500' : ''
-                  }`}
-                >
+                <Button variant="outline" onClick={() => onToggleFavorite(item)} className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 ${isFavorited ? 'text-red-500 border-red-500' : ''}`}>
                   <Heart size={16} className={isFavorited ? 'fill-current' : ''} />
                   <span className="hidden sm:inline">
                     {isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}
@@ -178,40 +148,24 @@ export const MarketplaceItemModal = ({
                   <span className="sm:hidden">{isFavorited ? 'Remove' : 'Favorite'}</span>
                 </Button>
                 
-                {showContactUs ? (
-                  <Button 
-                    onClick={handleContact} 
-                    className="flex-1 flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600"
-                  >
+                {showContactUs ? <Button onClick={handleContact} className="flex-1 flex items-center justify-center space-x-2 bg-purple-700 hover:bg-purple-600">
                     <Mail size={16} />
                     <span>
                       {item.category === 'individuals' ? 'Send Message' : 'Request Access'}
                     </span>
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={() => {
-                      onAddToCart(item);
-                      onClose();
-                    }} 
-                    className="flex-1 flex items-center justify-center space-x-2"
-                  >
+                  </Button> : <Button onClick={() => {
+                onAddToCart(item);
+                onClose();
+              }} className="flex-1 flex items-center justify-center space-x-2">
                     <ShoppingCart size={16} />
                     <span>Add to Cart</span>
-                  </Button>
-                )}
+                  </Button>}
               </div>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      <ContactModal
-        isOpen={contactModalOpen}
-        onClose={() => setContactModalOpen(false)}
-        itemName={item.name}
-        itemType={item.category as 'team' | 'individual' | 'solution'}
-      />
-    </>
-  );
+      <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} itemName={item.name} itemType={item.category as 'team' | 'individual' | 'solution'} />
+    </>;
 };
