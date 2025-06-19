@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -7,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { RatingsReviews } from './RatingsReviews';
 import { ContactModal } from './ContactModal';
-
 interface MarketplaceItemModalProps {
   item: MarketplaceItem | null;
   isOpen: boolean;
@@ -16,7 +14,6 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
-
 export const MarketplaceItemModal = ({
   item,
   isOpen,
@@ -26,21 +23,16 @@ export const MarketplaceItemModal = ({
   isFavorited
 }: MarketplaceItemModalProps) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
-
   if (!item) return null;
-
   const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
-
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={16} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
-
   const handleContact = () => {
     setContactModalOpen(true);
   };
-
   const getPricingDisplay = () => {
     if (item.category === 'capabilities') {
       return {
@@ -78,14 +70,7 @@ export const MarketplaceItemModal = ({
   const getTeamContent = () => {
     if (item.category === 'teams') {
       const teamNames = ['4WD Squad', 'Alpha Team', 'Phoenix Squad', 'Delta Force', 'Nexus Team'];
-      const roleDescriptions = [
-        'This innovation centered team comprises a frontend developer, scrum master, backend engineer, and DevOps specialist',
-        'Cross-functional squad with product manager, full-stack developers, and UX designer',
-        'Agile team featuring frontend specialist, backend architect, QA engineer, and team lead',
-        'High-performance squad with React developer, Node.js expert, cloud engineer, and project coordinator',
-        'Collaborative team including UI/UX designer, full-stack engineer, database specialist, and scrum master'
-      ];
-      
+      const roleDescriptions = ['This innovation centered team comprises a frontend developer, scrum master, backend engineer, and DevOps specialist', 'Cross-functional squad with product manager, full-stack developers, and UX designer', 'Agile team featuring frontend specialist, backend architect, QA engineer, and team lead', 'High-performance squad with React developer, Node.js expert, cloud engineer, and project coordinator', 'Collaborative team including UI/UX designer, full-stack engineer, database specialist, and scrum master'];
       const index = Math.abs(item.name.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % teamNames.length;
       return {
         teamName: teamNames[index],
@@ -94,11 +79,9 @@ export const MarketplaceItemModal = ({
     }
     return null;
   };
-
   const teamContent = getTeamContent();
   const pricing = getPricingDisplay();
   const displayName = item.category === 'teams' && teamContent ? teamContent.teamName : item.name;
-
   return <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -120,9 +103,7 @@ export const MarketplaceItemModal = ({
                   {item.category === 'individuals' && <Badge variant="secondary">
                       {item.level || 'Senior'}
                     </Badge>}
-                  {item.category === 'teams' && teamContent && <Badge variant="secondary" className="text-xs">
-                      {teamContent.roleComposition}
-                    </Badge>}
+                  {item.category === 'teams' && teamContent}
                 </div>
               </div>
             </div>
@@ -151,9 +132,7 @@ export const MarketplaceItemModal = ({
               <h3 className="text-lg font-semibold text-foreground">Description</h3>
               <div className="prose prose-sm max-w-none text-muted-foreground">
                 <p className="leading-relaxed whitespace-pre-line">{item.description}</p>
-                {item.category === 'teams' && teamContent && (
-                  <p className="leading-relaxed mt-2 text-primary">{teamContent.roleComposition}</p>
-                )}
+                {item.category === 'teams' && teamContent && <p className="leading-relaxed mt-2 text-primary">{teamContent.roleComposition}</p>}
               </div>
             </div>
 
