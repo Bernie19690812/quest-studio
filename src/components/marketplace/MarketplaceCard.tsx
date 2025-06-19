@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, ShoppingCart, Heart, Plus, User, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -89,8 +90,8 @@ export const MarketplaceCard = ({
                   </Badge>
                 </div>
               )}
-              {item.category === 'teams' && item.roleComposition && (
-                <p className="text-xs text-primary mt-1">{item.roleComposition}</p>
+              {item.category === 'teams' && (item as any).roleComposition && (
+                <p className="text-xs text-primary mt-1">{(item as any).roleComposition}</p>
               )}
             </div>
 

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -95,9 +96,9 @@ export const MarketplaceItemModal = ({
                       {item.level || 'Senior'}
                     </Badge>
                   )}
-                  {item.category === 'teams' && item.roleComposition && (
+                  {item.category === 'teams' && (item as any).roleComposition && (
                     <Badge variant="secondary" className="text-xs">
-                      {item.roleComposition}
+                      {(item as any).roleComposition}
                     </Badge>
                   )}
                 </div>
