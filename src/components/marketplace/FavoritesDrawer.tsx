@@ -11,7 +11,7 @@ interface FavoritesDrawerProps {
   onClose: () => void;
   items: MarketplaceItem[];
   onAddToCart: (item: MarketplaceItem) => void;
-  onToggleFavorite: (item: MarketplaceItem) => void;
+  onRemoveFavorite: (itemId: string) => void;
 }
 
 export const FavoritesDrawer = ({ 
@@ -19,7 +19,7 @@ export const FavoritesDrawer = ({
   onClose, 
   items, 
   onAddToCart, 
-  onToggleFavorite 
+  onRemoveFavorite 
 }: FavoritesDrawerProps) => {
   if (!isOpen) return null;
 
@@ -52,7 +52,7 @@ export const FavoritesDrawer = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onToggleFavorite(item)}
+                      onClick={() => onRemoveFavorite(item.id)}
                       className="h-6 w-6"
                     >
                       <X size={12} />

@@ -18,6 +18,7 @@ export const PaymentSuccessModal = ({
   purchasedItems, 
   onGoToStudio 
 }: PaymentSuccessModalProps) => {
+  const capabilities = purchasedItems.filter(item => item.category === 'capabilities');
   const solutions = purchasedItems.filter(item => item.category === 'solutions');
   const services = purchasedItems.filter(item => item.category === 'teams' || item.category === 'individuals');
 
@@ -40,6 +41,21 @@ export const PaymentSuccessModal = ({
 
           {/* Purchased Items Summary */}
           <div className="space-y-4">
+            {capabilities.length > 0 && (
+              <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                <h3 className="font-medium text-sm mb-2 text-green-800 dark:text-green-200">
+                  Capabilities Added to Studio
+                </h3>
+                <div className="space-y-1">
+                  {capabilities.map(item => (
+                    <p key={item.id} className="text-xs text-green-700 dark:text-green-300">
+                      • {item.name}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {solutions.length > 0 && (
               <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
                 <h3 className="font-medium text-sm mb-2 text-blue-800 dark:text-blue-200">
