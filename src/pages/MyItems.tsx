@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, ShoppingCart, Star, User, Search, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
 import { MarketplaceItemModal } from '@/components/marketplace/MarketplaceItemModal';
 import { FavoritesDrawer } from '@/components/marketplace/FavoritesDrawer';
@@ -123,11 +123,13 @@ const MyItems = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="border-border hover:bg-accent"
+                  className="border-border hover:bg-accent flex items-center space-x-2 px-3"
                 >
-                  <User size={20} />
-                  <ChevronDown size={12} className="ml-1" />
+                  <Avatar className="w-6 h-6">
+                    <AvatarImage src="" alt="User" />
+                    <AvatarFallback className="text-xs">U</AvatarFallback>
+                  </Avatar>
+                  <ChevronDown size={12} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
