@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Star, ShoppingCart, Heart, User, Clock, DollarSign, Mail, Phone } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -6,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { RatingsReviews } from './RatingsReviews';
 import { ContactModal } from './ContactModal';
+
 interface MarketplaceItemModalProps {
   item: MarketplaceItem | null;
   isOpen: boolean;
@@ -14,6 +16,7 @@ interface MarketplaceItemModalProps {
   onToggleFavorite: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
 export const MarketplaceItemModal = ({
   item,
   isOpen,
@@ -23,16 +26,21 @@ export const MarketplaceItemModal = ({
   isFavorited
 }: MarketplaceItemModalProps) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
+
   if (!item) return null;
+
   const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
+
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={16} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
+
   const handleContact = () => {
     setContactModalOpen(true);
   };
+
   const getPricingDisplay = () => {
     if (item.category === 'capabilities') {
       return {
@@ -65,7 +73,32 @@ export const MarketplaceItemModal = ({
       description: ''
     };
   };
+
+  // Generate team-specific content for teams category
+  const getTeamContent = () => {
+    if (item.category === 'teams') {
+      const teamNames = ['4WD Squad', 'Alpha Team', 'Phoenix Squad', 'Delta Force', 'Nexus Team'];
+      const roleDescriptions = [
+        'This innovation centered team comprises a frontend developer, scrum master, backend engineer, and DevOps specialist',
+        'Cross-functional squad with product manager, full-stack developers, and UX designer',
+        'Agile team featuring frontend specialist, backend architect, QA engineer, and team lead',
+        'High-performance squad with React developer, Node.js expert, cloud engineer, and project coordinator',
+        'Collaborative team including UI/UX designer, full-stack engineer, database specialist, and scrum master'
+      ];
+      
+      const index = Math.abs(item.name.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % teamNames.length;
+      return {
+        teamName: teamNames[index],
+        roleComposition: roleDescriptions[index]
+      };
+    }
+    return null;
+  };
+
+  const teamContent = getTeamContent();
   const pricing = getPricingDisplay();
+  const displayName = item.category === 'teams' && teamContent ? teamContent.teamName : item.name;
+
   return <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -73,7 +106,7 @@ export const MarketplaceItemModal = ({
             {/* Header with title and basic info */}
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-foreground mb-2">{item.name}</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-2">{displayName}</h2>
                 <div className="flex items-center space-x-4 mb-3">
                   <div className="flex items-center space-x-1">
                     {renderStars(Math.floor(item.rating || 4.5))}
@@ -87,8 +120,8 @@ export const MarketplaceItemModal = ({
                   {item.category === 'individuals' && <Badge variant="secondary">
                       {item.level || 'Senior'}
                     </Badge>}
-                  {item.category === 'teams' && (item as any).roleComposition && <Badge variant="secondary" className="text-xs">
-                      {(item as any).roleComposition}
+                  {item.category === 'teams' && teamContent && <Badge variant="secondary" className="text-xs">
+                      {teamContent.roleComposition}
                     </Badge>}
                 </div>
               </div>
@@ -100,13 +133,12 @@ export const MarketplaceItemModal = ({
                 <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
                   <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
                 </div>
-                <p className="text-sm text-muted-foreground">{item.name}</p>
+                <p className="text-sm text-muted-foreground">{displayName}</p>
               </div>
             </div>
 
             {/* 2. Pricing Section */}
             <div className="space-y-3 border-b border-border pb-4">
-              
               <div className="flex items-baseline space-x-2">
                 <span className="text-2xl font-bold text-foreground">{pricing.price}</span>
                 {pricing.unit && <span className="text-muted-foreground">{pricing.unit}</span>}
@@ -119,6 +151,9 @@ export const MarketplaceItemModal = ({
               <h3 className="text-lg font-semibold text-foreground">Description</h3>
               <div className="prose prose-sm max-w-none text-muted-foreground">
                 <p className="leading-relaxed whitespace-pre-line">{item.description}</p>
+                {item.category === 'teams' && teamContent && (
+                  <p className="leading-relaxed mt-2 text-primary">{teamContent.roleComposition}</p>
+                )}
               </div>
             </div>
 
@@ -166,6 +201,6 @@ export const MarketplaceItemModal = ({
         </DialogContent>
       </Dialog>
 
-      <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} itemName={item.name} itemType={item.category as 'team' | 'individual' | 'solution'} />
+      <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} itemName={displayName} itemType={item.category as 'team' | 'individual' | 'solution'} />
     </>;
 };

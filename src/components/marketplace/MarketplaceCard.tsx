@@ -41,6 +41,29 @@ export const MarketplaceCard = ({
     setContactModalOpen(true);
   };
 
+  // Generate team-specific content for teams category
+  const getTeamContent = () => {
+    if (item.category === 'teams') {
+      const teamNames = ['4WD Squad', 'Alpha Team', 'Phoenix Squad', 'Delta Force', 'Nexus Team'];
+      const roleDescriptions = [
+        'This innovation centered team comprises a frontend developer, scrum master, backend engineer, and DevOps specialist',
+        'Cross-functional squad with product manager, full-stack developers, and UX designer',
+        'Agile team featuring frontend specialist, backend architect, QA engineer, and team lead',
+        'High-performance squad with React developer, Node.js expert, cloud engineer, and project coordinator',
+        'Collaborative team including UI/UX designer, full-stack engineer, database specialist, and scrum master'
+      ];
+      
+      const index = Math.abs(item.name.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % teamNames.length;
+      return {
+        teamName: teamNames[index],
+        roleComposition: roleDescriptions[index]
+      };
+    }
+    return null;
+  };
+
+  const teamContent = getTeamContent();
+
   return (
     <>
       <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
@@ -80,7 +103,7 @@ export const MarketplaceCard = ({
           <div className="p-4 space-y-3">
             <div>
               <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-tight">
-                {item.name}
+                {item.category === 'teams' && teamContent ? teamContent.teamName : item.name}
               </h3>
               {item.category === 'individuals' && (
                 <div className="flex items-center justify-between mt-1">
@@ -90,8 +113,8 @@ export const MarketplaceCard = ({
                   </Badge>
                 </div>
               )}
-              {item.category === 'teams' && (item as any).roleComposition && (
-                <p className="text-xs text-primary mt-1">{(item as any).roleComposition}</p>
+              {item.category === 'teams' && teamContent && (
+                <p className="text-xs text-primary mt-1">{teamContent.roleComposition}</p>
               )}
             </div>
 
@@ -176,7 +199,7 @@ export const MarketplaceCard = ({
       <ContactModal
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
-        itemName={item.name}
+        itemName={item.category === 'teams' && teamContent ? teamContent.teamName : item.name}
         itemType={item.category as 'team' | 'individual' | 'solution'}
       />
     </>
