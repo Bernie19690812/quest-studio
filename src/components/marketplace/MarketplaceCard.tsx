@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Star, ShoppingCart, Heart, Plus, User, CalendarIcon } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus, User, CalendarIcon, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -139,11 +140,11 @@ export const MarketplaceCard = ({
                 {showContactUs ? <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="outline" size="icon" onClick={handleContactClick} className="h-8 w-8 rounded-full border-border hover:bg-accent">
-                        <CalendarIcon size={14} />
+                        {item.category === 'solutions' ? <MessageCircle size={14} /> : <CalendarIcon size={14} />}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Schedule a Meeting</p>
+                      <p>{item.category === 'solutions' ? 'Send Message' : 'Schedule a Meeting'}</p>
                     </TooltipContent>
                   </Tooltip> : <Button variant="outline" size="icon" onClick={e => {
                 e.stopPropagation();
