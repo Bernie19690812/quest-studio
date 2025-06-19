@@ -146,11 +146,19 @@ const Marketplace = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [purchasedItems, setPurchasedItems] = useState<MarketplaceItem[]>([]);
 
   const handleCheckout = () => {
+    setPurchasedItems([...cartItems]);
     setShowPaymentSuccess(true);
     setIsCartOpen(false);
     clearCart();
+  };
+
+  const handleGoToStudio = () => {
+    setShowPaymentSuccess(false);
+    // Navigate to studio - this would be implemented with router
+    console.log('Navigate to studio');
   };
 
   return (
@@ -197,8 +205,13 @@ const Marketplace = () => {
           isOpen={isCartOpen}
           onClose={() => setIsCartOpen(false)}
           items={cartItems}
+          allItems={marketplaceItems}
           onRemoveItem={removeFromCart}
+          onAddToCart={addToCart}
+          onToggleFavorite={toggleFavorite}
+          onOpenModal={setSelectedItem}
           onCheckout={handleCheckout}
+          isFavorited={(itemId: string) => favorites.some(fav => fav.id === itemId)}
         />
 
         <FavoritesDrawer
@@ -212,6 +225,8 @@ const Marketplace = () => {
         <PaymentSuccessModal
           isOpen={showPaymentSuccess}
           onClose={() => setShowPaymentSuccess(false)}
+          purchasedItems={purchasedItems}
+          onGoToStudio={handleGoToStudio}
         />
       </div>
     </div>
