@@ -978,7 +978,6 @@ const Marketplace = () => {
               </div>
               <nav className="flex items-center space-x-1">
                 <Button variant="ghost" onClick={() => setShowPurchasedItems(false)} className="text-muted-foreground hover:text-foreground flex items-center space-x-2">
-                  <ArrowLeft size={16} />
                   <span>Back to Marketplace</span>
                 </Button>
                 <Button variant="ghost" className="text-foreground font-medium">
