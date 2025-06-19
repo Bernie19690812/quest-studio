@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star, ShoppingCart, Heart, Plus, User, CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { MarketplaceItem } from '@/pages/Marketplace';
 import { ContactModal } from './ContactModal';
+import { CalendarBookingModal } from './CalendarBookingModal';
+
 interface MarketplaceCardProps {
   item: MarketplaceItem;
   onAddToCart: (item: MarketplaceItem) => void;
@@ -14,6 +15,7 @@ interface MarketplaceCardProps {
   onOpenModal: (item: MarketplaceItem) => void;
   isFavorited: boolean;
 }
+
 export const MarketplaceCard = ({
   item,
   onAddToCart,
@@ -22,18 +24,25 @@ export const MarketplaceCard = ({
   isFavorited
 }: MarketplaceCardProps) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [calendarModalOpen, setCalendarModalOpen] = useState(false);
+
   const renderStars = (rating: number) => {
     return Array.from({
       length: 5
     }, (_, i) => <Star key={i} size={12} className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'} />);
   };
+
   const showContactUs = item.category === 'solutions' || item.category === 'individuals' || item.category === 'teams';
+
   const handleContactClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setContactModalOpen(true);
+    if (item.category === 'solutions') {
+      setContactModalOpen(true);
+    } else {
+      setCalendarModalOpen(true);
+    }
   };
 
-  // Generate team-specific content for teams category
   const getTeamContent = () => {
     if (item.category === 'teams') {
       const teamNames = ['4WD Squad', 'Alpha Team', 'Phoenix Squad', 'Delta Force', 'Nexus Team'];
@@ -46,7 +55,9 @@ export const MarketplaceCard = ({
     }
     return null;
   };
+
   const teamContent = getTeamContent();
+
   return <TooltipProvider>
       <Card className="netflix-card min-w-[280px] max-w-[280px] cursor-pointer group">
         <div onClick={() => onOpenModal(item)} className="p-0">
@@ -146,6 +157,18 @@ export const MarketplaceCard = ({
         </div>
       </Card>
 
-      <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} itemName={item.category === 'teams' && teamContent ? teamContent.teamName : item.name} itemType={item.category as 'team' | 'individual' | 'solution'} />
+      <ContactModal 
+        isOpen={contactModalOpen} 
+        onClose={() => setContactModalOpen(false)} 
+        itemName={item.category === 'teams' && teamContent ? teamContent.teamName : item.name} 
+        itemType={item.category as 'team' | 'individual' | 'solution'} 
+      />
+
+      <CalendarBookingModal
+        isOpen={calendarModalOpen}
+        onClose={() => setCalendarModalOpen(false)}
+        itemName={item.category === 'teams' && teamContent ? teamContent.teamName : item.name}
+        itemType={item.category === 'teams' ? 'team' : 'individual'}
+      />
     </TooltipProvider>;
 };
