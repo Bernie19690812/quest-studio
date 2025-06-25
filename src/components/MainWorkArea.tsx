@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Send, Paperclip, Plus, X, Trash2, Wrench, Brain, Zap, MessageSquarePlus, Grid3X3, Upload, FileText, Image, File } from 'lucide-react';
+import { Send, Paperclip, Plus, X, Trash2, Wrench, Brain, Zap, MessageSquarePlus, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -24,14 +23,6 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-interface SolutionFile {
-  id: string;
-  name: string;
-  type: 'image' | 'document' | 'other';
-  size: string;
-  uploadDate: Date;
-}
-
 interface MainWorkAreaProps {
   activeSolution: Solution | null;
   activeChat: Chat | null;
@@ -49,18 +40,6 @@ const getComponentIcon = (type: ActiveComponent['type']) => {
       return Zap;
     default:
       return Wrench;
-  }
-};
-
-// Mock function to get file icon
-const getFileIcon = (type: SolutionFile['type']) => {
-  switch (type) {
-    case 'image':
-      return Image;
-    case 'document':
-      return FileText;
-    default:
-      return File;
   }
 };
 
@@ -84,7 +63,6 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('chats');
-  const [solutionFiles, setSolutionFiles] = useState<SolutionFile[]>([]);
 
   // Mock chats data
   const mockChats = [
@@ -93,11 +71,12 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
     { id: '3', name: 'API Integration Help', dateModified: new Date(), messages: [] },
   ];
 
-  // Mock files data
-  const mockFiles: SolutionFile[] = [
-    { id: 'f1', name: 'project-specs.pdf', type: 'document', size: '2.3 MB', uploadDate: new Date() },
-    { id: 'f2', name: 'ui-mockup.png', type: 'image', size: '1.1 MB', uploadDate: new Date() },
-    { id: 'f3', name: 'data-sample.csv', type: 'other', size: '456 KB', uploadDate: new Date() },
+  // Mock tools data
+  const mockTools = [
+    { id: 't1', name: 'Field Detector', type: 'capability' as const, description: 'Automatically detect and extract form fields' },
+    { id: 't2', name: 'Text Extractor (OCR)', type: 'template' as const, description: 'Extract text from images and documents' },
+    { id: 't3', name: 'Data Validator', type: 'capability' as const, description: 'Validate data format and integrity' },
+    { id: 't4', name: 'Report Generator', type: 'solution' as const, description: 'Generate automated reports' },
   ];
 
   // Update state when activeChat or activeSolution changes
@@ -117,10 +96,8 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
   useEffect(() => {
     if (activeSolution) {
       setSolutionName(activeSolution.title);
-      setSolutionFiles(mockFiles); // In real app, this would be solution-specific
     } else {
       setSolutionName('');
-      setSolutionFiles([]);
     }
   }, [activeSolution]);
 
@@ -167,26 +144,14 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
       if (files) {
         Array.from(files).forEach(file => {
           console.log('File uploaded:', file.name);
-          // Add new file to solution files
-          const newFile: SolutionFile = {
+          // Add file upload message to chat
+          const fileMessage: ChatMessage = {
             id: Date.now().toString(),
-            name: file.name,
-            type: file.type.startsWith('image/') ? 'image' : 'document',
-            size: `${(file.size / 1024).toFixed(1)} KB`,
-            uploadDate: new Date(),
+            text: `📎 Uploaded file: ${file.name}`,
+            isUser: true,
+            timestamp: new Date(),
           };
-          setSolutionFiles(prev => [...prev, newFile]);
-          
-          // Add file upload message to chat if in chat context
-          if (activeTab === 'chats') {
-            const fileMessage: ChatMessage = {
-              id: Date.now().toString(),
-              text: `📎 Uploaded file: ${file.name}`,
-              isUser: true,
-              timestamp: new Date(),
-            };
-            setChatMessages(prev => [...prev, fileMessage]);
-          }
+          setChatMessages(prev => [...prev, fileMessage]);
         });
       }
     };
@@ -218,6 +183,15 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
   const handleChatNameChange = (newName: string) => {
     setCurrentChatName(newName || 'Untitled Chat');
     console.log('Chat name changed to:', newName);
+  };
+
+  const handleToolAdd = (tool: typeof mockTools[0]) => {
+    const component: ActiveComponent = {
+      id: tool.id,
+      name: tool.name,
+      type: tool.type
+    };
+    handleDrop(component);
   };
 
   // Mock function to handle drop (would be implemented with proper drag & drop)
@@ -271,7 +245,7 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
 
   return (
     <div className="flex-1 flex">
-      {/* Left Panel - Solution Content (Chats and Files) */}
+      {/* Left Panel - Tabs for Chats and Tools */}
       <div className="w-80 border-r border-border flex flex-col">
         <div className="h-16 border-b border-border flex items-center px-4">
           <EditableField
@@ -285,7 +259,7 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <TabsList className="grid w-full grid-cols-2 m-4 mb-0">
             <TabsTrigger value="chats">Chats</TabsTrigger>
-            <TabsTrigger value="files">Files</TabsTrigger>
+            <TabsTrigger value="tools">Tools</TabsTrigger>
           </TabsList>
           
           <TabsContent value="chats" className="flex-1 overflow-hidden m-0">
@@ -322,37 +296,47 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
             </div>
           </TabsContent>
 
-          <TabsContent value="files" className="flex-1 overflow-hidden m-0">
+          <TabsContent value="tools" className="flex-1 overflow-hidden m-0">
             <div className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-foreground">Files</h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleFileUpload}
-                  className="h-8 w-8"
-                >
-                  <Upload size={16} />
-                </Button>
-              </div>
+              <h3 className="font-medium text-foreground mb-4">Available Tools</h3>
               <ScrollArea className="flex-1">
-                <div className="space-y-2">
-                  {solutionFiles.map((file) => {
-                    const IconComponent = getFileIcon(file.type);
+                <div className="space-y-3">
+                  {mockTools.map((tool) => {
+                    const IconComponent = getComponentIcon(tool.type);
+                    const isActive = activeComponents.some(comp => comp.id === tool.id);
+                    
                     return (
                       <div
-                        key={file.id}
-                        className="p-3 rounded-lg border border-border hover:bg-accent cursor-pointer transition-colors"
+                        key={tool.id}
+                        className={`p-3 rounded-lg border border-border hover:bg-accent cursor-pointer transition-colors ${
+                          isActive ? 'bg-accent border-primary' : ''
+                        }`}
+                        onClick={() => handleToolAdd(tool)}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-lg bg-muted">
-                            <IconComponent size={16} className="text-muted-foreground" />
+                          <div className={`p-2 rounded-lg ${
+                            tool.type === 'capability' ? 'bg-blue-50 dark:bg-blue-950/30' :
+                            tool.type === 'solution' ? 'bg-emerald-50 dark:bg-emerald-950/30' :
+                            'bg-amber-50 dark:bg-amber-950/30'
+                          }`}>
+                            <IconComponent size={16} className={
+                              tool.type === 'capability' ? 'text-blue-600 dark:text-blue-400' :
+                              tool.type === 'solution' ? 'text-emerald-600 dark:text-emerald-400' :
+                              'text-amber-600 dark:text-amber-400'
+                            } />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm text-foreground truncate">{file.name}</h4>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {file.size} • {file.uploadDate.toLocaleDateString()}
+                            <h4 className="font-medium text-sm text-foreground">{tool.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                              {tool.description}
                             </p>
+                            <Badge variant="outline" className={`mt-2 text-xs ${
+                              tool.type === 'capability' ? 'border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300' :
+                              tool.type === 'solution' ? 'border-emerald-200 text-emerald-700 dark:border-emerald-800 dark:text-emerald-300' :
+                              'border-amber-200 text-amber-700 dark:border-amber-800 dark:text-amber-300'
+                            }`}>
+                              {tool.type}
+                            </Badge>
                           </div>
                         </div>
                       </div>
@@ -454,7 +438,7 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
                 {activeComponents.length === 0 && (
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground mb-4">
-                      Use the Tools drawer to add capabilities to your workspace
+                      Add tools from the sidebar to get started
                     </p>
                   </div>
                 )}
