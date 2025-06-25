@@ -13,6 +13,7 @@ import { ActiveSection } from './StudioLayout';
 interface LeftSidebarProps {
   activeSection: ActiveSection;
   onSectionClick: (section: ActiveSection) => void;
+  isToolsDrawerOpen: boolean;
 }
 
 const topSectionItems = [
@@ -20,13 +21,11 @@ const topSectionItems = [
     id: 'solutions' as const,
     icon: Folder,
     label: 'My Solutions',
-    isExternal: false,
   },
   {
     id: 'tools' as const,
     icon: Wrench,
     label: 'My Tools',
-    isExternal: false,
   },
 ];
 
@@ -35,17 +34,15 @@ const bottomSectionItems = [
     id: 'marketplace' as const,
     icon: ShoppingCart,
     label: 'Marketplace',
-    isExternal: false,
   },
   {
     id: 'profile' as const,
     icon: User,
     label: 'Profile',
-    isExternal: false,
   },
 ];
 
-export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps) => {
+export const LeftSidebar = ({ activeSection, onSectionClick, isToolsDrawerOpen }: LeftSidebarProps) => {
   const navigate = useNavigate();
 
   const handleSectionClick = (section: ActiveSection) => {
@@ -58,14 +55,14 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
 
   return (
     <div className="w-16 bg-card border-r border-border flex flex-col">
-      {/* Logo/Brand */}
+      {/* Logo */}
       <div className="h-16 flex items-center justify-center border-b border-border">
-        <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-          <span className="text-primary-foreground font-bold text-sm">Q</span>
+        <div className="w-8 h-8 quest-gradient rounded-lg flex items-center justify-center">
+          <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-5 h-5" />
         </div>
       </div>
 
-      {/* Top Section - Primary Icons */}
+      {/* Top Section */}
       <nav className="flex-1 py-4">
         <ul className="space-y-2">
           {topSectionItems.map((item) => (
@@ -76,7 +73,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
                   className={cn(
                     "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 relative",
                     "hover:bg-accent hover:text-accent-foreground",
-                    activeSection === item.id
+                    (activeSection === item.id || (item.id === 'tools' && isToolsDrawerOpen))
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   )}
@@ -84,7 +81,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
                   <item.icon size={20} />
                   
                   {/* Active indicator */}
-                  {activeSection === item.id && (
+                  {(activeSection === item.id || (item.id === 'tools' && isToolsDrawerOpen)) && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-sm" />
                   )}
                 </button>
@@ -100,7 +97,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
         </ul>
       </nav>
 
-      {/* Bottom Section - Utility Icons */}
+      {/* Bottom Section */}
       <nav className="pb-4">
         <ul className="space-y-2">
           {bottomSectionItems.map((item) => (

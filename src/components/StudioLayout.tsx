@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
-import { ContextualDrawer } from './ContextualDrawer';
+import { ToolsDrawer } from './ToolsDrawer';
 
 export type ActiveSection = 'solutions' | 'tools' | 'marketplace' | 'profile' | null;
 
@@ -23,37 +23,49 @@ export interface Chat {
 
 export const StudioLayout = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [activeSolution, setActiveSolution] = useState<Solution | null>(null);
-  const [activeChat, setActiveChat] = useState<Chat | null>(null);
+  const [isToolsDrawerOpen, setIsToolsDrawerOpen] = useState(false);
+  const [activeSolution, setActiveSolution] = useState<Solution | null>({
+    id: '1',
+    title: 'Finance Analyzer',
+    description: 'Financial document processing solution',
+    dateModified: new Date(),
+    status: 'active'
+  });
+  const [activeChat, setActiveChat] = useState<Chat | null>({
+    id: '1',
+    name: 'Invoice Processing Chat',
+    dateModified: new Date(),
+    messages: []
+  });
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
-      // Navigate to marketplace page
       window.location.href = '/marketplace';
       return;
     }
 
-    if (section === activeSection && isDrawerOpen) {
-      setIsDrawerOpen(false);
+    if (section === 'tools') {
+      setIsToolsDrawerOpen(!isToolsDrawerOpen);
+      setActiveSection(isToolsDrawerOpen ? null : section);
+      return;
+    }
+
+    if (section === activeSection) {
       setActiveSection(null);
     } else {
       setActiveSection(section);
-      setIsDrawerOpen(true);
     }
   };
 
   const handleSolutionSelect = (solution: Solution) => {
     setActiveSolution(solution);
-    setActiveChat(null); // Reset chat when switching solutions
-    setIsDrawerOpen(false);
+    setActiveChat(null);
     setActiveSection(null);
   };
 
   const handleChatSelect = (chat: Chat, solution: Solution) => {
     setActiveSolution(solution);
     setActiveChat(chat);
-    setIsDrawerOpen(false);
     setActiveSection(null);
   };
 
@@ -62,24 +74,20 @@ export const StudioLayout = () => {
       <LeftSidebar 
         activeSection={activeSection} 
         onSectionClick={handleSectionClick}
+        isToolsDrawerOpen={isToolsDrawerOpen}
       />
-      <ContextualDrawer 
-        isOpen={isDrawerOpen}
-        activeSection={activeSection}
-        activeSolution={activeSolution}
+      <ToolsDrawer 
+        isOpen={isToolsDrawerOpen}
         onClose={() => {
-          setIsDrawerOpen(false);
+          setIsToolsDrawerOpen(false);
           setActiveSection(null);
         }}
-        onSolutionSelect={handleSolutionSelect}
-        onChatSelect={handleChatSelect}
       />
       <MainWorkArea 
         activeSolution={activeSolution}
         activeChat={activeChat}
         onCreateSolution={() => {
           setActiveSection('solutions');
-          setIsDrawerOpen(true);
         }}
       />
     </div>
