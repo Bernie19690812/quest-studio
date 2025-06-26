@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, User, Search, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, User, Search, ChevronDown, Brain, Wrench, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -26,8 +26,111 @@ const MyItems = () => {
   const [favorites, setFavorites] = useState<MarketplaceItem[]>([]);
   const [cartItems, setCartItems] = useState<MarketplaceItem[]>([]);
   
-  // Mock purchased items - in real app this would come from user's purchase history
-  const [purchasedItems] = useState<MarketplaceItem[]>([]);
+  // Mock purchased capabilities and tools
+  const [purchasedItems] = useState<MarketplaceItem[]>([
+    {
+      id: 'cap-1',
+      name: 'Advanced Text Analysis',
+      description: 'Comprehensive text processing and sentiment analysis capability',
+      price: 299,
+      originalPrice: 399,
+      category: 'AI & Machine Learning',
+      subcategory: 'Text Processing',
+      rating: 4.8,
+      reviews: 127,
+      image: '/placeholder.svg',
+      seller: {
+        name: 'AI Solutions Inc',
+        avatar: '/placeholder.svg',
+        verified: true
+      },
+      type: 'capability',
+      featured: true,
+      isNew: false,
+      tags: ['NLP', 'Sentiment Analysis', 'Text Mining']
+    },
+    {
+      id: 'cap-2',
+      name: 'Data Validator Pro',
+      description: 'Validate data format, integrity, and compliance across multiple formats',
+      price: 199,
+      category: 'Data & Analytics',
+      subcategory: 'Data Quality',
+      rating: 4.6,
+      reviews: 89,
+      image: '/placeholder.svg',
+      seller: {
+        name: 'DataTech Solutions',
+        avatar: '/placeholder.svg',
+        verified: true
+      },
+      type: 'capability',
+      featured: false,
+      isNew: false,
+      tags: ['Validation', 'Data Quality', 'Compliance']
+    },
+    {
+      id: 'tool-1',
+      name: 'Report Generator Suite',
+      description: 'Complete solution for automated report generation with templates',
+      price: 449,
+      originalPrice: 599,
+      category: 'Business Tools',
+      subcategory: 'Reporting',
+      rating: 4.9,
+      reviews: 203,
+      image: '/placeholder.svg',
+      seller: {
+        name: 'Business Automation Co',
+        avatar: '/placeholder.svg',
+        verified: true
+      },
+      type: 'solution',
+      featured: true,
+      isNew: false,
+      tags: ['Reports', 'Automation', 'Templates']
+    },
+    {
+      id: 'cap-3',
+      name: 'Image Recognition AI',
+      description: 'Advanced computer vision for object detection and classification',
+      price: 359,
+      category: 'AI & Machine Learning',
+      subcategory: 'Computer Vision',
+      rating: 4.7,
+      reviews: 156,
+      image: '/placeholder.svg',
+      seller: {
+        name: 'Vision AI Labs',
+        avatar: '/placeholder.svg',
+        verified: true
+      },
+      type: 'capability',
+      featured: false,
+      isNew: true,
+      tags: ['Computer Vision', 'Object Detection', 'AI']
+    },
+    {
+      id: 'temp-1',
+      name: 'Invoice Processing Template',
+      description: 'Ready-to-use template for automated invoice processing and extraction',
+      price: 129,
+      category: 'Templates',
+      subcategory: 'Document Processing',
+      rating: 4.5,
+      reviews: 78,
+      image: '/placeholder.svg',
+      seller: {
+        name: 'Template Masters',
+        avatar: '/placeholder.svg',
+        verified: true
+      },
+      type: 'template',
+      featured: false,
+      isNew: false,
+      tags: ['Invoice', 'OCR', 'Automation']
+    }
+  ]);
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -59,6 +162,37 @@ const MyItems = () => {
   const handleCheckout = () => {
     // Implementation would go here
   };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'capability':
+        return Brain;
+      case 'solution':
+        return Wrench;
+      case 'template':
+        return Zap;
+      default:
+        return Brain;
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'capability':
+        return 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800';
+      case 'solution':
+        return 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800';
+      case 'template':
+        return 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800';
+      default:
+        return 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800';
+    }
+  };
+
+  // Group items by type
+  const capabilities = purchasedItems.filter(item => item.type === 'capability');
+  const solutions = purchasedItems.filter(item => item.type === 'solution');
+  const templates = purchasedItems.filter(item => item.type === 'template');
 
   return (
     <div className="min-h-screen bg-background">
@@ -147,7 +281,7 @@ const MyItems = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">My Items</h1>
           <p className="text-muted-foreground">
-            {purchasedItems.length} items purchased
+            {purchasedItems.length} items purchased • {capabilities.length} capabilities • {solutions.length} solutions • {templates.length} templates
           </p>
         </div>
 
@@ -158,17 +292,78 @@ const MyItems = () => {
             <Button onClick={() => navigate('/marketplace')}>Browse Marketplace</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-            {purchasedItems.map((item) => (
-              <MarketplaceCard
-                key={item.id}
-                item={item}
-                onAddToCart={addToCart}
-                onToggleFavorite={toggleFavorite}
-                onOpenModal={handleOpenModal}
-                isFavorited={isFavorited(item.id)}
-              />
-            ))}
+          <div className="space-y-8">
+            {/* Capabilities Section */}
+            {capabilities.length > 0 && (
+              <div>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className={`p-2 rounded-lg ${getTypeColor('capability')}`}>
+                    <Brain size={20} />
+                  </div>
+                  <h2 className="text-xl font-semibold text-foreground">Capabilities ({capabilities.length})</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                  {capabilities.map((item) => (
+                    <MarketplaceCard
+                      key={item.id}
+                      item={item}
+                      onAddToCart={addToCart}
+                      onToggleFavorite={toggleFavorite}
+                      onOpenModal={handleOpenModal}
+                      isFavorited={isFavorited(item.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Solutions Section */}
+            {solutions.length > 0 && (
+              <div>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className={`p-2 rounded-lg ${getTypeColor('solution')}`}>
+                    <Wrench size={20} />
+                  </div>
+                  <h2 className="text-xl font-semibold text-foreground">Solutions ({solutions.length})</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                  {solutions.map((item) => (
+                    <MarketplaceCard
+                      key={item.id}
+                      item={item}
+                      onAddToCart={addToCart}
+                      onToggleFavorite={toggleFavorite}
+                      onOpenModal={handleOpenModal}
+                      isFavorited={isFavorited(item.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Templates Section */}
+            {templates.length > 0 && (
+              <div>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className={`p-2 rounded-lg ${getTypeColor('template')}`}>
+                    <Zap size={20} />
+                  </div>
+                  <h2 className="text-xl font-semibold text-foreground">Templates ({templates.length})</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                  {templates.map((item) => (
+                    <MarketplaceCard
+                      key={item.id}
+                      item={item}
+                      onAddToCart={addToCart}
+                      onToggleFavorite={toggleFavorite}
+                      onOpenModal={handleOpenModal}
+                      isFavorited={isFavorited(item.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
