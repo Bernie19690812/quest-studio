@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,41 +17,19 @@ interface ContextualDrawerProps {
   onChatSelect?: (chat: Chat, solution: Solution) => void;
 }
 
-// Mock data for solutions
-const mockSolutions: Solution[] = [
-  {
-    id: '1',
-    title: 'Customer Support Bot',
-    description: 'AI-powered customer service solution',
-    dateModified: new Date('2024-06-07'),
-    status: 'active',
-  },
-  {
-    id: '2',
-    title: 'Data Analysis Pipeline',
-    description: 'Automated data processing and insights',
-    dateModified: new Date('2024-06-06'),
-    status: 'draft',
-  },
-  {
-    id: '3',
-    title: 'Content Generator',
-    description: 'Marketing content creation assistant',
-    dateModified: new Date('2024-06-05'),
-    status: 'active',
-  },
-];
-
 // Mock data for tools
 const mockTools = {
   capabilities: [
     { id: '1', name: 'GPT-4 Integration', description: 'Advanced language model', category: 'AI Models' },
     { id: '2', name: 'Vision API', description: 'Image and video analysis', category: 'AI Models' },
     { id: '3', name: 'Speech Recognition', description: 'Convert speech to text', category: 'Audio' },
+    { id: '4', name: 'Document Scanner', description: 'Extract text from documents', category: 'OCR' },
+    { id: '5', name: 'Sentiment Analysis', description: 'Analyze text sentiment', category: 'NLP' },
   ],
   solutions: [
-    { id: '4', name: 'Email Template Generator', description: 'Create professional emails', category: 'Templates' },
-    { id: '5', name: 'Code Review Assistant', description: 'Automated code analysis', category: 'Development' },
+    { id: '6', name: 'Email Template Generator', description: 'Create professional emails', category: 'Templates' },
+    { id: '7', name: 'Code Review Assistant', description: 'Automated code analysis', category: 'Development' },
+    { id: '8', name: 'Report Builder', description: 'Generate structured reports', category: 'Business' },
   ],
 };
 
@@ -78,7 +57,6 @@ const SolutionsContent = ({
   };
 
   const handleFileSelect = (file: any, solution: Solution) => {
-    // Handle file selection/preview
     console.log('Selected file:', file.name, 'in solution:', solution.title);
   };
 
@@ -145,7 +123,7 @@ const ToolsContent = () => {
         <div>
           <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
             <Tag size={14} />
-            Capabilities
+            Capabilities ({filteredCapabilities.length})
           </h4>
           <div className="space-y-2">
             {filteredCapabilities.map((tool) => (
@@ -153,6 +131,9 @@ const ToolsContent = () => {
                 key={tool.id}
                 className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-grab"
                 draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', JSON.stringify(tool));
+                }}
               >
                 <h5 className="font-medium text-foreground">{tool.name}</h5>
                 <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>
@@ -165,7 +146,7 @@ const ToolsContent = () => {
         <div>
           <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
             <Tag size={14} />
-            Solutions
+            Solutions ({filteredSolutions.length})
           </h4>
           <div className="space-y-2">
             {filteredSolutions.map((tool) => (
@@ -173,6 +154,9 @@ const ToolsContent = () => {
                 key={tool.id}
                 className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-grab"
                 draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', JSON.stringify(tool));
+                }}
               >
                 <h5 className="font-medium text-foreground">{tool.name}</h5>
                 <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>

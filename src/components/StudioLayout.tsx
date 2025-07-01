@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
-import { ToolsDrawer } from './ToolsDrawer';
+import { ContextualDrawer } from './ContextualDrawer';
 
 export type ActiveSection = 'solutions' | 'tools' | 'marketplace' | 'profile' | null;
 
@@ -23,30 +23,12 @@ export interface Chat {
 
 export const StudioLayout = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
-  const [isToolsDrawerOpen, setIsToolsDrawerOpen] = useState(false);
-  const [activeSolution, setActiveSolution] = useState<Solution | null>({
-    id: '1',
-    title: 'Finance Analyzer',
-    description: 'Financial document processing solution',
-    dateModified: new Date(),
-    status: 'active'
-  });
-  const [activeChat, setActiveChat] = useState<Chat | null>({
-    id: '1',
-    name: 'Invoice Processing Chat',
-    dateModified: new Date(),
-    messages: []
-  });
+  const [activeSolution, setActiveSolution] = useState<Solution | null>(null);
+  const [activeChat, setActiveChat] = useState<Chat | null>(null);
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
-      window.location.href = '/marketplace';
-      return;
-    }
-
-    if (section === 'tools') {
-      setIsToolsDrawerOpen(!isToolsDrawerOpen);
-      setActiveSection(isToolsDrawerOpen ? null : section);
+      window.open('/marketplace', '_blank');
       return;
     }
 
@@ -69,26 +51,28 @@ export const StudioLayout = () => {
     setActiveSection(null);
   };
 
+  const handleCreateSolution = () => {
+    setActiveSection('solutions');
+  };
+
   return (
     <div className="h-screen flex bg-background">
       <LeftSidebar 
         activeSection={activeSection} 
         onSectionClick={handleSectionClick}
-        isToolsDrawerOpen={isToolsDrawerOpen}
       />
-      <ToolsDrawer 
-        isOpen={isToolsDrawerOpen}
-        onClose={() => {
-          setIsToolsDrawerOpen(false);
-          setActiveSection(null);
-        }}
+      <ContextualDrawer 
+        isOpen={activeSection !== null && activeSection !== 'marketplace'}
+        activeSection={activeSection}
+        activeSolution={activeSolution}
+        onClose={() => setActiveSection(null)}
+        onSolutionSelect={handleSolutionSelect}
+        onChatSelect={handleChatSelect}
       />
       <MainWorkArea 
         activeSolution={activeSolution}
         activeChat={activeChat}
-        onCreateSolution={() => {
-          setActiveSection('solutions');
-        }}
+        onCreateSolution={handleCreateSolution}
       />
     </div>
   );

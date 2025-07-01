@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Paperclip, X, Grid3X3 } from 'lucide-react';
+import { Send, Paperclip, X, Grid3X3, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -21,11 +21,7 @@ interface ActiveTool {
 
 export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
-  const [activeTools, setActiveTools] = useState<ActiveTool[]>([
-    { id: '1', name: 'Field Detector', type: 'capability' },
-    { id: '2', name: 'Text Extractor (OCR)', type: 'capability' },
-    { id: '3', name: 'Audio Transcription', type: 'capability' },
-  ]);
+  const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -58,17 +54,50 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
     setActiveTools(prev => prev.filter(tool => tool.id !== toolId));
   };
 
+  // Show prompt when no solution is selected
+  if (!activeSolution) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-background">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="w-20 h-20 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
+            <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-10 h-10" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Welcome to Quest AI Studio
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Select or create a solution to begin working with AI-powered tools and capabilities.
+            </p>
+            <Button onClick={onCreateSolution} size="lg" className="gap-2">
+              <Plus size={20} />
+              Create Solution
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
       <div className="h-16 border-b border-border flex items-center justify-between px-6">
         <div className="flex items-center space-x-3">
           <h1 className="font-semibold text-foreground">
-            {activeSolution?.title} &gt; {activeChat?.name}
+            {activeSolution.title}
+            {activeChat && (
+              <>
+                <span className="text-muted-foreground"> › </span>
+                {activeChat.name}
+              </>
+            )}
           </h1>
-          <div className="text-sm text-muted-foreground">
-            {activeTools.length} tool(s) active
-          </div>
+          {activeTools.length > 0 && (
+            <div className="text-sm text-muted-foreground">
+              {activeTools.length} tool(s) active
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="icon">
@@ -106,20 +135,34 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto">
-          {/* Welcome message or chat content would go here */}
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
-              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
+          {activeChat ? (
+            // Show chat content
+            <div className="space-y-4">
+              <div className="text-center py-8">
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  {activeChat.name}
+                </h3>
+                <p className="text-muted-foreground">
+                  Chat history and messages would appear here
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Ready to Process Invoices
-              </h2>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                Your active tools are ready to help analyze and extract data from your documents.
-              </p>
+          ) : (
+            // Show solution welcome
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
+                <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">
+                  {activeSolution.title}
+                </h2>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  {activeSolution.description || 'Ready to start working on your solution. Create a new chat or select an existing one to begin.'}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
