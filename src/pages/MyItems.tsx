@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from 'react-router-dom';
 import { MarketplaceItem } from './Marketplace';
+import { ReviewModal } from '@/components/marketplace/ReviewModal';
+import { ItemReviews } from '@/components/marketplace/ItemReviews';
 
 const MyItems = () => {
   const navigate = useNavigate();
@@ -25,9 +27,96 @@ const MyItems = () => {
   const [isFullPageCartOpen, setIsFullPageCartOpen] = useState(false);
   const [favorites, setFavorites] = useState<MarketplaceItem[]>([]);
   const [cartItems, setCartItems] = useState<MarketplaceItem[]>([]);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedReviewItem, setSelectedReviewItem] = useState<MarketplaceItem | null>(null);
   
-  // Mock purchased items - in real app this would come from user's purchase history
-  const [purchasedItems] = useState<MarketplaceItem[]>([]);
+  // Mock purchased items with review data
+  const [purchasedItems] = useState<MarketplaceItem[]>([
+    {
+      id: '1',
+      name: 'Advanced Data Analytics',
+      category: 'capabilities',
+      type: 'service',
+      price: 0.05,
+      rating: 4.8,
+      reviewCount: 245,
+      tags: ['Analytics', 'Machine Learning', 'Data Science'],
+      description: 'Powerful analytics capability for processing large datasets'
+    },
+    {
+      id: '2',
+      name: 'Natural Language Processing',
+      category: 'capabilities',
+      type: 'service',
+      price: 0.03,
+      rating: 4.6,
+      reviewCount: 189,
+      tags: ['NLP', 'Text Analysis', 'Sentiment Analysis'],
+      description: 'Advanced NLP tools for text processing and analysis'
+    },
+    {
+      id: '3',
+      name: 'Image Recognition Suite',
+      category: 'capabilities',
+      type: 'service',
+      price: 0.08,
+      rating: 4.7,
+      reviewCount: 156,
+      tags: ['Computer Vision', 'AI', 'Image Processing'],
+      description: 'Comprehensive image recognition and processing tools'
+    },
+    {
+      id: '4',
+      name: 'Custom E-commerce Solution',
+      category: 'solutions',
+      type: 'service',
+      price: 2500,
+      rating: 4.9,
+      reviewCount: 78,
+      tags: ['E-commerce', 'Custom Development', 'Full-stack'],
+      description: 'Complete e-commerce platform with custom features'
+    },
+    {
+      id: '5',
+      name: 'Marketing Dashboard Template',
+      category: 'solutions',
+      type: 'service',
+      price: 299,
+      rating: 4.5,
+      reviewCount: 92,
+      tags: ['Dashboard', 'Analytics', 'Marketing'],
+      description: 'Pre-built marketing dashboard with analytics'
+    }
+  ]);
+
+  // Mock user reviews (in a real app, this would come from an API)
+  const [userReviews, setUserReviews] = useState<Record<string, { rating: number; review: string }>>({
+    '1': { rating: 5, review: 'Excellent analytics capability, very easy to integrate!' },
+    '3': { rating: 4, review: 'Great image recognition accuracy, though setup took a bit longer than expected.' }
+  });
+
+  // Mock all reviews for items (in a real app, this would come from an API)
+  const mockReviews = {
+    '1': [
+      { id: '1', rating: 5, review: 'Excellent analytics capability, very easy to integrate!', author: 'You', date: '2024-01-15', verified: true },
+      { id: '2', rating: 4, review: 'Great performance, would recommend for data-heavy applications.', author: 'John D.', date: '2024-01-10', verified: true },
+      { id: '3', rating: 5, review: 'Outstanding results and great documentation.', author: 'Sarah M.', date: '2024-01-08', verified: true }
+    ],
+    '2': [
+      { id: '4', rating: 5, review: 'Perfect for our text analysis needs.', author: 'Mike R.', date: '2024-01-12', verified: true },
+      { id: '5', rating: 4, review: 'Good accuracy, easy to implement.', author: 'Lisa K.', date: '2024-01-09', verified: true }
+    ],
+    '3': [
+      { id: '6', rating: 4, review: 'Great image recognition accuracy, though setup took a bit longer than expected.', author: 'You', date: '2024-01-20', verified: true },
+      { id: '7', rating: 5, review: 'Impressive accuracy and speed.', author: 'David L.', date: '2024-01-18', verified: true }
+    ],
+    '4': [
+      { id: '8', rating: 5, review: 'Exceeded our expectations, great team!', author: 'Emma P.', date: '2024-01-25', verified: true }
+    ],
+    '5': [
+      { id: '9', rating: 4, review: 'Good template, saved us development time.', author: 'Alex T.', date: '2024-01-22', verified: true }
+    ]
+  };
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -58,6 +147,20 @@ const MyItems = () => {
 
   const handleCheckout = () => {
     // Implementation would go here
+  };
+
+  const handleReviewItem = (item: MarketplaceItem) => {
+    setSelectedReviewItem(item);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleSubmitReview = (itemId: string, rating: number, review: string) => {
+    setUserReviews(prev => ({
+      ...prev,
+      [itemId]: { rating, review }
+    }));
+    // In a real app, this would make an API call to save the review
+    console.log('Review submitted:', { itemId, rating, review });
   };
 
   return (
@@ -158,22 +261,82 @@ const MyItems = () => {
             <Button onClick={() => navigate('/marketplace')}>Browse Marketplace</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+          <div className="space-y-8">
             {purchasedItems.map((item) => (
-              <MarketplaceCard
-                key={item.id}
-                item={item}
-                onAddToCart={addToCart}
-                onToggleFavorite={toggleFavorite}
-                onOpenModal={handleOpenModal}
-                isFavorited={isFavorited(item.id)}
-              />
+              <div key={item.id} className="bg-card border border-border rounded-lg p-6 space-y-4">
+                {/* Item Header */}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-foreground mb-2">{item.name}</h3>
+                    <p className="text-muted-foreground mb-3">{item.description}</p>
+                    <div className="flex items-center space-x-4">
+                      <Badge variant="outline" className="capitalize">
+                        {item.category}
+                      </Badge>
+                      <div className="flex items-center space-x-1">
+                        <Star size={16} className="text-yellow-400 fill-current" />
+                        <span className="text-sm font-medium">{item.rating}</span>
+                        <span className="text-sm text-muted-foreground">
+                          ({item.reviewCount} reviews)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleReviewItem(item)}
+                      className="flex items-center space-x-2"
+                    >
+                      <Star size={16} />
+                      <span>
+                        {userReviews[item.id] ? 'Edit Review' : 'Write Review'}
+                      </span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleOpenModal(item)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+
+                {/* User's Review (if exists) */}
+                {userReviews[item.id] && (
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-sm font-medium text-primary">Your Review:</span>
+                      <div className="flex items-center space-x-1">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Star
+                            key={i}
+                            size={14}
+                            className={i < userReviews[item.id].rating ? 'text-yellow-400 fill-current' : 'text-gray-400'}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    {userReviews[item.id].review && (
+                      <p className="text-sm text-muted-foreground">
+                        {userReviews[item.id].review}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* All Reviews */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-lg font-medium text-foreground mb-4">Reviews</h4>
+                  <ItemReviews itemId={item.id} reviews={mockReviews[item.id] || []} />
+                </div>
+              </div>
             ))}
           </div>
         )}
       </main>
 
-      {/* Modals */}
+      {/* Existing Modals */}
       <MarketplaceItemModal
         item={selectedItem}
         isOpen={isModalOpen}
@@ -197,13 +360,25 @@ const MyItems = () => {
         isOpen={isFullPageCartOpen}
         onClose={() => setIsFullPageCartOpen(false)}
         items={cartItems}
-        allItems={[]} // Would be all marketplace items in real app
+        allItems={[]}
         onRemoveItem={removeFromCart}
         onAddToCart={addToCart}
         onToggleFavorite={toggleFavorite}
         onOpenModal={handleOpenModal}
         onCheckout={handleCheckout}
         isFavorited={isFavorited}
+      />
+
+      {/* Review Modal */}
+      <ReviewModal
+        item={selectedReviewItem}
+        isOpen={isReviewModalOpen}
+        onClose={() => {
+          setIsReviewModalOpen(false);
+          setSelectedReviewItem(null);
+        }}
+        onSubmitReview={handleSubmitReview}
+        existingReview={selectedReviewItem ? userReviews[selectedReviewItem.id] : null}
       />
     </div>
   );
