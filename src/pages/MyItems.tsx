@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, User, Search, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, User, Search, ChevronDown, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
 import { MarketplaceItemModal } from '@/components/marketplace/MarketplaceItemModal';
 import { FavoritesDrawer } from '@/components/marketplace/FavoritesDrawer';
@@ -17,7 +18,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { MarketplaceItem } from './Marketplace';
 import { ReviewModal } from '@/components/marketplace/ReviewModal';
-import { ItemReviews } from '@/components/marketplace/ItemReviews';
 
 const MyItems = () => {
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ const MyItems = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedReviewItem, setSelectedReviewItem] = useState<MarketplaceItem | null>(null);
   
-  // Mock purchased items with review data
   const [purchasedItems] = useState<MarketplaceItem[]>([
     {
       id: '1',
@@ -41,7 +40,7 @@ const MyItems = () => {
       rating: 4.8,
       reviewCount: 245,
       tags: ['Analytics', 'Machine Learning', 'Data Science'],
-      description: 'Powerful analytics capability for processing large datasets'
+      description: 'Powerful analytics capability for processing large datasets with advanced machine learning algorithms and real-time insights.'
     },
     {
       id: '2',
@@ -52,7 +51,7 @@ const MyItems = () => {
       rating: 4.6,
       reviewCount: 189,
       tags: ['NLP', 'Text Analysis', 'Sentiment Analysis'],
-      description: 'Advanced NLP tools for text processing and analysis'
+      description: 'Advanced NLP tools for text processing, sentiment analysis, and language understanding with high accuracy.'
     },
     {
       id: '3',
@@ -63,7 +62,7 @@ const MyItems = () => {
       rating: 4.7,
       reviewCount: 156,
       tags: ['Computer Vision', 'AI', 'Image Processing'],
-      description: 'Comprehensive image recognition and processing tools'
+      description: 'Comprehensive image recognition and processing tools with state-of-the-art computer vision algorithms.'
     },
     {
       id: '4',
@@ -74,7 +73,7 @@ const MyItems = () => {
       rating: 4.9,
       reviewCount: 78,
       tags: ['E-commerce', 'Custom Development', 'Full-stack'],
-      description: 'Complete e-commerce platform with custom features'
+      description: 'Complete e-commerce platform with custom features, payment integration, and scalable architecture.'
     },
     {
       id: '5',
@@ -85,7 +84,7 @@ const MyItems = () => {
       rating: 4.5,
       reviewCount: 92,
       tags: ['Dashboard', 'Analytics', 'Marketing'],
-      description: 'Pre-built marketing dashboard with analytics'
+      description: 'Pre-built marketing dashboard with comprehensive analytics, reporting tools, and customizable widgets.'
     }
   ]);
 
@@ -94,29 +93,6 @@ const MyItems = () => {
     '1': { rating: 5, review: 'Excellent analytics capability, very easy to integrate!' },
     '3': { rating: 4, review: 'Great image recognition accuracy, though setup took a bit longer than expected.' }
   });
-
-  // Mock all reviews for items (in a real app, this would come from an API)
-  const mockReviews = {
-    '1': [
-      { id: '1', rating: 5, review: 'Excellent analytics capability, very easy to integrate!', author: 'You', date: '2024-01-15', verified: true },
-      { id: '2', rating: 4, review: 'Great performance, would recommend for data-heavy applications.', author: 'John D.', date: '2024-01-10', verified: true },
-      { id: '3', rating: 5, review: 'Outstanding results and great documentation.', author: 'Sarah M.', date: '2024-01-08', verified: true }
-    ],
-    '2': [
-      { id: '4', rating: 5, review: 'Perfect for our text analysis needs.', author: 'Mike R.', date: '2024-01-12', verified: true },
-      { id: '5', rating: 4, review: 'Good accuracy, easy to implement.', author: 'Lisa K.', date: '2024-01-09', verified: true }
-    ],
-    '3': [
-      { id: '6', rating: 4, review: 'Great image recognition accuracy, though setup took a bit longer than expected.', author: 'You', date: '2024-01-20', verified: true },
-      { id: '7', rating: 5, review: 'Impressive accuracy and speed.', author: 'David L.', date: '2024-01-18', verified: true }
-    ],
-    '4': [
-      { id: '8', rating: 5, review: 'Exceeded our expectations, great team!', author: 'Emma P.', date: '2024-01-25', verified: true }
-    ],
-    '5': [
-      { id: '9', rating: 4, review: 'Good template, saved us development time.', author: 'Alex T.', date: '2024-01-22', verified: true }
-    ]
-  };
 
   const addToCart = (item: MarketplaceItem) => {
     setCartItems(prev => [...prev.filter(i => i.id !== item.id), item]);
@@ -261,76 +237,70 @@ const MyItems = () => {
             <Button onClick={() => navigate('/marketplace')}>Browse Marketplace</Button>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {purchasedItems.map((item) => (
-              <div key={item.id} className="bg-card border border-border rounded-lg p-6 space-y-4">
-                {/* Item Header */}
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-foreground mb-2">{item.name}</h3>
-                    <p className="text-muted-foreground mb-3">{item.description}</p>
-                    <div className="flex items-center space-x-4">
-                      <Badge variant="outline" className="capitalize">
+              <Card key={item.id} className="bg-card border border-border hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  {/* Item Header */}
+                  <div className="flex items-start space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-foreground mb-1 truncate">{item.name}</h3>
+                      <Badge variant="outline" className="capitalize text-xs">
                         {item.category}
                       </Badge>
-                      <div className="flex items-center space-x-1">
-                        <Star size={16} className="text-yellow-400 fill-current" />
-                        <span className="text-sm font-medium">{item.rating}</span>
-                        <span className="text-sm text-muted-foreground">
-                          ({item.reviewCount} reviews)
-                        </span>
-                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {item.description}
+                  </p>
+
+                  {/* User's Review Status */}
+                  {userReviews[item.id] && (
+                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs font-medium text-primary">Your Rating:</span>
+                        <div className="flex items-center space-x-1">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <Star
+                              key={i}
+                              size={12}
+                              className={i < userReviews[item.id].rating ? 'text-yellow-400 fill-current' : 'text-gray-400'}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-between">
                     <Button
-                      variant="outline"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleOpenModal(item)}
+                      className="text-muted-foreground hover:text-foreground flex items-center space-x-1"
+                    >
+                      <ExternalLink size={14} />
+                      <span>View Details</span>
+                    </Button>
+                    <Button
+                      size="sm"
                       onClick={() => handleReviewItem(item)}
                       className="flex items-center space-x-2"
                     >
-                      <Star size={16} />
+                      <Star size={14} />
                       <span>
                         {userReviews[item.id] ? 'Edit Review' : 'Write Review'}
                       </span>
                     </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleOpenModal(item)}
-                    >
-                      View Details
-                    </Button>
                   </div>
-                </div>
-
-                {/* User's Review (if exists) */}
-                {userReviews[item.id] && (
-                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-sm font-medium text-primary">Your Review:</span>
-                      <div className="flex items-center space-x-1">
-                        {Array.from({ length: 5 }, (_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            className={i < userReviews[item.id].rating ? 'text-yellow-400 fill-current' : 'text-gray-400'}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    {userReviews[item.id].review && (
-                      <p className="text-sm text-muted-foreground">
-                        {userReviews[item.id].review}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* All Reviews */}
-                <div className="border-t border-border pt-4">
-                  <h4 className="text-lg font-medium text-foreground mb-4">Reviews</h4>
-                  <ItemReviews itemId={item.id} reviews={mockReviews[item.id] || []} />
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}
