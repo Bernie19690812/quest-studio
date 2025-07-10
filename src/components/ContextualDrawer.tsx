@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
-import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
+import { X, Search, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { ActiveSection, Solution, Chat } from './StudioLayout';
-import { CreateSolutionModal } from './CreateSolutionModal';
 import { SolutionsList } from './SolutionsList';
 
 interface ContextualDrawerProps {
@@ -42,8 +40,6 @@ const SolutionsContent = ({
   onChatSelect?: (chat: Chat, solution: Solution) => void;
   onClose: () => void;
 }) => {
-  const [showCreateModal, setShowCreateModal] = useState(false);
-
   const handleSolutionClick = (solution: Solution) => {
     onSolutionSelect(solution);
     onClose();
@@ -61,32 +57,24 @@ const SolutionsContent = ({
   };
 
   return (
-    <>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-foreground">My Solutions</h3>
-          <Button size="sm" onClick={() => setShowCreateModal(true)}>
-            <Plus size={16} className="mr-1" />
-            New
-          </Button>
-        </div>
-
-        <SolutionsList 
-          onSolutionSelect={handleSolutionClick}
-          onChatSelect={handleChatSelect}
-          onFileSelect={handleFileSelect}
-        />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-foreground">My Solutions</h3>
+        <Button 
+          size="sm" 
+          onClick={() => window.location.href = '/marketplace'}
+          variant="outline"
+        >
+          Browse Marketplace
+        </Button>
       </div>
 
-      <CreateSolutionModal 
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
-        onSolutionCreate={(solution) => {
-          handleSolutionClick(solution);
-          setShowCreateModal(false);
-        }}
+      <SolutionsList 
+        onSolutionSelect={handleSolutionClick}
+        onChatSelect={handleChatSelect}
+        onFileSelect={handleFileSelect}
       />
-    </>
+    </div>
   );
 };
 
