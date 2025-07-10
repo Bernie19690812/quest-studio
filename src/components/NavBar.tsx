@@ -14,7 +14,7 @@ export const NavBar = ({ onProfileClick }: NavBarProps) => {
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-4">
           <img 
-            src="/lovable-uploads/2027b02b-7048-4f6a-918c-0c0f9c2a305f.png" 
+            src="/lovable-uploads/17871398-c225-43f1-aa3f-9403bcaad753.png" 
             alt="Quest AI Logo" 
             className="h-8 w-8"
           />
