@@ -3,7 +3,7 @@ import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
 import { ContextualDrawer } from './ContextualDrawer';
 
-export type ActiveSection = 'solutions' | 'tools' | 'marketplace' | 'profile' | null;
+export type ActiveSection = 'tools' | 'marketplace' | 'profile' | null;
 
 export interface Solution {
   id: string;
@@ -51,7 +51,8 @@ export const StudioLayout = () => {
   };
 
   const handleCreateSolution = () => {
-    setActiveSection('solutions');
+    // Since we removed solutions from sidebar, this could redirect to marketplace
+    window.location.href = '/marketplace';
   };
 
   return (

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { 
-  Folder, 
   User, 
   ShoppingCart,
   Wrench,
@@ -16,9 +15,9 @@ interface LeftSidebarProps {
 
 const topSectionItems = [
   {
-    id: 'solutions' as const,
-    icon: Folder,
-    label: 'My Solutions',
+    id: 'marketplace' as const,
+    icon: ShoppingCart,
+    label: 'Marketplace',
   },
   {
     id: 'tools' as const,
@@ -28,11 +27,6 @@ const topSectionItems = [
 ];
 
 const bottomSectionItems = [
-  {
-    id: 'marketplace' as const,
-    icon: ShoppingCart,
-    label: 'Marketplace',
-  },
   {
     id: 'profile' as const,
     icon: User,
