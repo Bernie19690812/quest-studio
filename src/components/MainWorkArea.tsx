@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Paperclip, X, Grid3X3, Zap, Lock } from 'lucide-react';
+import { Send, Paperclip, X, Grid3X3, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +10,7 @@ import { Solution, Chat } from './StudioLayout';
 interface MainWorkAreaProps {
   activeSolution: Solution | null;
   activeChat: Chat | null;
-  isSandbox: boolean;
-  onSandboxToggle: () => void;
+  onCreateSolution: () => void;
 }
 
 interface ActiveTool {
@@ -20,12 +19,7 @@ interface ActiveTool {
   type: 'capability' | 'solution';
 }
 
-export const MainWorkArea = ({ 
-  activeSolution, 
-  activeChat, 
-  isSandbox,
-  onSandboxToggle 
-}: MainWorkAreaProps) => {
+export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
 
@@ -60,83 +54,6 @@ export const MainWorkArea = ({
     setActiveTools(prev => prev.filter(tool => tool.id !== toolId));
   };
 
-  // Show sandbox mode
-  if (isSandbox) {
-    return (
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="h-16 border-b border-border flex items-center justify-between px-6">
-          <div className="flex items-center space-x-3">
-            <Zap className="w-5 h-5 text-primary" />
-            <h1 className="font-semibold text-foreground">Sandbox</h1>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Experiment Mode
-            </Badge>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon">
-              <Grid3X3 size={18} />
-            </Button>
-            <AppLauncherDropdown />
-          </div>
-        </div>
-
-        {/* Sandbox Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-                <Zap className="w-8 h-8 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
-                  Capability Sandbox
-                </h2>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Test and experiment with your purchased capabilities in isolation. 
-                  Perfect for exploring features before integrating them into your solutions.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Input Area */}
-        <div className="border-t border-border p-4 bg-background">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="rounded-full border-border hover:bg-accent"
-                onClick={handleFileUpload}
-              >
-                <Paperclip size={18} />
-              </Button>
-              <div className="flex-1 relative">
-                <Input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Test your capabilities here..."
-                  className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
-                />
-                <Button
-                  onClick={handleSendMessage}
-                  size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                  disabled={!message.trim()}
-                >
-                  <Send size={16} />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Show prompt when no solution is selected
   if (!activeSolution) {
     return (
@@ -150,40 +67,11 @@ export const MainWorkArea = ({
               Welcome to Quest AI Studio
             </h2>
             <p className="text-muted-foreground mb-6">
-              Select a purchased solution from the sidebar to begin working, or use the Sandbox to experiment with your capabilities.
+              Select or create a solution to begin working with AI-powered tools and capabilities.
             </p>
-            <div className="flex flex-col gap-3">
-              <Button onClick={onSandboxToggle} variant="outline" size="lg" className="gap-2">
-                <Zap size={20} />
-                Open Sandbox
-              </Button>
-              <p className="text-sm text-muted-foreground">
-                Purchase solutions from the Marketplace to unlock full workspace features.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show locked state for non-purchased solutions
-  if (!activeSolution.isPurchased) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-background">
-        <div className="text-center space-y-6 max-w-md">
-          <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto">
-            <Lock className="w-10 h-10 text-muted-foreground" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">
-              Solution Locked
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              This solution requires a purchase to access. Visit the Marketplace to unlock full features.
-            </p>
-            <Button size="lg" className="gap-2">
-              Visit Marketplace
+            <Button onClick={onCreateSolution} size="lg" className="gap-2">
+              <Plus size={20} />
+              Create Solution
             </Button>
           </div>
         </div>
