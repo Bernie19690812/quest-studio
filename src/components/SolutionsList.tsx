@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, MessageSquare, FileText, MoreHorizontal, Calendar } from 'lucide-react';
+import { Plus, MessageSquare, FileText, MoreHorizontal, Calendar, Lock, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ interface SolutionsListProps {
   onFileSelect: (file: any, solution: Solution) => void;
 }
 
-// Mock data for solutions with chats and files
+// Mock data for solutions - now includes isPurchased flag
 const mockSolutions: Solution[] = [
   {
     id: '1',
@@ -21,6 +21,7 @@ const mockSolutions: Solution[] = [
     description: 'AI-powered customer service solution',
     dateModified: new Date('2024-06-07'),
     status: 'active',
+    isPurchased: true,
   },
   {
     id: '2',
@@ -28,6 +29,7 @@ const mockSolutions: Solution[] = [
     description: 'Automated data processing and insights',
     dateModified: new Date('2024-06-06'),
     status: 'draft',
+    isPurchased: false,
   },
   {
     id: '3',
@@ -35,20 +37,21 @@ const mockSolutions: Solution[] = [
     description: 'Marketing content creation assistant',
     dateModified: new Date('2024-06-05'),
     status: 'active',
+    isPurchased: true,
   },
 ];
 
 const mockChats: Record<string, Chat[]> = {
   '1': [
-    { id: 'c1', name: 'Customer Query Analysis', dateModified: new Date('2024-06-07') },
-    { id: 'c2', name: 'Response Templates', dateModified: new Date('2024-06-06') },
+    { id: 'c1', name: 'Customer Query Analysis', dateModified: new Date('2024-06-07'), solutionId: '1' },
+    { id: 'c2', name: 'Response Templates', dateModified: new Date('2024-06-06'), solutionId: '1' },
   ],
   '2': [
-    { id: 'c3', name: 'Sales Data Review', dateModified: new Date('2024-06-06') },
+    { id: 'c3', name: 'Sales Data Review', dateModified: new Date('2024-06-06'), solutionId: '2' },
   ],
   '3': [
-    { id: 'c4', name: 'Blog Post Ideas', dateModified: new Date('2024-06-05') },
-    { id: 'c5', name: 'Social Media Content', dateModified: new Date('2024-06-04') },
+    { id: 'c4', name: 'Blog Post Ideas', dateModified: new Date('2024-06-05'), solutionId: '3' },
+    { id: 'c5', name: 'Social Media Content', dateModified: new Date('2024-06-04'), solutionId: '3' },
   ],
 };
 
@@ -72,6 +75,9 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
   const [selectedSolutionForChat, setSelectedSolutionForChat] = useState<Solution | null>(null);
 
   const handleSolutionClick = (solution: Solution) => {
+    // Only allow expansion for purchased solutions
+    if (!solution.isPurchased) return;
+    
     if (expandedSolution === solution.id) {
       setExpandedSolution(null);
     } else {
@@ -82,7 +88,7 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
 
   const handleCreateChat = (solutionId: string) => {
     const solution = mockSolutions.find(s => s.id === solutionId);
-    if (solution) {
+    if (solution && solution.isPurchased) {
       setSelectedSolutionForChat(solution);
       setShowNewChatModal(true);
     }
@@ -95,6 +101,7 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
         name: chatName,
         dateModified: new Date(),
         messages: [],
+        solutionId: selectedSolutionForChat.id,
       };
       onChatSelect(newChat, selectedSolutionForChat);
     }
@@ -133,19 +140,40 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
           <div key={solution.id} className="border border-border rounded-lg overflow-hidden">
             {/* Solution Header */}
             <div 
-              className="p-4 hover:bg-accent/50 transition-colors cursor-pointer"
+              className={cn(
+                "p-4 transition-colors relative",
+                solution.isPurchased 
+                  ? "hover:bg-accent/50 cursor-pointer" 
+                  : "bg-muted/50 cursor-not-allowed"
+              )}
               onClick={() => handleSolutionClick(solution)}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h4 className="font-medium text-foreground">{solution.title}</h4>
+                    <h4 className={cn(
+                      "font-medium",
+                      solution.isPurchased ? "text-foreground" : "text-muted-foreground"
+                    )}>
+                      {solution.title}
+                    </h4>
                     <Badge className={cn("text-xs", getStatusColor(solution.status))}>
                       {solution.status}
                     </Badge>
+                    {!solution.isPurchased && (
+                      <Badge variant="outline" className="text-xs gap-1">
+                        <Lock size={10} />
+                        Locked
+                      </Badge>
+                    )}
                   </div>
                   {solution.description && (
-                    <p className="text-sm text-muted-foreground mb-2">{solution.description}</p>
+                    <p className={cn(
+                      "text-sm mb-2",
+                      solution.isPurchased ? "text-muted-foreground" : "text-muted-foreground/60"
+                    )}>
+                      {solution.description}
+                    </p>
                   )}
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
@@ -156,21 +184,47 @@ export const SolutionsList = ({ onSolutionSelect, onChatSelect, onFileSelect }: 
                     <span>{mockFiles[solution.id]?.length || 0} files</span>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSolutionSelect(solution);
-                  }}
-                >
-                  Open
-                </Button>
+                <div className="flex items-center gap-2">
+                  {!solution.isPurchased && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = '/marketplace';
+                      }}
+                    >
+                      <ShoppingCart size={12} />
+                      Purchase
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={!solution.isPurchased}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (solution.isPurchased) {
+                        onSolutionSelect(solution);
+                      }
+                    }}
+                  >
+                    {solution.isPurchased ? 'Open' : 'Locked'}
+                  </Button>
+                </div>
               </div>
+              
+              {/* Lock overlay for non-purchased solutions */}
+              {!solution.isPurchased && (
+                <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                  <Lock className="w-8 h-8 text-muted-foreground" />
+                </div>
+              )}
             </div>
 
-            {/* Expanded Content */}
-            {expandedSolution === solution.id && (
+            {/* Expanded Content - Only for purchased solutions */}
+            {expandedSolution === solution.id && solution.isPurchased && (
               <div className="border-t border-border">
                 {/* Tabs */}
                 <div className="flex border-b border-border">
