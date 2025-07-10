@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Paperclip, X, Grid3X3, FlaskConical, ShoppingCart } from 'lucide-react';
+import { Send, Paperclip, X, Grid3X3, Zap, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +10,8 @@ import { Solution, Chat } from './StudioLayout';
 interface MainWorkAreaProps {
   activeSolution: Solution | null;
   activeChat: Chat | null;
-  isSandboxMode?: boolean;
-  onExitSandbox?: () => void;
+  isSandbox: boolean;
+  onSandboxToggle: () => void;
 }
 
 interface ActiveTool {
@@ -23,21 +23,15 @@ interface ActiveTool {
 export const MainWorkArea = ({ 
   activeSolution, 
   activeChat, 
-  isSandboxMode = false,
-  onExitSandbox 
+  isSandbox,
+  onSandboxToggle 
 }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
-  const [sandboxMessages, setSandboxMessages] = useState<string[]>([]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      if (isSandboxMode) {
-        setSandboxMessages(prev => [...prev, message]);
-        console.log('Sandbox message:', message);
-      } else {
-        console.log('Sending message:', message);
-      }
+      console.log('Sending message:', message);
       setMessage('');
     }
   };
@@ -50,11 +44,6 @@ export const MainWorkArea = ({
   };
 
   const handleFileUpload = () => {
-    if (isSandboxMode) {
-      // Sandbox mode doesn't support file uploads
-      return;
-    }
-    
     const input = document.createElement('input');
     input.type = 'file';
     input.multiple = true;
@@ -72,20 +61,19 @@ export const MainWorkArea = ({
   };
 
   // Show sandbox mode
-  if (isSandboxMode) {
+  if (isSandbox) {
     return (
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="h-16 border-b border-border flex items-center justify-between px-6">
           <div className="flex items-center space-x-3">
-            <FlaskConical size={20} className="text-primary" />
+            <Zap className="w-5 h-5 text-primary" />
             <h1 className="font-semibold text-foreground">Sandbox</h1>
-            <Badge variant="secondary" className="text-xs">Experimental Mode</Badge>
+            <Badge variant="secondary" className="bg-primary/10 text-primary">
+              Experiment Mode
+            </Badge>
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={onExitSandbox}>
-              Exit Sandbox
-            </Button>
             <Button variant="ghost" size="icon">
               <Grid3X3 size={18} />
             </Button>
@@ -93,46 +81,44 @@ export const MainWorkArea = ({
           </div>
         </div>
 
-        {/* Sandbox Chat Area */}
+        {/* Sandbox Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-8">
+            <div className="text-center space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-                <FlaskConical size={24} className="text-primary" />
+                <Zap className="w-8 h-8 text-primary" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-2">
                   Capability Sandbox
                 </h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Experiment with capabilities in isolation. No history or files are saved beyond this session.
+                  Test and experiment with your purchased capabilities in isolation. 
+                  Perfect for exploring features before integrating them into your solutions.
                 </p>
               </div>
             </div>
-
-            {/* Sandbox Messages */}
-            {sandboxMessages.length > 0 && (
-              <div className="space-y-4">
-                {sandboxMessages.map((msg, index) => (
-                  <div key={index} className="bg-muted/50 rounded-lg p-4">
-                    <p className="text-foreground">{msg}</p>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Input Area - Limited for sandbox */}
+        {/* Input Area */}
         <div className="border-t border-border p-4 bg-background">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-full border-border hover:bg-accent"
+                onClick={handleFileUpload}
+              >
+                <Paperclip size={18} />
+              </Button>
               <div className="flex-1 relative">
                 <Input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder="Experiment with capabilities..."
+                  placeholder="Test your capabilities here..."
                   className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
                 />
                 <Button
@@ -164,14 +150,39 @@ export const MainWorkArea = ({
               Welcome to Quest AI Studio
             </h2>
             <p className="text-muted-foreground mb-6">
-              Select a purchased solution to start working, or visit the Marketplace to purchase new solutions.
+              Select a purchased solution from the sidebar to begin working, or use the Sandbox to experiment with your capabilities.
             </p>
-            <Button 
-              onClick={() => window.location.href = '/marketplace'} 
-              size="lg" 
-              className="gap-2"
-            >
-              <ShoppingCart size={20} />
+            <div className="flex flex-col gap-3">
+              <Button onClick={onSandboxToggle} variant="outline" size="lg" className="gap-2">
+                <Zap size={20} />
+                Open Sandbox
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                Purchase solutions from the Marketplace to unlock full workspace features.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show locked state for non-purchased solutions
+  if (!activeSolution.isPurchased) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-background">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto">
+            <Lock className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Solution Locked
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              This solution requires a purchase to access. Visit the Marketplace to unlock full features.
+            </p>
+            <Button size="lg" className="gap-2">
               Visit Marketplace
             </Button>
           </div>
@@ -180,7 +191,6 @@ export const MainWorkArea = ({
     );
   }
 
-  // Show purchased solution workspace
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}

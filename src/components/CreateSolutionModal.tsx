@@ -27,7 +27,6 @@ export const CreateSolutionModal = ({ open, onOpenChange, onSolutionCreate }: Cr
       description: description.trim() || undefined,
       dateModified: new Date(),
       status: 'draft',
-      isPurchased: false, // Default to false since manual creation shouldn't create purchased solutions
     };
 
     onSolutionCreate(newSolution);

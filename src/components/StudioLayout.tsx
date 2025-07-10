@@ -4,7 +4,7 @@ import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
 import { ContextualDrawer } from './ContextualDrawer';
 
-export type ActiveSection = 'solutions' | 'sandbox' | 'tools' | 'marketplace' | 'profile' | null;
+export type ActiveSection = 'solutions' | 'tools' | 'marketplace' | 'profile' | 'sandbox' | null;
 
 export interface Solution {
   id: string;
@@ -20,13 +20,22 @@ export interface Chat {
   name: string;
   dateModified: Date;
   messages?: any[];
+  solutionId?: string;
+}
+
+export interface Capability {
+  id: string;
+  name: string;
+  description?: string;
+  isPurchased: boolean;
 }
 
 export const StudioLayout = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
   const [activeSolution, setActiveSolution] = useState<Solution | null>(null);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
-  const [isSandboxMode, setIsSandboxMode] = useState(false);
+  const [isSandbox, setIsSandbox] = useState<boolean>(false);
+  const [sidebarPinned, setSidebarPinned] = useState<boolean>(true);
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
@@ -35,7 +44,7 @@ export const StudioLayout = () => {
     }
 
     if (section === 'sandbox') {
-      setIsSandboxMode(true);
+      setIsSandbox(true);
       setActiveSolution(null);
       setActiveChat(null);
       setActiveSection(null);
@@ -46,34 +55,39 @@ export const StudioLayout = () => {
       setActiveSection(null);
     } else {
       setActiveSection(section);
-      setIsSandboxMode(false);
+      setIsSandbox(false);
     }
   };
 
   const handleSolutionSelect = (solution: Solution) => {
-    if (!solution.isPurchased) {
-      // Redirect to marketplace to purchase
-      window.location.href = '/marketplace';
-      return;
-    }
+    if (!solution.isPurchased) return; // Only allow purchased solutions
     
     setActiveSolution(solution);
     setActiveChat(null);
     setActiveSection(null);
-    setIsSandboxMode(false);
+    setIsSandbox(false);
   };
 
   const handleChatSelect = (chat: Chat, solution: Solution) => {
-    if (!solution.isPurchased) return;
+    if (!solution.isPurchased) return; // Only allow purchased solutions
     
     setActiveSolution(solution);
     setActiveChat(chat);
     setActiveSection(null);
-    setIsSandboxMode(false);
+    setIsSandbox(false);
   };
 
-  const handleExitSandbox = () => {
-    setIsSandboxMode(false);
+  const handleSandboxToggle = () => {
+    setIsSandbox(!isSandbox);
+    if (!isSandbox) {
+      setActiveSolution(null);
+      setActiveChat(null);
+      setActiveSection(null);
+    }
+  };
+
+  const handleSidebarToggle = () => {
+    setSidebarPinned(!sidebarPinned);
   };
 
   return (
@@ -81,7 +95,9 @@ export const StudioLayout = () => {
       <LeftSidebar 
         activeSection={activeSection} 
         onSectionClick={handleSectionClick}
-        isSandboxActive={isSandboxMode}
+        isPinned={sidebarPinned}
+        onTogglePin={handleSidebarToggle}
+        isSandbox={isSandbox}
       />
       <ContextualDrawer 
         isOpen={activeSection !== null && activeSection !== 'marketplace'}
@@ -94,8 +110,8 @@ export const StudioLayout = () => {
       <MainWorkArea 
         activeSolution={activeSolution}
         activeChat={activeChat}
-        isSandboxMode={isSandboxMode}
-        onExitSandbox={handleExitSandbox}
+        isSandbox={isSandbox}
+        onSandboxToggle={handleSandboxToggle}
       />
     </div>
   );
