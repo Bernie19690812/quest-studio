@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
 import { ContextualDrawer } from './ContextualDrawer';
 
-export type ActiveSection = 'tools' | 'marketplace' | 'profile' | null;
+export type ActiveSection = 'solutions' | 'sandbox' | 'tools' | 'marketplace' | 'profile' | null;
 
 export interface Solution {
   id: string;
@@ -11,6 +12,7 @@ export interface Solution {
   description?: string;
   dateModified: Date;
   status: 'active' | 'draft' | 'archived';
+  isPurchased: boolean;
 }
 
 export interface Chat {
@@ -24,6 +26,7 @@ export const StudioLayout = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
   const [activeSolution, setActiveSolution] = useState<Solution | null>(null);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
+  const [isSandboxMode, setIsSandboxMode] = useState(false);
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
@@ -31,28 +34,46 @@ export const StudioLayout = () => {
       return;
     }
 
+    if (section === 'sandbox') {
+      setIsSandboxMode(true);
+      setActiveSolution(null);
+      setActiveChat(null);
+      setActiveSection(null);
+      return;
+    }
+
     if (section === activeSection) {
       setActiveSection(null);
     } else {
       setActiveSection(section);
+      setIsSandboxMode(false);
     }
   };
 
   const handleSolutionSelect = (solution: Solution) => {
+    if (!solution.isPurchased) {
+      // Redirect to marketplace to purchase
+      window.location.href = '/marketplace';
+      return;
+    }
+    
     setActiveSolution(solution);
     setActiveChat(null);
     setActiveSection(null);
+    setIsSandboxMode(false);
   };
 
   const handleChatSelect = (chat: Chat, solution: Solution) => {
+    if (!solution.isPurchased) return;
+    
     setActiveSolution(solution);
     setActiveChat(chat);
     setActiveSection(null);
+    setIsSandboxMode(false);
   };
 
-  const handleCreateSolution = () => {
-    // Since we removed solutions from sidebar, this could redirect to marketplace
-    window.location.href = '/marketplace';
+  const handleExitSandbox = () => {
+    setIsSandboxMode(false);
   };
 
   return (
@@ -60,6 +81,7 @@ export const StudioLayout = () => {
       <LeftSidebar 
         activeSection={activeSection} 
         onSectionClick={handleSectionClick}
+        isSandboxActive={isSandboxMode}
       />
       <ContextualDrawer 
         isOpen={activeSection !== null && activeSection !== 'marketplace'}
@@ -72,7 +94,8 @@ export const StudioLayout = () => {
       <MainWorkArea 
         activeSolution={activeSolution}
         activeChat={activeChat}
-        onCreateSolution={handleCreateSolution}
+        isSandboxMode={isSandboxMode}
+        onExitSandbox={handleExitSandbox}
       />
     </div>
   );

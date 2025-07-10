@@ -4,6 +4,7 @@ import {
   User, 
   ShoppingCart,
   Wrench,
+  FlaskConical,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ActiveSection } from './StudioLayout';
@@ -11,13 +12,19 @@ import { ActiveSection } from './StudioLayout';
 interface LeftSidebarProps {
   activeSection: ActiveSection;
   onSectionClick: (section: ActiveSection) => void;
+  isSandboxActive?: boolean;
 }
 
 const topSectionItems = [
   {
-    id: 'marketplace' as const,
+    id: 'solutions' as const,
     icon: ShoppingCart,
-    label: 'Marketplace',
+    label: 'My Solutions',
+  },
+  {
+    id: 'sandbox' as const,
+    icon: FlaskConical,
+    label: 'Sandbox',
   },
   {
     id: 'tools' as const,
@@ -34,7 +41,7 @@ const bottomSectionItems = [
   },
 ];
 
-export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps) => {
+export const LeftSidebar = ({ activeSection, onSectionClick, isSandboxActive }: LeftSidebarProps) => {
   return (
     <div className="w-16 bg-card border-r border-border flex flex-col">
       {/* Logo */}
@@ -55,7 +62,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
                   className={cn(
                     "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 relative",
                     "hover:bg-accent hover:text-accent-foreground",
-                    activeSection === item.id
+                    (activeSection === item.id || (item.id === 'sandbox' && isSandboxActive))
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   )}
@@ -63,7 +70,7 @@ export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps)
                   <item.icon size={20} />
                   
                   {/* Active indicator */}
-                  {activeSection === item.id && (
+                  {(activeSection === item.id || (item.id === 'sandbox' && isSandboxActive)) && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-sm" />
                   )}
                 </button>
