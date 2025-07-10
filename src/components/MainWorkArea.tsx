@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Paperclip, X, Grid3X3, FlaskConical, ShoppingCart } from 'lucide-react';
+import { Send, Paperclip, X, Grid3X3, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +10,7 @@ import { Solution, Chat } from './StudioLayout';
 interface MainWorkAreaProps {
   activeSolution: Solution | null;
   activeChat: Chat | null;
-  isSandboxMode?: boolean;
-  onExitSandbox?: () => void;
+  onCreateSolution: () => void;
 }
 
 interface ActiveTool {
@@ -20,24 +19,13 @@ interface ActiveTool {
   type: 'capability' | 'solution';
 }
 
-export const MainWorkArea = ({ 
-  activeSolution, 
-  activeChat, 
-  isSandboxMode = false,
-  onExitSandbox 
-}: MainWorkAreaProps) => {
+export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
-  const [sandboxMessages, setSandboxMessages] = useState<string[]>([]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      if (isSandboxMode) {
-        setSandboxMessages(prev => [...prev, message]);
-        console.log('Sandbox message:', message);
-      } else {
-        console.log('Sending message:', message);
-      }
+      console.log('Sending message:', message);
       setMessage('');
     }
   };
@@ -50,11 +38,6 @@ export const MainWorkArea = ({
   };
 
   const handleFileUpload = () => {
-    if (isSandboxMode) {
-      // Sandbox mode doesn't support file uploads
-      return;
-    }
-    
     const input = document.createElement('input');
     input.type = 'file';
     input.multiple = true;
@@ -71,86 +54,6 @@ export const MainWorkArea = ({
     setActiveTools(prev => prev.filter(tool => tool.id !== toolId));
   };
 
-  // Show sandbox mode
-  if (isSandboxMode) {
-    return (
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="h-16 border-b border-border flex items-center justify-between px-6">
-          <div className="flex items-center space-x-3">
-            <FlaskConical size={20} className="text-primary" />
-            <h1 className="font-semibold text-foreground">Sandbox</h1>
-            <Badge variant="secondary" className="text-xs">Experimental Mode</Badge>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={onExitSandbox}>
-              Exit Sandbox
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Grid3X3 size={18} />
-            </Button>
-            <AppLauncherDropdown />
-          </div>
-        </div>
-
-        {/* Sandbox Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-                <FlaskConical size={24} className="text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
-                  Capability Sandbox
-                </h2>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Experiment with capabilities in isolation. No history or files are saved beyond this session.
-                </p>
-              </div>
-            </div>
-
-            {/* Sandbox Messages */}
-            {sandboxMessages.length > 0 && (
-              <div className="space-y-4">
-                {sandboxMessages.map((msg, index) => (
-                  <div key={index} className="bg-muted/50 rounded-lg p-4">
-                    <p className="text-foreground">{msg}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Input Area - Limited for sandbox */}
-        <div className="border-t border-border p-4 bg-background">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center space-x-3">
-              <div className="flex-1 relative">
-                <Input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Experiment with capabilities..."
-                  className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
-                />
-                <Button
-                  onClick={handleSendMessage}
-                  size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                  disabled={!message.trim()}
-                >
-                  <Send size={16} />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Show prompt when no solution is selected
   if (!activeSolution) {
     return (
@@ -164,15 +67,11 @@ export const MainWorkArea = ({
               Welcome to Quest AI Studio
             </h2>
             <p className="text-muted-foreground mb-6">
-              Select a purchased solution to start working, or visit the Marketplace to purchase new solutions.
+              Select or create a solution to begin working with AI-powered tools and capabilities.
             </p>
-            <Button 
-              onClick={() => window.location.href = '/marketplace'} 
-              size="lg" 
-              className="gap-2"
-            >
-              <ShoppingCart size={20} />
-              Visit Marketplace
+            <Button onClick={onCreateSolution} size="lg" className="gap-2">
+              <Plus size={20} />
+              Create Solution
             </Button>
           </div>
         </div>
@@ -180,7 +79,6 @@ export const MainWorkArea = ({
     );
   }
 
-  // Show purchased solution workspace
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
