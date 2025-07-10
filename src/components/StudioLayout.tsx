@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
@@ -28,7 +27,7 @@ export const StudioLayout = () => {
 
   const handleSectionClick = (section: ActiveSection) => {
     if (section === 'marketplace') {
-      window.open('/marketplace', '_blank');
+      window.location.href = '/marketplace';
       return;
     }
 
