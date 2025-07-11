@@ -167,7 +167,7 @@ export const MainWorkArea = ({
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Header - Simplified to match the image */}
+      {/* Header */}
       <div className="h-16 border-b border-border flex items-center justify-between px-6">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-lg quest-gradient flex items-center justify-center">
@@ -178,7 +178,7 @@ export const MainWorkArea = ({
               {activeSolution.title}
             </h1>
             <p className="text-xs text-muted-foreground">
-              Component(s): {activeTools.length}
+              Capabilities: {activeTools.length}
             </p>
           </div>
         </div>
