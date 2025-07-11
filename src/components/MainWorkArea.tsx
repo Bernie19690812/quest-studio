@@ -146,9 +146,7 @@ export const MainWorkArea = ({
         <div className="flex-1 flex flex-col items-center justify-center p-8 max-w-4xl mx-auto w-full">
           {/* Welcome Section */}
           <div className="text-center space-y-6 mb-12">
-            <div className="w-20 h-20 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
-              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-10 h-10" />
-            </div>
+            
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-3">
                 Welcome to Quest AI Studio
