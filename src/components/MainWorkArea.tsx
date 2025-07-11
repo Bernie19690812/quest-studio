@@ -215,11 +215,12 @@ export const MainWorkArea = ({
                 </Button>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div className="h-full flex flex-col">
@@ -240,9 +241,11 @@ export const MainWorkArea = ({
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="icon">
-            <Grid3X3 size={18} />
+            <img src="/lovable-uploads/31763b67-3e42-479e-bd19-b0995be4dd2b.png" alt="Icon 1" className="w-5 h-5" />
           </Button>
-          <AppLauncherDropdown />
+          <Button variant="ghost" size="icon">
+            <img src="/lovable-uploads/40a4e5e7-e382-408a-84ea-f367cac3b88c.png" alt="Icon 2" className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 
