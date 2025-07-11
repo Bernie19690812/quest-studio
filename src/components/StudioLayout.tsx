@@ -87,6 +87,11 @@ export const StudioLayout = () => {
     setSandboxTools(prev => prev.filter(t => t.id !== toolId));
   };
 
+  const handleMoveFromSandbox = (tool: SandboxTool) => {
+    // Remove from sandbox when moved to active solution
+    handleRemoveFromSandbox(tool.id);
+  };
+
   return (
     <div className="h-screen flex bg-background relative">
       <LeftSidebar 
@@ -110,6 +115,8 @@ export const StudioLayout = () => {
             activeChat={activeChat}
             onCreateSolution={handleCreateSolution}
             onDropToSandbox={handleDropToSandbox}
+            sandboxTools={sandboxTools}
+            onMoveFromSandbox={handleMoveFromSandbox}
           />
         </ResizablePanel>
         
@@ -128,14 +135,16 @@ export const StudioLayout = () => {
         )}
       </ResizablePanelGroup>
 
-      {/* Floating Sandbox Button */}
-      <Button
-        onClick={handleSandboxToggle}
-        size="icon"
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-50"
-      >
-        <FlaskConical size={24} />
-      </Button>
+      {/* Floating Sandbox Button - Hidden when sandbox is open */}
+      {!isSandboxOpen && (
+        <Button
+          onClick={handleSandboxToggle}
+          size="icon"
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-50"
+        >
+          <FlaskConical size={24} />
+        </Button>
+      )}
     </div>
   );
 };

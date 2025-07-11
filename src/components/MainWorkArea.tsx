@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Paperclip, X, Grid3X3, Plus } from 'lucide-react';
+import { Send, Paperclip, X, Grid3X3, Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,8 @@ interface MainWorkAreaProps {
   activeChat: Chat | null;
   onCreateSolution: () => void;
   onDropToSandbox: (tool: SandboxTool) => void;
+  sandboxTools: SandboxTool[];
+  onMoveFromSandbox?: (tool: SandboxTool) => void;
 }
 
 interface ActiveTool {
@@ -20,7 +22,14 @@ interface ActiveTool {
   type: 'capability' | 'solution';
 }
 
-export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onDropToSandbox }: MainWorkAreaProps) => {
+export const MainWorkArea = ({ 
+  activeSolution, 
+  activeChat, 
+  onCreateSolution, 
+  onDropToSandbox,
+  sandboxTools,
+  onMoveFromSandbox
+}: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -74,10 +83,46 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onD
       const toolData = e.dataTransfer.getData('application/json');
       if (toolData) {
         const tool: SandboxTool = JSON.parse(toolData);
-        onDropToSandbox(tool);
+        
+        // Check if dropping in active solution area and solution is selected
+        if (activeSolution) {
+          // Add to active tools instead of sandbox
+          const newActiveTool: ActiveTool = {
+            id: tool.id,
+            name: tool.name,
+            type: tool.type,
+          };
+          setActiveTools(prev => {
+            const exists = prev.find(t => t.id === tool.id);
+            if (exists) return prev;
+            return [...prev, newActiveTool];
+          });
+        } else {
+          onDropToSandbox(tool);
+        }
       }
     } catch (error) {
       console.error('Failed to parse dropped tool data:', error);
+    }
+  };
+
+  const handleMoveFromSandbox = (tool: SandboxTool) => {
+    if (!activeSolution) return;
+    
+    const newActiveTool: ActiveTool = {
+      id: tool.id,
+      name: tool.name,
+      type: tool.type,
+    };
+    
+    setActiveTools(prev => {
+      const exists = prev.find(t => t.id === tool.id);
+      if (exists) return prev;
+      return [...prev, newActiveTool];
+    });
+    
+    if (onMoveFromSandbox) {
+      onMoveFromSandbox(tool);
     }
   };
 
@@ -122,23 +167,20 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onD
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Header */}
+      {/* Header - Simplified to match the image */}
       <div className="h-16 border-b border-border flex items-center justify-between px-6">
         <div className="flex items-center space-x-3">
-          <h1 className="font-semibold text-foreground">
-            {activeSolution.title}
-            {activeChat && (
-              <>
-                <span className="text-muted-foreground"> › </span>
-                {activeChat.name}
-              </>
-            )}
-          </h1>
-          {activeTools.length > 0 && (
-            <div className="text-sm text-muted-foreground">
-              {activeTools.length} tool(s) active
-            </div>
-          )}
+          <div className="w-8 h-8 rounded-lg quest-gradient flex items-center justify-center">
+            <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-4 h-4" />
+          </div>
+          <div>
+            <h1 className="font-semibold text-foreground">
+              {activeSolution.title}
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Component(s): {activeTools.length}
+            </p>
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="icon">
@@ -173,9 +215,35 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onD
         </div>
       )}
 
-      {/* Chat Area */}
+      {/* Sandbox Tools Available for Moving */}
+      {sandboxTools.length > 0 && activeSolution && (
+        <div className="px-6 py-3 border-b border-border bg-blue-50/50 dark:bg-blue-950/20">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm text-muted-foreground">Available from Sandbox:</p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {sandboxTools.map((tool) => (
+              <div key={tool.id} className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">
+                  {tool.name}
+                </Badge>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0"
+                  onClick={() => handleMoveFromSandbox(tool)}
+                >
+                  <ArrowRight size={12} />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chat Area - Updated to match the image layout */}
       <div 
-        className="flex-1 overflow-y-auto p-6 relative"
+        className="flex-1 overflow-y-auto relative"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -183,16 +251,20 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onD
         {isDragOver && (
           <div className="absolute inset-4 bg-primary/10 border-2 border-dashed border-primary rounded-lg flex items-center justify-center z-10">
             <div className="text-center">
-              <p className="text-lg font-medium text-primary">Drop to add to Sandbox</p>
-              <p className="text-sm text-muted-foreground">Experiment before using in this solution</p>
+              <p className="text-lg font-medium text-primary">
+                {activeSolution ? 'Drop to add to Solution' : 'Drop to add to Sandbox'}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {activeSolution ? 'Add capability to this solution' : 'Experiment before using in solution'}
+              </p>
             </div>
           </div>
         )}
         
-        <div className="max-w-4xl mx-auto">
+        <div className="h-full flex flex-col items-center justify-center p-6">
           {activeChat ? (
             // Show chat content
-            <div className="space-y-4">
+            <div className="space-y-4 w-full max-w-4xl">
               <div className="text-center py-8">
                 <h3 className="text-lg font-medium text-foreground mb-2">
                   {activeChat.name}
@@ -203,17 +275,22 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onD
               </div>
             </div>
           ) : (
-            // Show solution welcome
-            <div className="text-center space-y-4">
+            // Show solution welcome - matching the image layout
+            <div className="text-center space-y-6">
               <div className="w-16 h-16 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
                 <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-8 h-8" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-2">
-                  {activeSolution.title}
+                  Working on: {activeSolution.title}
                 </h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  {activeSolution.description || 'Ready to start working on your solution. Create a new chat or select an existing one to begin.'}
+                  {activeSolution.description || 'AI-powered customer service persona'}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Drag capabilities from the left sidebar to get started
                 </p>
               </div>
             </div>

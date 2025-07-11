@@ -22,7 +22,7 @@ const topSectionItems = [
   {
     id: 'tools' as const,
     icon: Wrench,
-    label: 'My Tools',
+    label: 'Purchased Assets',
   },
 ];
 
