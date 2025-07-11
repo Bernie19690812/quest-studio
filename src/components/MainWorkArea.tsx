@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Send, Paperclip, X, Grid3X3, Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -161,6 +160,39 @@ export const MainWorkArea = ({
             </Button>
           </div>
         </div>
+
+        {/* Input Area moved to bottom */}
+        <div className="absolute bottom-0 left-0 right-0 border-t border-border p-4 bg-background">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-full border-border hover:bg-accent"
+                onClick={handleFileUpload}
+              >
+                <Paperclip size={18} />
+              </Button>
+              <div className="flex-1 relative">
+                <Input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Type your message..."
+                  className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                  disabled={!message.trim()}
+                >
+                  <Send size={16} />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -241,7 +273,7 @@ export const MainWorkArea = ({
         </div>
       )}
 
-      {/* Chat Area - Updated to match the image layout */}
+      {/* Chat Area */}
       <div 
         className="flex-1 overflow-y-auto relative"
         onDragOver={handleDragOver}
@@ -298,7 +330,7 @@ export const MainWorkArea = ({
         </div>
       </div>
 
-      {/* Input Area */}
+      {/* Input Area moved to bottom */}
       <div className="border-t border-border p-4 bg-background">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center space-x-3">
