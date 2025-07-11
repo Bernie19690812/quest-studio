@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
-import { Send, Paperclip, X, Grid3X3, Plus, ArrowRight } from 'lucide-react';
+import { Send, Paperclip, X, Grid3X3, Plus, ArrowRight, Store, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { AppLauncherDropdown } from './AppLauncherDropdown';
 import { Solution, Chat, SandboxTool } from './StudioLayout';
 
@@ -32,6 +34,13 @@ export const MainWorkArea = ({
   const [message, setMessage] = useState('');
   const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+
+  // Mock recently used solutions
+  const recentSolutions = [
+    { id: '1', title: 'Customer Support Bot', description: 'AI-powered customer service', dateModified: new Date('2024-01-15') },
+    { id: '2', title: 'Content Generator', description: 'Automated content creation', dateModified: new Date('2024-01-12') },
+    { id: '3', title: 'Data Analyzer', description: 'Smart data insights', dateModified: new Date('2024-01-10') },
+  ];
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -83,9 +92,7 @@ export const MainWorkArea = ({
       if (toolData) {
         const tool: SandboxTool = JSON.parse(toolData);
         
-        // Check if dropping in active solution area and solution is selected
         if (activeSolution) {
-          // Add to active tools instead of sandbox
           const newActiveTool: ActiveTool = {
             id: tool.id,
             name: tool.name,
@@ -125,11 +132,20 @@ export const MainWorkArea = ({
     }
   };
 
-  // Show prompt when no solution is selected
+  const handleExploreMarketplace = () => {
+    window.location.href = '/marketplace';
+  };
+
+  const handleRecentSolutionClick = (solution: any) => {
+    // This would typically trigger the solution selection logic
+    console.log('Selected recent solution:', solution);
+  };
+
+  // Show redesigned welcome screen when no solution is selected
   if (!activeSolution) {
     return (
       <div 
-        className="flex-1 flex flex-col items-center justify-center bg-background relative"
+        className="flex-1 flex flex-col bg-background relative"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -143,55 +159,64 @@ export const MainWorkArea = ({
           </div>
         )}
         
-        <div className="text-center space-y-6 max-w-md">
-          <div className="w-20 h-20 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
-            <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-10 h-10" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">
-              Welcome to Quest AI Studio
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Select or create a solution to begin working with AI-powered tools and capabilities.
-            </p>
-            <Button onClick={onCreateSolution} size="lg" className="gap-2">
-              <Plus size={20} />
-              Create Solution
-            </Button>
-          </div>
-        </div>
-
-        {/* Input Area moved to bottom */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-border p-4 bg-background">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="rounded-full border-border hover:bg-accent"
-                onClick={handleFileUpload}
-              >
-                <Paperclip size={18} />
-              </Button>
-              <div className="flex-1 relative">
-                <Input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Type your message..."
-                  className="rounded-full bg-secondary border-border text-foreground placeholder:text-muted-foreground pr-12"
-                />
-                <Button
-                  onClick={handleSendMessage}
-                  size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                  disabled={!message.trim()}
-                >
-                  <Send size={16} />
+        <div className="flex-1 flex flex-col items-center justify-center p-8 max-w-4xl mx-auto w-full">
+          {/* Welcome Section */}
+          <div className="text-center space-y-6 mb-12">
+            <div className="w-20 h-20 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
+              <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-10 h-10" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-3">
+                Welcome to Quest AI Studio
+              </h1>
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
+                Build powerful AI solutions with our marketplace of capabilities. Start by exploring pre-built solutions or create your own from scratch.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button onClick={handleExploreMarketplace} size="lg" className="gap-2">
+                  <Store size={20} />
+                  Explore Marketplace
+                </Button>
+                <Button onClick={onCreateSolution} variant="outline" size="lg" className="gap-2">
+                  <Plus size={20} />
+                  Create Solution
                 </Button>
               </div>
             </div>
           </div>
+
+          {/* Recently Used Solutions */}
+          {recentSolutions.length > 0 && (
+            <div className="w-full space-y-6">
+              <div className="flex items-center gap-2">
+                <Clock size={20} className="text-muted-foreground" />
+                <h2 className="text-xl font-semibold text-foreground">Recently Used</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {recentSolutions.map((solution) => (
+                  <Card key={solution.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                    <CardContent className="p-4" onClick={() => handleRecentSolutionClick(solution)}>
+                      <div className="space-y-2">
+                        <h3 className="font-medium text-foreground truncate">{solution.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{solution.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">
+                            {solution.dateModified.toLocaleDateString()}
+                          </span>
+                          <ArrowRight size={16} className="text-muted-foreground" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <div className="text-center">
+                <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">
+                  View all solutions
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
