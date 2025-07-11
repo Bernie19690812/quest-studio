@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Send, Paperclip, X, Grid3X3, Plus, ArrowRight, Store, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -223,7 +222,7 @@ export const MainWorkArea = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="h-full flex flex-col">
       {/* Header */}
       <div className="h-16 border-b border-border flex items-center justify-between px-6">
         <div className="flex items-center space-x-3">
@@ -355,7 +354,7 @@ export const MainWorkArea = ({
         </div>
       </div>
 
-      {/* Input Area moved to bottom */}
+      {/* Input Area at the bottom */}
       <div className="border-t border-border p-4 bg-background">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center space-x-3">
