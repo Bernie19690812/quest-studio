@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { ActiveSection, Solution, Chat } from './StudioLayout';
+import { ActiveSection, Solution, Chat, SandboxTool } from './StudioLayout';
 import { CreateSolutionModal } from './CreateSolutionModal';
 import { SolutionsList } from './SolutionsList';
 
@@ -15,6 +14,7 @@ interface ContextualDrawerProps {
   onClose: () => void;
   onSolutionSelect: (solution: Solution) => void;
   onChatSelect?: (chat: Chat, solution: Solution) => void;
+  onDropToSandbox: (tool: SandboxTool) => void;
 }
 
 // Mock data for tools
@@ -90,7 +90,7 @@ const SolutionsContent = ({
   );
 };
 
-const ToolsContent = () => {
+const ToolsContent = ({ onDropToSandbox }: { onDropToSandbox: (tool: SandboxTool) => void }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredCapabilities = mockTools.capabilities.filter(tool =>
@@ -102,6 +102,28 @@ const ToolsContent = () => {
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tool.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleDragStart = (e: React.DragEvent, tool: any, type: 'capability' | 'solution') => {
+    const sandboxTool: SandboxTool = {
+      id: tool.id,
+      name: tool.name,
+      type,
+      description: tool.description,
+      category: tool.category,
+    };
+    e.dataTransfer.setData('application/json', JSON.stringify(sandboxTool));
+  };
+
+  const handleDoubleClick = (tool: any, type: 'capability' | 'solution') => {
+    const sandboxTool: SandboxTool = {
+      id: tool.id,
+      name: tool.name,
+      type,
+      description: tool.description,
+      category: tool.category,
+    };
+    onDropToSandbox(sandboxTool);
+  };
 
   return (
     <div className="space-y-4">
@@ -119,6 +141,10 @@ const ToolsContent = () => {
         />
       </div>
 
+      <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded-md">
+        💡 Drag to Sandbox or double-click to experiment
+      </div>
+
       <div className="space-y-4">
         <div>
           <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
@@ -129,11 +155,10 @@ const ToolsContent = () => {
             {filteredCapabilities.map((tool) => (
               <div
                 key={tool.id}
-                className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-grab"
+                className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-grab active:cursor-grabbing select-none"
                 draggable
-                onDragStart={(e) => {
-                  e.dataTransfer.setData('text/plain', JSON.stringify(tool));
-                }}
+                onDragStart={(e) => handleDragStart(e, tool, 'capability')}
+                onDoubleClick={() => handleDoubleClick(tool, 'capability')}
               >
                 <h5 className="font-medium text-foreground">{tool.name}</h5>
                 <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>
@@ -152,11 +177,10 @@ const ToolsContent = () => {
             {filteredSolutions.map((tool) => (
               <div
                 key={tool.id}
-                className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-grab"
+                className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-grab active:cursor-grabbing select-none"
                 draggable
-                onDragStart={(e) => {
-                  e.dataTransfer.setData('text/plain', JSON.stringify(tool));
-                }}
+                onDragStart={(e) => handleDragStart(e, tool, 'solution')}
+                onDoubleClick={() => handleDoubleClick(tool, 'solution')}
               >
                 <h5 className="font-medium text-foreground">{tool.name}</h5>
                 <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>
@@ -208,14 +232,15 @@ export const ContextualDrawer = ({
   activeSolution,
   onClose, 
   onSolutionSelect,
-  onChatSelect
+  onChatSelect,
+  onDropToSandbox
 }: ContextualDrawerProps) => {
   const renderContent = () => {
     switch (activeSection) {
       case 'solutions':
         return <SolutionsContent onSolutionSelect={onSolutionSelect} onChatSelect={onChatSelect} onClose={onClose} />;
       case 'tools':
-        return <ToolsContent />;
+        return <ToolsContent onDropToSandbox={onDropToSandbox} />;
       case 'profile':
         return <ProfileContent />;
       default:

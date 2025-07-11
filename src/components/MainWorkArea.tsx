@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AppLauncherDropdown } from './AppLauncherDropdown';
-import { Solution, Chat } from './StudioLayout';
+import { Solution, Chat, SandboxTool } from './StudioLayout';
 
 interface MainWorkAreaProps {
   activeSolution: Solution | null;
   activeChat: Chat | null;
   onCreateSolution: () => void;
+  onDropToSandbox: (tool: SandboxTool) => void;
 }
 
 interface ActiveTool {
@@ -19,9 +20,10 @@ interface ActiveTool {
   type: 'capability' | 'solution';
 }
 
-export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: MainWorkAreaProps) => {
+export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution, onDropToSandbox }: MainWorkAreaProps) => {
   const [message, setMessage] = useState('');
   const [activeTools, setActiveTools] = useState<ActiveTool[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -54,10 +56,49 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
     setActiveTools(prev => prev.filter(tool => tool.id !== toolId));
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    try {
+      const toolData = e.dataTransfer.getData('application/json');
+      if (toolData) {
+        const tool: SandboxTool = JSON.parse(toolData);
+        onDropToSandbox(tool);
+      }
+    } catch (error) {
+      console.error('Failed to parse dropped tool data:', error);
+    }
+  };
+
   // Show prompt when no solution is selected
   if (!activeSolution) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-background">
+      <div 
+        className="flex-1 flex flex-col items-center justify-center bg-background relative"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {isDragOver && (
+          <div className="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded-lg flex items-center justify-center z-10">
+            <div className="text-center">
+              <p className="text-lg font-medium text-primary">Drop to add to Sandbox</p>
+              <p className="text-sm text-muted-foreground">Experiment with capabilities before using in solutions</p>
+            </div>
+          </div>
+        )}
+        
         <div className="text-center space-y-6 max-w-md">
           <div className="w-20 h-20 rounded-2xl quest-gradient flex items-center justify-center mx-auto">
             <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-10 h-10" />
@@ -133,7 +174,21 @@ export const MainWorkArea = ({ activeSolution, activeChat, onCreateSolution }: M
       )}
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div 
+        className="flex-1 overflow-y-auto p-6 relative"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {isDragOver && (
+          <div className="absolute inset-4 bg-primary/10 border-2 border-dashed border-primary rounded-lg flex items-center justify-center z-10">
+            <div className="text-center">
+              <p className="text-lg font-medium text-primary">Drop to add to Sandbox</p>
+              <p className="text-sm text-muted-foreground">Experiment before using in this solution</p>
+            </div>
+          </div>
+        )}
+        
         <div className="max-w-4xl mx-auto">
           {activeChat ? (
             // Show chat content
