@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { FlaskConical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
 import { ContextualDrawer } from './ContextualDrawer';
@@ -86,12 +88,10 @@ export const StudioLayout = () => {
   };
 
   return (
-    <div className="h-screen flex bg-background">
+    <div className="h-screen flex bg-background relative">
       <LeftSidebar 
         activeSection={activeSection} 
         onSectionClick={handleSectionClick}
-        onSandboxToggle={handleSandboxToggle}
-        isSandboxOpen={isSandboxOpen}
       />
       <ContextualDrawer 
         isOpen={activeSection !== null && activeSection !== 'marketplace'}
@@ -127,6 +127,15 @@ export const StudioLayout = () => {
           </>
         )}
       </ResizablePanelGroup>
+
+      {/* Floating Sandbox Button */}
+      <Button
+        onClick={handleSandboxToggle}
+        size="icon"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-50"
+      >
+        <FlaskConical size={24} />
+      </Button>
     </div>
   );
 };

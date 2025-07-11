@@ -4,7 +4,6 @@ import {
   User, 
   ShoppingCart,
   Wrench,
-  FlaskConical,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ActiveSection } from './StudioLayout';
@@ -12,8 +11,6 @@ import { ActiveSection } from './StudioLayout';
 interface LeftSidebarProps {
   activeSection: ActiveSection;
   onSectionClick: (section: ActiveSection) => void;
-  onSandboxToggle: () => void;
-  isSandboxOpen: boolean;
 }
 
 const topSectionItems = [
@@ -37,7 +34,7 @@ const bottomSectionItems = [
   },
 ];
 
-export const LeftSidebar = ({ activeSection, onSectionClick, onSandboxToggle, isSandboxOpen }: LeftSidebarProps) => {
+export const LeftSidebar = ({ activeSection, onSectionClick }: LeftSidebarProps) => {
   return (
     <div className="w-16 bg-card border-r border-border flex flex-col">
       {/* Logo */}
@@ -79,35 +76,6 @@ export const LeftSidebar = ({ activeSection, onSectionClick, onSandboxToggle, is
               </div>
             </li>
           ))}
-          
-          {/* Sandbox Toggle */}
-          <li className="px-2">
-            <div className="relative group">
-              <button
-                onClick={onSandboxToggle}
-                className={cn(
-                  "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 relative",
-                  "hover:bg-accent hover:text-accent-foreground",
-                  isSandboxOpen
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground"
-                )}
-              >
-                <FlaskConical size={20} />
-                
-                {/* Active indicator */}
-                {isSandboxOpen && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-sm" />
-                )}
-              </button>
-
-              {/* Tooltip */}
-              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                Sandbox
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-popover rotate-45" />
-              </div>
-            </div>
-          </li>
         </ul>
       </nav>
 
