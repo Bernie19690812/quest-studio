@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Plus, Search, Calendar, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,63 +32,6 @@ const mockTools = {
     { id: '7', name: 'Code Review Assistant', description: 'Automated code analysis', category: 'Development' },
     { id: '8', name: 'Report Builder', description: 'Generate structured reports', category: 'Business' },
   ],
-};
-
-const SolutionsContent = ({ 
-  onSolutionSelect, 
-  onChatSelect, 
-  onClose 
-}: { 
-  onSolutionSelect: (solution: Solution) => void; 
-  onChatSelect?: (chat: Chat, solution: Solution) => void;
-  onClose: () => void;
-}) => {
-  const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const handleSolutionClick = (solution: Solution) => {
-    onSolutionSelect(solution);
-    onClose();
-  };
-
-  const handleChatSelect = (chat: Chat, solution: Solution) => {
-    if (onChatSelect) {
-      onChatSelect(chat, solution);
-    }
-    onClose();
-  };
-
-  const handleFileSelect = (file: any, solution: Solution) => {
-    console.log('Selected file:', file.name, 'in solution:', solution.title);
-  };
-
-  return (
-    <>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-foreground">My Solutions</h3>
-          <Button size="sm" onClick={() => setShowCreateModal(true)}>
-            <Plus size={16} className="mr-1" />
-            New
-          </Button>
-        </div>
-
-        <SolutionsList 
-          onSolutionSelect={handleSolutionClick}
-          onChatSelect={handleChatSelect}
-          onFileSelect={handleFileSelect}
-        />
-      </div>
-
-      <CreateSolutionModal 
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
-        onSolutionCreate={(solution) => {
-          handleSolutionClick(solution);
-          setShowCreateModal(false);
-        }}
-      />
-    </>
-  );
 };
 
 const ToolsContent = ({ onDropToSandbox }: { onDropToSandbox: (tool: SandboxTool) => void }) => {
@@ -237,8 +181,6 @@ export const ContextualDrawer = ({
 }: ContextualDrawerProps) => {
   const renderContent = () => {
     switch (activeSection) {
-      case 'solutions':
-        return <SolutionsContent onSolutionSelect={onSolutionSelect} onChatSelect={onChatSelect} onClose={onClose} />;
       case 'tools':
         return <ToolsContent onDropToSandbox={onDropToSandbox} />;
       case 'profile':
@@ -259,7 +201,6 @@ export const ContextualDrawer = ({
           <div className="h-16 border-b border-border flex items-center justify-between px-4">
             <div className="flex items-center space-x-2">
               <h2 className="font-semibold text-foreground">
-                {activeSection === 'solutions' && 'Solutions'}
                 {activeSection === 'tools' && 'Tools'}
                 {activeSection === 'profile' && 'Profile'}
               </h2>
