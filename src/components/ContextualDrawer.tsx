@@ -19,6 +19,16 @@ interface ContextualDrawerProps {
   onDropToSandbox: (tool: SandboxTool) => void;
 }
 
+// Fixed Sandbox solution
+const sandboxSolution: Solution = {
+  id: 'sandbox',
+  title: 'Sandbox',
+  description: 'Experimental workspace for testing ideas',
+  dateModified: new Date(),
+  status: 'active',
+  isPurchased: true,
+};
+
 // Mock data for solutions - removed status indicators
 const mockSolutions: Solution[] = [
   {
@@ -134,12 +144,29 @@ const ToolsContent = ({
         <TabsContent value="solutions" className="flex-1 overflow-hidden mt-4">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-muted-foreground">
-              {filteredSolutions.length} purchased solutions
+              {filteredSolutions.length + 1} purchased solutions
             </span>
           </div>
           
           <ScrollArea className="h-full">
             <div className="space-y-3">
+              {/* Fixed Sandbox solution */}
+              <div
+                key={sandboxSolution.id}
+                className="p-3 rounded-lg border border-purple-300 hover:bg-accent/50 cursor-pointer transition-colors"
+                onClick={() => handleSolutionClick(sandboxSolution)}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-foreground">{sandboxSolution.title}</h4>
+                    {sandboxSolution.description && (
+                      <p className="text-sm text-muted-foreground mt-1">{sandboxSolution.description}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Regular solutions */}
               {filteredSolutions.map((solution) => (
                 <div
                   key={solution.id}
