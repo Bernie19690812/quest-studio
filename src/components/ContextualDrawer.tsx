@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Search, User, Zap, Brain, Mic, Camera, FileText, MessageSquare } from 'lucide-react';
+import { X, Search, User, Zap, Brain, Mic, Camera, FileText, MessageSquare, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ActiveSection, Solution, Chat, SandboxTool } from './StudioLayout';
 import { CreateSolutionModal } from './CreateSolutionModal';
+import { EditSolutionModal } from './EditSolutionModal';
 
 interface ContextualDrawerProps {
   isOpen: boolean;
@@ -81,6 +82,7 @@ const ToolsContent = ({
   onClose: () => void;
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [editingSolution, setEditingSolution] = useState<Solution | null>(null);
 
   const filteredSolutions = mockSolutions.filter(solution =>
     solution.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -95,6 +97,17 @@ const ToolsContent = ({
   const handleSolutionClick = (solution: Solution) => {
     onSolutionSelect(solution);
     onClose();
+  };
+
+  const handleEditSolution = (e: React.MouseEvent, solution: Solution) => {
+    e.stopPropagation(); // Prevent solution selection
+    setEditingSolution(solution);
+  };
+
+  const handleSaveEditedSolution = (updatedSolution: Solution) => {
+    // In a real implementation, you would update the solution in your data store
+    console.log('Updated solution:', updatedSolution);
+    setEditingSolution(null);
   };
 
   const handleCapabilityDragStart = (e: React.DragEvent, capability: any) => {
@@ -170,7 +183,7 @@ const ToolsContent = ({
               {filteredSolutions.map((solution) => (
                 <div
                   key={solution.id}
-                  className="p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer transition-colors"
+                  className="p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer transition-colors group"
                   onClick={() => handleSolutionClick(solution)}
                 >
                   <div className="flex items-start justify-between">
@@ -180,6 +193,14 @@ const ToolsContent = ({
                         <p className="text-sm text-muted-foreground mt-1">{solution.description}</p>
                       )}
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => handleEditSolution(e, solution)}
+                    >
+                      <Settings size={16} />
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -221,6 +242,16 @@ const ToolsContent = ({
           </ScrollArea>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Solution Modal */}
+      {editingSolution && (
+        <EditSolutionModal
+          isOpen={!!editingSolution}
+          onClose={() => setEditingSolution(null)}
+          solution={editingSolution}
+          onSave={handleSaveEditedSolution}
+        />
+      )}
     </div>
   );
 };
