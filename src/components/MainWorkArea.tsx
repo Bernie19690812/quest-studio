@@ -161,10 +161,7 @@ export const MainWorkArea = ({
                   <Store size={20} />
                   Explore Marketplace
                 </Button>
-                <Button onClick={onCreateSolution} variant="outline" size="lg" className="gap-2">
-                  <Plus size={20} />
-                  Create Solution
-                </Button>
+                
               </div>
             </div>
           </div>
