@@ -153,9 +153,7 @@ export const MainWorkArea = ({
               <h1 className="text-3xl font-bold text-foreground mb-3">
                 Welcome to Quest AI Studio
               </h1>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
-                Build powerful AI solutions with our marketplace of capabilities. Start by exploring pre-built solutions or create your own from scratch.
-              </p>
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl">Build powerful AI solutions with our marketplace of capabilities. Start by exploring pre-built solutions.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button onClick={handleExploreMarketplace} size="lg" className="gap-2">
                   <Store size={20} />
