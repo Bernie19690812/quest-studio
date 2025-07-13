@@ -56,8 +56,8 @@ export const EditSolutionModal = ({ isOpen, onClose, solution, onSave }: EditSol
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Settings size={20} />
             Edit Solution: {solution.title}
@@ -67,8 +67,8 @@ export const EditSolutionModal = ({ isOpen, onClose, solution, onSave }: EditSol
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="personality" className="flex-1 overflow-hidden">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="personality" className="flex-1 flex flex-col overflow-hidden">
+          <TabsList className="grid w-full grid-cols-3 flex-shrink-0">
             <TabsTrigger value="personality">Personality</TabsTrigger>
             <TabsTrigger value="prompts">Prompts</TabsTrigger>
             <TabsTrigger value="examples">Examples</TabsTrigger>
@@ -255,7 +255,7 @@ Assistant: [Another response]"
           </div>
         </Tabs>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4 border-t flex-shrink-0">
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
