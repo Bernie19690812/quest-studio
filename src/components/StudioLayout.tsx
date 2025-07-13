@@ -106,14 +106,16 @@ export const StudioLayout = () => {
         onDropToSandbox={handleDropToSandbox}
       />
       
-      <MainWorkArea 
-        activeSolution={activeSolution}
-        activeChat={activeChat}
-        onCreateSolution={handleCreateSolution}
-        onDropToSandbox={handleDropToSandbox}
-        sandboxTools={activeSolution?.id === 'sandbox' ? sandboxTools : []}
-        onMoveFromSandbox={handleMoveFromSandbox}
-      />
+      <div className="flex-1">
+        <MainWorkArea 
+          activeSolution={activeSolution}
+          activeChat={activeChat}
+          onCreateSolution={handleCreateSolution}
+          onDropToSandbox={handleDropToSandbox}
+          sandboxTools={activeSolution?.id === 'sandbox' ? sandboxTools : []}
+          onMoveFromSandbox={handleMoveFromSandbox}
+        />
+      </div>
     </div>
   );
 };
