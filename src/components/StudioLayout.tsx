@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { FlaskConical } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { LeftSidebar } from './LeftSidebar';
 import { MainWorkArea } from './MainWorkArea';
 import { ContextualDrawer } from './ContextualDrawer';
-import { SandboxPanel } from './SandboxPanel';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+
+
 
 export type ActiveSection = 'tools' | 'marketplace' | 'profile' | null;
 
@@ -38,7 +38,6 @@ export const StudioLayout = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
   const [activeSolution, setActiveSolution] = useState<Solution | null>(null);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
-  const [isSandboxOpen, setIsSandboxOpen] = useState(false);
   const [sandboxTools, setSandboxTools] = useState<SandboxTool[]>([]);
 
   const handleSectionClick = (section: ActiveSection) => {
@@ -70,17 +69,16 @@ export const StudioLayout = () => {
     window.location.href = '/marketplace';
   };
 
-  const handleSandboxToggle = () => {
-    setIsSandboxOpen(!isSandboxOpen);
-  };
 
   const handleDropToSandbox = (tool: SandboxTool) => {
-    setSandboxTools(prev => {
-      const exists = prev.find(t => t.id === tool.id);
-      if (exists) return prev;
-      return [...prev, tool];
-    });
-    setIsSandboxOpen(true);
+    // Only add to sandbox if sandbox solution is active
+    if (activeSolution?.id === 'sandbox') {
+      setSandboxTools(prev => {
+        const exists = prev.find(t => t.id === tool.id);
+        if (exists) return prev;
+        return [...prev, tool];
+      });
+    }
   };
 
   const handleRemoveFromSandbox = (toolId: string) => {
@@ -108,43 +106,14 @@ export const StudioLayout = () => {
         onDropToSandbox={handleDropToSandbox}
       />
       
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        <ResizablePanel defaultSize={isSandboxOpen ? 70 : 100} minSize={50}>
-          <MainWorkArea 
-            activeSolution={activeSolution}
-            activeChat={activeChat}
-            onCreateSolution={handleCreateSolution}
-            onDropToSandbox={handleDropToSandbox}
-            sandboxTools={sandboxTools}
-            onMoveFromSandbox={handleMoveFromSandbox}
-          />
-        </ResizablePanel>
-        
-        {isSandboxOpen && (
-          <>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={30} minSize={25} maxSize={50}>
-              <SandboxPanel
-                isOpen={isSandboxOpen}
-                tools={sandboxTools}
-                onClose={() => setIsSandboxOpen(false)}
-                onRemoveTool={handleRemoveFromSandbox}
-              />
-            </ResizablePanel>
-          </>
-        )}
-      </ResizablePanelGroup>
-
-      {/* Floating Sandbox Button - Hidden when sandbox is open */}
-      {!isSandboxOpen && (
-        <Button
-          onClick={handleSandboxToggle}
-          size="icon"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-50"
-        >
-          <FlaskConical size={24} />
-        </Button>
-      )}
+      <MainWorkArea 
+        activeSolution={activeSolution}
+        activeChat={activeChat}
+        onCreateSolution={handleCreateSolution}
+        onDropToSandbox={handleDropToSandbox}
+        sandboxTools={activeSolution?.id === 'sandbox' ? sandboxTools : []}
+        onMoveFromSandbox={handleMoveFromSandbox}
+      />
     </div>
   );
 };
