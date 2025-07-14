@@ -202,9 +202,7 @@ export const MainWorkArea = ({
       {/* Header */}
       <div className="h-16 border-b border-border flex items-center justify-between px-6">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg quest-gradient flex items-center justify-center">
-            <img src="/lovable-uploads/6afb39a4-7ab6-4eee-b62e-bf83a883bb52.png" alt="Quest AI" className="w-4 h-4" />
-          </div>
+          
           <div>
             <h1 className="font-semibold text-foreground">
               {activeSolution.title}
